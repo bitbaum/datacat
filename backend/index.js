@@ -60,6 +60,7 @@ app.use('/api/v1/audio', require('./routes/audio'));
 app.use('/api/v1/images', require('./routes/images'));
 app.use('/api/v1/videos', require('./routes/videos'));
 app.use('/api/v1/websites', require('./routes/websites'));
+app.use('/api/v1/db-ingestion', require('./routes/dbIngestion'));
 
 // Deprecated REST routes (redirect to v1)
 app.use('/api/auth', (req, res) => {
