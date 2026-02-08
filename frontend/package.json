@@ -17,7 +17,7 @@
     "@headlessui/react": "^2.2.4",
     "@heroicons/react": "^2.2.0",
     "@mdx-js/react": "^3.0.0",
-    "@prisma/client": "^6.12.0",
+    "@prisma/client": "^6.19.2",
     "@trpc/server": "^11.4.3",
     "@types/react-datepicker": "^6.2.0",
     "bcryptjs": "^3.0.2",
