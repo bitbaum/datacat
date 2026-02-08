@@ -23,7 +23,7 @@
     "bcryptjs": "^3.0.2",
     "contentlayer": "^0.3.1",
     "jose": "^5.9.6",
-    "next": "15.3.5",
+    "next": "15.5.9",
     "next-auth": "^4.24.10",
     "next-contentlayer": "^0.3.1",
     "openai": "^5.15.0",
