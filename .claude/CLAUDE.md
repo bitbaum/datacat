@@ -1,21 +1,18 @@
-# DataCat - Universal AI-Powered Data Capture
+# DataCat
+
+@~/.claude/CLAUDE.md
+
+---
 
 ## Overview
 
-DataCat is a **universal data ingestion platform** with AI analysis. Custom forms capture any data type, AI processes it, and actions are delivered to humans or machines.
+**DataCat** is a universal data ingestion platform with AI analysis. Custom forms capture any data type, AI processes it, and actions are delivered to humans or machines.
 
-## Architecture
+**Workflow**: Data Ingestion → AI Analysis → Action Delivery
 
-```
-datacat/
-├── frontend/            # Next.js 15 (port 3000)
-├── backend/             # Express.js (port 5001)
-├── docs/                # Documentation
-├── scripts/             # Rebranding & utilities
-└── docker-compose.yml   # Infrastructure
-```
+---
 
-### Tech Stack
+## Tech Stack
 
 | Layer | Technology |
 |-------|------------|
@@ -24,6 +21,25 @@ datacat/
 | Database | PostgreSQL (Prisma ORM), Redis |
 | AI | Multi-LLM (OpenAI, Claude, custom) |
 | Testing | Playwright |
+
+---
+
+## Project Structure (Monorepo)
+
+```
+datacat/
+├── frontend/            # Next.js 15 (port 3000)
+│   ├── src/app/        # App Router pages
+│   ├── src/components/ # React components
+│   └── src/stores/     # Zustand state
+├── backend/             # Express.js (port 5001)
+│   ├── src/routes/     # API routes
+│   ├── prisma/         # Database schema
+│   └── src/trpc/       # tRPC routers
+└── docker-compose.yml   # Infrastructure
+```
+
+---
 
 ## Quick Start
 
@@ -41,27 +57,21 @@ npm run dev:backend
 npm run docker:dev
 ```
 
-## Critical Rules
+---
 
-### 1. Monorepo Structure
-- `frontend/` - React components, pages, state
+## Critical: Monorepo Rules
+
+- `frontend/` - React components, pages, Zustand state
 - `backend/` - API routes, database, business logic
 - Root `package.json` - orchestration scripts only
+- **Never mix** frontend/backend code
 
-### 2. Code Locations
+---
 
-| Concern | Location |
-|---------|----------|
-| UI Components | `frontend/src/components/` |
-| Pages | `frontend/src/app/` |
-| State Management | Zustand stores in `frontend/src/stores/` |
-| API Routes | `backend/src/routes/` |
-| Database | `backend/prisma/` |
-| Types | Shared via tRPC |
-
-### 3. Rebranding System
+## Rebranding System
 
 DataCat supports white-labeling via environment variables:
+
 ```bash
 # Apply preset
 ./scripts/dev/rebrand.sh medical
@@ -70,9 +80,11 @@ DataCat supports white-labeling via environment variables:
 ./scripts/dev/rebrand.sh custom "MyApp" "Data Capture"
 ```
 
-Presets: `datacat`, `hr`, `medical`, `legal`, `government`, `generic`
+**Presets**: `datacat`, `hr`, `medical`, `legal`, `government`, `generic`
 
-### 4. Environment Variables
+---
+
+## Environment Variables
 
 **Frontend** (`frontend/.env.local`):
 ```bash
@@ -87,6 +99,8 @@ REDIS_URL=redis://localhost:6379
 OPENAI_API_KEY=...
 ```
 
+---
+
 ## Don't
 
 - Mix frontend/backend code
@@ -94,14 +108,6 @@ OPENAI_API_KEY=...
 - Skip Prisma migrations
 - Commit API keys
 
-## Testing
-
-```bash
-npm test              # Playwright tests
-npm run test:ui       # Interactive mode
-npm run test:headed   # With browser
-```
-
 ---
 
-**See `AGENTS.md` for universal agent guidelines.**
+**Last Updated**: 2026-01-23
