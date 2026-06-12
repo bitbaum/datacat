@@ -2,6 +2,7 @@ import type { NextConfig } from "next";
 import { withContentlayer } from "next-contentlayer";
 
 const nextConfig: NextConfig = {
+  output: "standalone",
   async rewrites() {
     // Proxy API requests to the backend only when BACKEND_URL is provided.
     const backendBase = process.env.BACKEND_URL;

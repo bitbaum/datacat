@@ -1,19 +1,15 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+// Bundled fonts from the `geist` package — next/font/google fetched these at
+// build time, which fails on the self-host build machine without Google access.
+import { GeistSans } from "geist/font/sans";
+import { GeistMono } from "geist/font/mono";
 import "./globals.css";
 import GlobalNavigation from './components/GlobalNavigation';
 import Providers from './providers';
 import { UsageMonitor } from './components/UsageMonitor';
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+const geistSans = GeistSans;
+const geistMono = GeistMono;
 
 export const metadata: Metadata = {
   title: "Form Builder | KI-gestützter DataCat-Editor",
