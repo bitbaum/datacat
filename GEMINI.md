@@ -74,3 +74,65 @@ This project has access to powerful MCP (Model Context Protocol) servers for enh
 - Monitor deployments and performance via Vercel integration
 
 For more detailed project information, see `VISION.md` and `CLAUDE.md`.
+
+## 7. Design System
+
+**File**: `frontend/src/app/globals.css` — SSOT for all design tokens.
+**Tailwind config**: `frontend/tailwind.config.ts`
+**UI library**: No component library (no shadcn, no Radix UI). Plain Tailwind + custom CSS utilities.
+
+### CSS Custom Properties (from `globals.css`)
+
+```css
+:root {
+  --background: #ffffff;   /* light mode */
+  --foreground: #171717;   /* light mode */
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+```
+
+Only two semantic tokens are currently defined. `body` also uses `var(--font-geist-sans)` (set via Next.js font loader).
+
+### Tailwind Config
+
+The two CSS vars are correctly mapped — no literal hex values in config:
+```ts
+colors: {
+  background: 'var(--background)',
+  foreground: 'var(--foreground)',
+},
+fontFamily: {
+  sans: ['var(--font-geist-sans)', 'system-ui', 'sans-serif'],
+  mono: ['var(--font-geist-mono)', 'monospace'],
+},
+```
+
+### Known Violations in `globals.css` (fix when touching UI)
+
+Several utility classes in `globals.css` contain hardcoded hex values that should become CSS vars:
+
+| Class | Hardcoded value | Should become |
+|-------|----------------|---------------|
+| `.focus-enhanced:focus-visible` | `#6366f1` | `--color-focus-ring` |
+| `.gradient-mesh` | `#667eea`, `#764ba2` | `--color-gradient-start`, `--color-gradient-end` |
+| `.gradient-mesh-alt` | `#f093fb`, `#f5576c` | `--color-gradient-alt-start`, `--color-gradient-alt-end` |
+| `.skeleton` (light) | `#f0f0f0`, `#e0e0e0` | `--color-skeleton-base`, `--color-skeleton-shine` |
+| `.skeleton` (dark) | `#374151`, `#4b5563` | `--color-skeleton-base-dark`, `--color-skeleton-shine-dark` |
+
+### SSOT Rule
+
+All design tokens live in the main CSS file only. Tailwind config MUST reference CSS vars (`'var(--name)'`), never literal values. Components MUST use semantic Tailwind classes, never arbitrary values like `bg-[#hex]`.
+
+**Violations to fix when touching UI:**
+- `bg-[#hex]` / `text-[#hex]` in className → CSS var + semantic class
+- `style={{ color: '#hex' }}` → CSS var + className
+- Literal hex in tailwind.config → `'var(--color-name)'`
+- Same token defined in 2+ files → consolidate to main CSS file
+
+**Audit:** `grep -r '\[#' src/` — every result is a violation.
