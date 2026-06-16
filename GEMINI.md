@@ -38,7 +38,7 @@ This section will be updated as the project is set up.
 ## 5. Development Roadmap & Current Status
 
 - **✅ Phase 1:** Frontend MVP with Next.js + Tailwind CSS - Complete
-- **🚀 Deployment:** Auto-deployed to Vercel from GitHub main branch at https://formular-erfassung-orangecat.vercel.app
+- **🚀 Deployment:** Self-hosted on the Hetzner box (bitbaum, behind Caddy) via Docker at https://datacat.orangecat.ch
 - **⏭️ Phase 2:** Implement tRPC backend with Prisma ORM and PostgreSQL database
 - **⏭️ Phase 3:** Integrate with AI for response analysis and form optimization
 
@@ -57,21 +57,20 @@ This project has access to powerful MCP (Model Context Protocol) servers for enh
 
 ### Deployment & Infrastructure
 - **GitHub**: Repository management, PR reviews, issue tracking, workflow automation
-- **Vercel**: Deployment monitoring, environment configuration, performance metrics
-- **Docker**: Container management for development and production environments
+- **Docker**: Container management for development and production (self-hosted on the Hetzner box behind Caddy)
 
 ### Development Workflow
 1. **Documentation**: Use Context7 for latest library documentation
 2. **Testing**: Use Playwright for comprehensive E2E testing
 3. **Debugging**: Use Browser Tools for performance and accessibility analysis
-4. **Deployment**: Use Vercel tools for monitoring and configuration
+4. **Deployment**: Build the Docker images and deploy to the Hetzner box (behind Caddy)
 5. **Project Management**: Use GitHub for issues and code reviews
 
 ### Best Practices
 - Always check latest documentation via Context7 before implementation
 - Run accessibility and performance audits via Browser Tools
 - Use Playwright for automated testing of form workflows
-- Monitor deployments and performance via Vercel integration
+- Monitor the self-hosted deployment via Docker and Caddy logs on the box
 
 For more detailed project information, see `VISION.md` and `CLAUDE.md`.
 

@@ -13,7 +13,7 @@
 | Backend | Express.js, tRPC, Prisma |
 | Database | PostgreSQL, Redis |
 | AI | Multi-LLM (OpenAI, Claude) |
-| Deployment | Vercel (frontend), Docker (backend) |
+| Deployment | Docker (self-hosted on the Hetzner box behind Caddy) |
 
 ## Quick Commands
 
