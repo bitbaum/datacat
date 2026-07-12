@@ -1,5 +1,10 @@
+import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/db';
 import { getAuthUserFromRequest } from '@/lib/auth';
+
+type FormWithSubmissionCount = Prisma.FormGetPayload<{
+  include: { _count: { select: { submissions: true } } };
+}>;
 
 export async function GET(req: Request) {
   const user = await getAuthUserFromRequest(req);
@@ -11,7 +16,7 @@ export async function GET(req: Request) {
     include: { _count: { select: { submissions: true } } },
   });
 
-  const data = forms.map((f) => ({
+  const data = forms.map((f: FormWithSubmissionCount) => ({
     id: f.id,
     title: f.title,
     description: f.description,
@@ -20,7 +25,7 @@ export async function GET(req: Request) {
     status: f.isPublished ? 'published' : 'draft',
     created_at: f.createdAt,
     updated_at: f.updatedAt,
-    submission_count: (f as any)._count?.submissions ?? 0,
+    submission_count: f._count?.submissions ?? 0,
   }));
 
   return Response.json(data);
