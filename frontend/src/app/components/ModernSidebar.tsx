@@ -387,8 +387,7 @@ export function ModernSidebar({
             {/* Saved Templates - Only when logged in */}
             <button
               onClick={() => {
-                // TODO: Check if user is logged in
-                const isLoggedIn = false; // This should come from auth context
+                const isLoggedIn = !!token;
                 if (isLoggedIn) {
                   setActiveTab('templates');
                 } else {
