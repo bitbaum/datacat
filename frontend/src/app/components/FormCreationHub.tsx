@@ -1,12 +1,17 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { SquaresPlusIcon, DocumentArrowUpIcon, CameraIcon } from '@heroicons/react/24/outline';
 import { visionService, VisionAnalysisProgress } from '../services/visionService';
 import { useFormBuilderStore } from '../hooks/useFormBuilderStore';
 import { TemplateLibrary } from './TemplateLibrary';
 import { microTemplates, formTemplates } from '../data/templates';
 import { useAuth } from '../context/AuthContext';
+
+interface SavedTemplateSummary {
+  id: string;
+  title: string;
+}
 
 interface FormCreationHubProps {
   onMethodSelect: (method: 'fields' | 'templates' | 'upload') => void;
@@ -22,7 +27,35 @@ export function FormCreationHub({ onMethodSelect, onShowTemplateLibrary }: FormC
 
   // Check if user is logged in using auth context
   const isLoggedIn = !!token;
-  const savedTemplates = []; // TODO: Get from user's saved templates via API
+  const [savedTemplates, setSavedTemplates] = useState<SavedTemplateSummary[]>([]);
+
+  useEffect(() => {
+    if (!token) {
+      setSavedTemplates([]);
+      return;
+    }
+
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch('/api/v1/forms', { headers: { 'x-auth-token': token } });
+        if (!res.ok) throw new Error('Failed to fetch saved templates');
+        const data = await res.json();
+        if (cancelled) return;
+        setSavedTemplates(
+          data
+            .filter((form: { is_template?: boolean }) => form.is_template)
+            .map((form: { id: string; title: string }) => ({ id: form.id, title: form.title }))
+        );
+      } catch (error) {
+        console.error('Error fetching saved templates:', error);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [token]);
 
   const handleVisionUpload = async (file: File) => {
     const validation = visionService.isValidFile(file);

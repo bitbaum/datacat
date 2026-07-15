@@ -23,6 +23,7 @@ export async function GET(req: Request) {
     structure: f.schema as any,
     isMultiStep: (f.schema as any)?.isMultiStep ?? false,
     status: f.isPublished ? 'published' : 'draft',
+    is_template: f.isTemplate,
     created_at: f.createdAt,
     updated_at: f.updatedAt,
     submission_count: f._count?.submissions ?? 0,
