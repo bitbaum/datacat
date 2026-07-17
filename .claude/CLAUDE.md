@@ -32,10 +32,15 @@ datacat/
 │   ├── src/app/        # App Router pages
 │   ├── src/components/ # React components
 │   └── src/stores/     # Zustand state
-├── backend/             # Express.js (port 5001)
-│   ├── src/routes/     # API routes
+├── backend/             # Express.js (port 5001) — NO src/ dir; flat layout
+│   ├── index.js        # Entrypoint
+│   ├── routes/         # API routes
+│   ├── controllers/    # Request handlers
+│   ├── services/       # Business logic (incl. image/video/audio ingestion)
+│   ├── trpc/           # tRPC routers
 │   ├── prisma/         # Database schema
-│   └── src/trpc/       # tRPC routers
+│   ├── jobs/ middleware/ lib/ utils/ config/ db/
+│   └── (backend has ZERO tests — "test" script exits 1; change with care)
 └── docker-compose.yml   # Infrastructure
 ```
 
