@@ -1,0 +1,52 @@
+# Golden CI floor — see dotfiles/templates/ci/README.md.
+# datacat: npm monorepo (frontend/ + backend/). The only tests are full-stack
+# Playwright e2e that need both servers + a DB running — NOT hermetic, so they
+# are deferred to a future e2e job (lift revampit's e2e-local pattern once a
+# seeded DB service is wired). This floor gates the frontend quality signals
+# that currently never run: lint, typecheck, build (contentlayer + prisma
+# generate + next build). The frontend needs --legacy-peer-deps (proven in the
+# old deploy workflow). The production Docker deploy stays disabled — enabling a
+# deploy is an outward-facing decision, not part of the CI floor.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify-frontend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install
+        run: npm ci --legacy-peer-deps
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npx tsc --noEmit
+
+      - name: Build (contentlayer + prisma generate + next build)
+        env:
+          # prisma generate reads the datasource url but does not connect.
+          DATABASE_URL: postgres://ci:ci@localhost:5432/ci
+        run: npm run build
