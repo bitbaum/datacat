@@ -24,9 +24,6 @@ jobs:
   verify-frontend:
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    defaults:
-      run:
-        working-directory: frontend
     steps:
       - uses: actions/checkout@v4
 
@@ -40,13 +37,14 @@ jobs:
           cache-dependency-path: frontend/package-lock.json
 
       - name: Install
+        working-directory: frontend
         run: npm ci --legacy-peer-deps
 
-      - name: Lint
-        run: npm run lint
-
-      - name: Typecheck
-        run: npx tsc --noEmit
+      # SSOT: one definition of "verified" lives in the ROOT package.json
+      # `verify` (frontend lint + typecheck), run identically here and locally.
+      # Runs from repo root — the script cds into frontend itself.
+      - name: Verify
+        run: npm run verify
 
       # Build is DEFERRED, not skipped silently. `prisma generate` currently
       # fails in CI on a missing engine (query_engine_bg.postgresql.wasm) — a
