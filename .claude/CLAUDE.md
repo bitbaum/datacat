@@ -55,7 +55,16 @@ npm run dev:backend
 
 # Docker
 npm run docker:dev
+
+# Verify a change before declaring it done (mirrors CI: frontend lint + typecheck)
+npm run verify
 ```
+
+**Before declaring any change done, run `npm run verify`.** It runs the same
+hermetic gates as CI (`.github/workflows/ci.yml`: frontend lint + typecheck), so
+green locally means green on `main`. Build and the full-stack Playwright e2e are
+not yet gated in CI (build hits a prisma-engine issue; e2e needs both servers +
+a DB) — run those manually until wired.
 
 ---
 
