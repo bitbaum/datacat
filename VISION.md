@@ -99,7 +99,7 @@ We're building the **most perfect data ingestion platform** that can be complete
 - **Auth:** Clerk or Supabase Auth
 
 ###  Database (Stage 2-3)
-- **PostgreSQL** (via Supabase or hosted on Vercel/AWS)
+- **PostgreSQL** (via Supabase or self-hosted)
 - Dynamically structured per form
 - Field-level metadata for AI parsing
 
