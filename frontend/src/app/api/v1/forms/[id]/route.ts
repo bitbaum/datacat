@@ -6,7 +6,7 @@ export async function PUT(req: Request, ctx: any) {
   const user = await getAuthUserFromRequest(req);
   if (!user) return Response.json({ success: false, message: 'Unauthorized' }, { status: 401 });
   const body = await req.json();
-  const { title, description, structure, status } = body || {};
+  const { title, description, structure, status, isTemplate } = body || {};
   const isPublished = status === 'published';
 
   const found = await prisma.form.findFirst({ where: { id, userId: user.id } });
@@ -19,6 +19,7 @@ export async function PUT(req: Request, ctx: any) {
       description: description ?? found.description,
       schema: structure ?? found.schema,
       isPublished,
+      isTemplate: isTemplate === undefined ? found.isTemplate : Boolean(isTemplate),
     },
   });
 
@@ -28,6 +29,7 @@ export async function PUT(req: Request, ctx: any) {
     description: updated.description,
     structure: updated.schema,
     status: updated.isPublished ? 'published' : 'draft',
+    is_template: updated.isTemplate,
     created_at: updated.createdAt,
     updated_at: updated.updatedAt,
   });

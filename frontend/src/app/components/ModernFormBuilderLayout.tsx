@@ -179,6 +179,7 @@ export function ModernFormBuilderLayout({
       description: description,
       structure: { fields, steps, isMultiStep, tags: [] },
       status: 'draft',
+      isTemplate: true,
     };
 
     const isUpdating = !!editingFormId;

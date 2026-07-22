@@ -37,7 +37,7 @@ export async function POST(req: Request) {
   if (!user) return Response.json({ success: false, message: 'Unauthorized' }, { status: 401 });
 
   const body = await req.json();
-  const { title, description, structure, status } = body || {};
+  const { title, description, structure, status, isTemplate } = body || {};
   if (!title || !structure) {
     return Response.json({ success: false, message: 'Missing title or structure' }, { status: 400 });
   }
@@ -49,6 +49,7 @@ export async function POST(req: Request) {
       schema: structure,
       userId: user.id,
       isPublished,
+      isTemplate: Boolean(isTemplate),
     },
   });
 
@@ -58,6 +59,7 @@ export async function POST(req: Request) {
     description: created.description,
     structure: created.schema,
     status: created.isPublished ? 'published' : 'draft',
+    is_template: created.isTemplate,
     created_at: created.createdAt,
     updated_at: created.updatedAt,
   });
