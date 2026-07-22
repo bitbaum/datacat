@@ -19,9 +19,6 @@ dist/
 .env*.local
 *.env
 
-# Vercel
-.vercel
-
 # Testing
 coverage/
 .nyc_output/
