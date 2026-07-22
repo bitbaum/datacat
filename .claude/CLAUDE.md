@@ -71,6 +71,14 @@ green locally means green on `main`. Build and the full-stack Playwright e2e are
 not yet gated in CI (build hits a prisma-engine issue; e2e needs both servers +
 a DB) — run those manually until wired.
 
+> **Prerequisite:** `verify`'s typecheck reads `frontend/.contentlayer/generated`
+> (git-ignored, produced by `frontend`'s `postinstall` → `contentlayer build`).
+> CI regenerates it via `npm ci`. Locally, if `verify` fails with
+> `TS2307: Cannot find module '../../../.contentlayer/generated'` for the blog
+> pages, you skipped that step — run `cd frontend && npx contentlayer build`
+> once (it prints a harmless `ERR_INVALID_ARG_TYPE` on exit under Node 20+ but
+> still generates the types), then re-run `verify`.
+
 ---
 
 ## Critical: Monorepo Rules
