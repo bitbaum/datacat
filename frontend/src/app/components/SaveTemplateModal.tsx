@@ -26,6 +26,7 @@ export function SaveTemplateModal({
   const [description, setDescription] = useState(initialDescription);
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<{ name?: string; description?: string }>({});
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const validateForm = () => {
     const newErrors: { name?: string; description?: string } = {};
@@ -48,8 +49,9 @@ export function SaveTemplateModal({
 
   const handleSave = async () => {
     if (!validateForm()) return;
-    
+
     setIsLoading(true);
+    setSubmitError(null);
     try {
       await onSave(name.trim(), description.trim());
       setName('');
@@ -58,6 +60,7 @@ export function SaveTemplateModal({
       onClose();
     } catch (error) {
       console.error('Error saving template:', error);
+      setSubmitError('Vorlage konnte nicht gespeichert werden. Bitte versuchen Sie es erneut.');
     } finally {
       setIsLoading(false);
     }
@@ -67,6 +70,7 @@ export function SaveTemplateModal({
     setName(initialName);
     setDescription(initialDescription);
     setErrors({});
+    setSubmitError(null);
     onClose();
   };
 
@@ -139,6 +143,12 @@ export function SaveTemplateModal({
               error={errors.description}
             />
           </div>
+
+          {submitError && (
+            <div className="bg-red-50 dark:bg-red-900/20 rounded-xl p-4 border border-red-200 dark:border-red-800/50 text-sm text-red-800 dark:text-red-200">
+              {submitError}
+            </div>
+          )}
         </div>
 
         <div className="px-6 py-4 bg-gray-50 dark:bg-gray-800/50 rounded-b-2xl flex justify-end space-x-3">

@@ -1,5 +1,7 @@
 'use client';
 
+// @ts-ignore – Typings for react-hot-toast available in dev deps
+import { toast } from 'react-hot-toast';
 import React, { useState, useCallback, useEffect } from 'react';
 import { ModernSidebar } from '../components/ModernSidebar';
 import { MultiStepFormBuilder } from './MultiStepFormBuilder';
@@ -171,8 +173,7 @@ export function ModernFormBuilderLayout({
 
   const doSave = async (name: string, description: string) => {
     if (!token) {
-      console.error("No token found. Please log in.");
-      return;
+      throw new Error('Nicht angemeldet. Bitte melden Sie sich erneut an.');
     }
     const formPayload = {
       title: name,
@@ -186,25 +187,21 @@ export function ModernFormBuilderLayout({
     const url = isUpdating ? `/api/v1/forms/${editingFormId}` : '/api/v1/forms';
     const method = isUpdating ? 'PUT' : 'POST';
 
-    try {
-      const response = await fetch(url, {
-        method: method,
-        headers: { 'Content-Type': 'application/json', 'x-auth-token': token },
-        body: JSON.stringify(formPayload),
-      });
-      if (!response.ok) throw new Error(`Failed to ${isUpdating ? 'update' : 'save'} form`);
-      const savedForm = await response.json();
-      if (isUpdating) {
-        setSavedForms(prev => prev.map(f => f.id === editingFormId ? { ...f, ...savedForm, ...savedForm.structure } : f));
-      } else {
-        setSavedForms(prev => [savedForm, ...prev]);
-        setEditingFormId(savedForm.id); 
-      }
-      setShowSaveTemplateModal(false);
-      setHasUnsavedChanges(false);
-    } catch (error) {
-      console.error(`Error ${isUpdating ? 'updating' : 'saving'} form:`, error);
+    const response = await fetch(url, {
+      method: method,
+      headers: { 'Content-Type': 'application/json', 'x-auth-token': token },
+      body: JSON.stringify(formPayload),
+    });
+    if (!response.ok) throw new Error(`Failed to ${isUpdating ? 'update' : 'save'} form`);
+    const savedForm = await response.json();
+    if (isUpdating) {
+      setSavedForms(prev => prev.map(f => f.id === editingFormId ? { ...f, ...savedForm, ...savedForm.structure } : f));
+    } else {
+      setSavedForms(prev => [savedForm, ...prev]);
+      setEditingFormId(savedForm.id);
     }
+    setShowSaveTemplateModal(false);
+    setHasUnsavedChanges(false);
   };
 
   const handleNewForm = () => {
@@ -228,21 +225,29 @@ export function ModernFormBuilderLayout({
   const handleDeleteForm = async (formId: string) => {
     if (!token) { return; }
     try {
-      await fetch(`/api/v1/forms/${formId}`, { method: 'DELETE', headers: { 'x-auth-token': token } });
+      const response = await fetch(`/api/v1/forms/${formId}`, { method: 'DELETE', headers: { 'x-auth-token': token } });
+      if (!response.ok) throw new Error('Failed to delete form');
       setSavedForms(prev => prev.filter(f => f.id !== formId));
-    } catch (error) { console.error('Error deleting form:', error); }
+    } catch (error) {
+      console.error('Error deleting form:', error);
+      toast.error('Formular konnte nicht gelöscht werden.');
+    }
   };
-  
+
   const handleStatusChange = async (formId: string, newStatus: 'draft' | 'published' | 'archived') => {
     if (!token) { return; }
     try {
-      await fetch(`/api/v1/forms/${formId}/status`, {
+      const response = await fetch(`/api/v1/forms/${formId}/status`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', 'x-auth-token': token },
         body: JSON.stringify({ status: newStatus }),
       });
+      if (!response.ok) throw new Error('Failed to update status');
       setSavedForms(prev => prev.map(f => (f.id === formId ? { ...f, status: newStatus } : f)));
-    } catch (error) { console.error('Error updating status:', error); }
+    } catch (error) {
+      console.error('Error updating status:', error);
+      toast.error('Status konnte nicht aktualisiert werden.');
+    }
   };
 
   // Handlers for sidebar communication with smooth transitions
