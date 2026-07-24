@@ -98,6 +98,8 @@ export function UnifiedFormCreationHub({
       if (result.success && result.fields) {
         const stepId = isMultiStep ? steps[currentStep]?.id : undefined;
         addTemplateFields({ fields: result.fields, name: 'Vision Analysis', description: 'AI-generated fields from image analysis' } as any, stepId);
+      } else {
+        alert(result.error || 'Analyse fehlgeschlagen. Bitte versuchen Sie es erneut.');
       }
     } catch (error) {
       console.error('Vision analysis failed:', error);
