@@ -234,6 +234,30 @@ export function ModernFormBuilderLayout({
     }
   };
 
+  const handleDuplicateForm = async (form: SavedForm) => {
+    if (!token) { return; }
+    try {
+      const response = await fetch('/api/v1/forms', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-auth-token': token },
+        body: JSON.stringify({
+          title: `${form.title} (Kopie)`,
+          description: form.description,
+          structure: { fields: form.fields, steps: form.steps, isMultiStep: form.isMultiStep, tags: form.tags },
+          status: 'draft',
+          isTemplate: true,
+        }),
+      });
+      if (!response.ok) throw new Error('Failed to duplicate form');
+      const duplicated = await response.json();
+      setSavedForms(prev => [duplicated, ...prev]);
+      toast.success('Formular dupliziert.');
+    } catch (error) {
+      console.error('Error duplicating form:', error);
+      toast.error('Formular konnte nicht dupliziert werden.');
+    }
+  };
+
   const handleStatusChange = async (formId: string, newStatus: 'draft' | 'published' | 'archived') => {
     if (!token) { return; }
     try {
@@ -431,7 +455,7 @@ export function ModernFormBuilderLayout({
         return (
           <SavedFormsLibrary
             onLoadForm={handleUseTemplate}
-            onDuplicateForm={() => {}}
+            onDuplicateForm={handleDuplicateForm}
             onDeleteForm={handleDeleteForm}
             onPreviewForm={setSelectedTemplatePreview}
             onStatusChange={handleStatusChange}
