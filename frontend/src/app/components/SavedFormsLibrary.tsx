@@ -230,6 +230,15 @@ export function SavedFormsLibrary({
     }
   };
 
+  const getNextStatusAction = (status: SavedForm['status']): { label: string; next: SavedForm['status'] } => {
+    switch (status) {
+      case 'draft': return { label: 'Veröffentlichen', next: 'published' };
+      case 'published': return { label: 'Archivieren', next: 'archived' };
+      case 'archived': return { label: 'Als Entwurf wiederherstellen', next: 'draft' };
+      default: return { label: 'Veröffentlichen', next: 'published' };
+    }
+  };
+
   return (
     <div className="h-screen bg-gray-50 dark:bg-gray-900 overflow-y-auto">
       <div className="max-w-7xl mx-auto p-6">
@@ -372,6 +381,18 @@ export function SavedFormsLibrary({
                                       className={`${active ? 'bg-gray-100 dark:bg-gray-700' : ''} block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 w-full text-left`}
                                     >
                                       Duplizieren
+                                    </button>
+                                  )}
+                                </Menu.Item>
+                              )}
+                              {onStatusChange && (
+                                <Menu.Item>
+                                  {({ active }) => (
+                                    <button
+                                      onClick={() => onStatusChange(form.id, getNextStatusAction(form.status).next)}
+                                      className={`${active ? 'bg-gray-100 dark:bg-gray-700' : ''} block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 w-full text-left`}
+                                    >
+                                      {getNextStatusAction(form.status).label}
                                     </button>
                                   )}
                                 </Menu.Item>
