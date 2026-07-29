@@ -76,6 +76,7 @@ export default function DatabaseDetailPage() {
   // AI Analysis state
   const [aiQuery, setAiQuery] = useState('');
   const [aiAnalysis, setAiAnalysis] = useState<AIAnalysis | null>(null);
+  const [aiError, setAiError] = useState<string | null>(null);
   const [aiLoading, setAiLoading] = useState(false);
   const [showAiPanel, setShowAiPanel] = useState(false);
 
@@ -117,6 +118,7 @@ export default function DatabaseDetailPage() {
     if (!aiQuery.trim()) return;
 
     setAiLoading(true);
+    setAiError(null);
     try {
       const response = await fetch(`/api/v1/databases/${databaseId}/analyze`, {
         method: 'POST',
@@ -131,12 +133,16 @@ export default function DatabaseDetailPage() {
         })
       });
 
+      const data = await response.json();
+
       if (response.ok) {
-        const data = await response.json();
         setAiAnalysis(data.analysis);
+      } else {
+        setAiError(data.message || 'AI analysis failed');
       }
     } catch (error) {
       console.error('AI analysis failed:', error);
+      setAiError(error instanceof Error ? error.message : 'AI analysis failed');
     } finally {
       setAiLoading(false);
     }
@@ -458,6 +464,14 @@ export default function DatabaseDetailPage() {
                       </>
                     )}
                   </button>
+
+                  {aiError && (
+                    <div className="border-t pt-4">
+                      <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg p-4 text-sm">
+                        {aiError}
+                      </div>
+                    </div>
+                  )}
 
                   {aiAnalysis && (
                     <div className="border-t pt-4">
