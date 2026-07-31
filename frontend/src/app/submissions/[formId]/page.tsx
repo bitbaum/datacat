@@ -9,7 +9,7 @@ import "react-datepicker/dist/react-datepicker.css";
 interface Submission {
     id: string;
     data: Record<string, any>;
-    submitted_at: string;
+    submittedAt: string;
 }
 
 const SubmissionsPage = () => {
@@ -29,7 +29,7 @@ const SubmissionsPage = () => {
 
         const fetchSubmissions = async () => {
             setLoading(true);
-            const url = new URL(`/api/v1/submissions/${formId}`, window.location.origin);
+            const url = new URL(`/api/v1/submissions/form/${formId}`, window.location.origin);
             if (search) url.searchParams.append('search', search);
             if (startDate) url.searchParams.append('startDate', startDate.toISOString());
             if (endDate) url.searchParams.append('endDate', endDate.toISOString());
@@ -40,10 +40,10 @@ const SubmissionsPage = () => {
                 });
                 if (!res.ok) {
                     const errData = await res.json();
-                    throw new Error(errData.msg || 'Failed to fetch submissions.');
+                    throw new Error(errData.message || 'Failed to fetch submissions.');
                 }
                 const data = await res.json();
-                setSubmissions(data);
+                setSubmissions(data.submissions);
             } catch (err) {
                 setError(err instanceof Error ? err.message : 'An error occurred');
             } finally {
@@ -64,7 +64,7 @@ const SubmissionsPage = () => {
             headers.join(','),
             ...submissions.map(sub => {
                 const row = [
-                    new Date(sub.submitted_at).toLocaleString(),
+                    new Date(sub.submittedAt).toLocaleString(),
                     ...headers.slice(1).map(header => JSON.stringify(sub.data[header] || ''))
                 ];
                 return row.join(',');
@@ -147,7 +147,7 @@ const SubmissionsPage = () => {
                                 {submissions.map(submission => (
                                     <tr key={submission.id}>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                            {new Date(submission.submitted_at).toLocaleString()}
+                                            {new Date(submission.submittedAt).toLocaleString()}
                                         </td>
                                         {Object.keys(submission.data).map(key => (
                                             <td key={key} className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200">
