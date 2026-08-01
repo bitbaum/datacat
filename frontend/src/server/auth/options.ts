@@ -2,6 +2,9 @@ import type { NextAuthOptions } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import { prisma } from '@/lib/db';
 import { compare } from 'bcryptjs';
+import { SignJWT } from 'jose';
+
+const secret = new TextEncoder().encode(process.env.JWT_SECRET || 'dev-secret');
 
 export const authOptions: NextAuthOptions = {
   session: { strategy: 'jwt' },
@@ -24,11 +27,20 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async jwt({ token, user }) {
-      if (user) token.id = (user as any).id;
+      if (user) {
+        const authUser = user as { id: string; email?: string | null };
+        token.id = authUser.id;
+        token.accessToken = await new SignJWT({ sub: authUser.id, email: authUser.email })
+          .setProtectedHeader({ alg: 'HS256' })
+          .setIssuedAt()
+          .setExpirationTime('7d')
+          .sign(secret);
+      }
       return token;
     },
     async session({ session, token }) {
       if (session.user) (session.user as any).id = token.id as string;
+      session.accessToken = token.accessToken;
       return session;
     },
   },

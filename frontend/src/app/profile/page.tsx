@@ -24,7 +24,7 @@ export default function ProfilePage() {
     const load = async () => {
       if (!token) return;
       try {
-        const data = await http.get<ApiSuccess<{ user: ProfileUser }>>('/api/v1/user/me', true);
+        const data = await http.get<ApiSuccess<{ user: ProfileUser }>>('/api/v1/user/me', true, token);
         setProfile(data.user);
         setName(data.user.name ?? '');
       } catch (e) {
@@ -40,7 +40,7 @@ export default function ProfilePage() {
     setError(null);
     setMessage(null);
     try {
-      const data = await http.put<ApiSuccess<{ user: ProfileUser }>>('/api/v1/user/me', { name }, true);
+      const data = await http.put<ApiSuccess<{ user: ProfileUser }>>('/api/v1/user/me', { name }, true, token);
       setProfile(data.user);
       setMessage('Profil aktualisiert');
     } catch (e) {

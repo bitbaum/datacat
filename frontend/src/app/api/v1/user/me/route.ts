@@ -19,4 +19,23 @@ export async function GET(req: Request) {
   }
 }
 
+export async function PUT(req: Request) {
+  const auth = req.headers.get('authorization') || req.headers.get('x-auth-token');
+  const token = auth?.toString().startsWith('Bearer ')
+    ? auth.toString().slice(7)
+    : (auth || '').toString();
+  if (!token) return Response.json({ success: false, message: 'Unauthorized' }, { status: 401 });
+  try {
+    const { payload } = await jwtVerify(token, secret);
+    const { name } = await req.json();
+    const user = await prisma.user.update({
+      where: { id: payload.sub as string },
+      data: { ...(name !== undefined && { name }) },
+    });
+    return Response.json({ success: true, user: { id: user.id, email: user.email, name: user.name } });
+  } catch {
+    return Response.json({ success: false, message: 'Invalid token' }, { status: 401 });
+  }
+}
+
 

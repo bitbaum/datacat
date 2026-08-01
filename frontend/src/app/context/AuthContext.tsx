@@ -43,7 +43,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     user: (session?.user as any) || null,
     loading: status === 'loading',
     isAuthenticated: status === 'authenticated',
-    token: null,
+    token: session?.accessToken || null,
     loginWithCredentials,
     logout,
   };
