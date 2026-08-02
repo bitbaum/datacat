@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import AudioIngestion from '../../components/data-ingestion/AudioIngestion';
+import { useAuth } from '../../context/AuthContext';
 
 interface AudioSource {
   id: string;
@@ -21,18 +22,21 @@ export default function AudioIngestionPage() {
   const [recentAudio, setRecentAudio] = useState<AudioSource[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedAudio, setSelectedAudio] = useState<AudioSource | null>(null);
+  const { token } = useAuth();
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
 
   // Fetch recent audio sources
   useEffect(() => {
-    fetchRecentAudio();
+    if (token) fetchRecentAudio();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [token]);
 
   const fetchRecentAudio = async () => {
     try {
-      const response = await fetch(`${apiUrl}/api/v1/audio?limit=10`);
+      const response = await fetch(`${apiUrl}/api/v1/audio?limit=10`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+      });
       if (response.ok) {
         const data = await response.json();
         setRecentAudio(data.data?.dataSources || []);
@@ -98,6 +102,7 @@ export default function AudioIngestionPage() {
               onUploadComplete={handleUploadComplete}
               onError={(error) => console.error('Upload error:', error)}
               apiUrl={apiUrl}
+              token={token}
             />
           </div>
 

@@ -3,6 +3,7 @@ const router = express.Router();
 const multer = require('multer');
 const path = require('path');
 const audioIngestionService = require('../services/audioIngestionService');
+const auth = require('../middleware/auth');
 
 // Configure multer for audio file uploads
 const storage = multer.diskStorage({
@@ -40,10 +41,9 @@ const upload = multer({
  * @desc Upload and transcribe an audio file
  * @access Private
  */
-router.post('/upload', upload.single('audio'), async (req, res) => {
+router.post('/upload', auth, upload.single('audio'), async (req, res) => {
   try {
-    // For now, use a demo user ID (replace with actual auth)
-    const userId = req.user?.id || req.body.userId || 'demo-user';
+    const userId = req.user.id;
 
     if (!req.file) {
       return res.status(400).json({
@@ -86,9 +86,9 @@ router.post('/upload', upload.single('audio'), async (req, res) => {
  * @desc Process base64 audio data (from browser recording)
  * @access Private
  */
-router.post('/record', async (req, res) => {
+router.post('/record', auth, async (req, res) => {
   try {
-    const userId = req.user?.id || req.body.userId || 'demo-user';
+    const userId = req.user.id;
     const { audioData, name, description, language, prompt, formId } = req.body;
 
     if (!audioData) {
@@ -123,9 +123,9 @@ router.post('/record', async (req, res) => {
  * @desc Get all audio sources for user
  * @access Private
  */
-router.get('/', async (req, res) => {
+router.get('/', auth, async (req, res) => {
   try {
-    const userId = req.user?.id || req.query.userId || 'demo-user';
+    const userId = req.user.id;
     const { limit, offset, status, formId } = req.query;
 
     const result = await audioIngestionService.getUserAudioSources(userId, {
@@ -154,9 +154,9 @@ router.get('/', async (req, res) => {
  * @desc Get single audio source by ID
  * @access Private
  */
-router.get('/:id', async (req, res) => {
+router.get('/:id', auth, async (req, res) => {
   try {
-    const userId = req.user?.id || req.query.userId || 'demo-user';
+    const userId = req.user.id;
     const { id } = req.params;
 
     const result = await audioIngestionService.getAudioSource(id, userId);
@@ -180,9 +180,9 @@ router.get('/:id', async (req, res) => {
  * @desc Delete audio source
  * @access Private
  */
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', auth, async (req, res) => {
   try {
-    const userId = req.user?.id || req.query.userId || 'demo-user';
+    const userId = req.user.id;
     const { id } = req.params;
 
     const result = await audioIngestionService.deleteAudioSource(id, userId);
@@ -206,9 +206,9 @@ router.delete('/:id', async (req, res) => {
  * @desc Analyze transcription with custom prompt
  * @access Private
  */
-router.post('/:id/analyze', async (req, res) => {
+router.post('/:id/analyze', auth, async (req, res) => {
   try {
-    const userId = req.user?.id || req.body.userId || 'demo-user';
+    const userId = req.user.id;
     const { id } = req.params;
     const { prompt } = req.body;
 

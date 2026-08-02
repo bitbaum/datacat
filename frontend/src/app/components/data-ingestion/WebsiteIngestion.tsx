@@ -6,6 +6,7 @@ interface WebsiteIngestionProps {
   onScrapeComplete?: (result: WebsiteResult) => void;
   onError?: (error: string) => void;
   apiUrl?: string;
+  token?: string | null;
 }
 
 interface WebsiteResult {
@@ -39,7 +40,8 @@ const extractTypes = [
 export default function WebsiteIngestion({
   onScrapeComplete,
   onError,
-  apiUrl = 'http://localhost:5001'
+  apiUrl = 'http://localhost:5001',
+  token
 }: WebsiteIngestionProps) {
   const [url, setUrl] = useState('');
   const [name, setName] = useState('');
@@ -79,7 +81,10 @@ export default function WebsiteIngestion({
     try {
       const response = await fetch(`${apiUrl}/api/v1/websites/scrape`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify({
           url: url.trim(),
           name: name.trim() || undefined,

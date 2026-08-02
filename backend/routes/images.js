@@ -3,6 +3,7 @@ const router = express.Router();
 const multer = require('multer');
 const path = require('path');
 const imageIngestionService = require('../services/imageIngestionService');
+const auth = require('../middleware/auth');
 
 // Configure multer for image file uploads
 const storage = multer.diskStorage({
@@ -40,9 +41,9 @@ const upload = multer({
  * @desc Upload and analyze an image/document
  * @access Private
  */
-router.post('/upload', upload.single('image'), async (req, res) => {
+router.post('/upload', auth, upload.single('image'), async (req, res) => {
   try {
-    const userId = req.user?.id || req.body.userId || 'demo-user';
+    const userId = req.user.id;
 
     if (!req.file) {
       return res.status(400).json({
@@ -85,9 +86,9 @@ router.post('/upload', upload.single('image'), async (req, res) => {
  * @desc Process base64 image data (from camera capture)
  * @access Private
  */
-router.post('/capture', async (req, res) => {
+router.post('/capture', auth, async (req, res) => {
   try {
-    const userId = req.user?.id || req.body.userId || 'demo-user';
+    const userId = req.user.id;
     const { imageData, name, description, documentType, extractionPrompt, formId } = req.body;
 
     if (!imageData) {
@@ -122,9 +123,9 @@ router.post('/capture', async (req, res) => {
  * @desc Get all image sources for user
  * @access Private
  */
-router.get('/', async (req, res) => {
+router.get('/', auth, async (req, res) => {
   try {
-    const userId = req.user?.id || req.query.userId || 'demo-user';
+    const userId = req.user.id;
     const { limit, offset, status, formId, documentType } = req.query;
 
     const result = await imageIngestionService.getUserImageSources(userId, {
@@ -154,9 +155,9 @@ router.get('/', async (req, res) => {
  * @desc Get single image source by ID
  * @access Private
  */
-router.get('/:id', async (req, res) => {
+router.get('/:id', auth, async (req, res) => {
   try {
-    const userId = req.user?.id || req.query.userId || 'demo-user';
+    const userId = req.user.id;
     const { id } = req.params;
 
     const result = await imageIngestionService.getImageSource(id, userId);
@@ -180,9 +181,9 @@ router.get('/:id', async (req, res) => {
  * @desc Delete image source
  * @access Private
  */
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', auth, async (req, res) => {
   try {
-    const userId = req.user?.id || req.query.userId || 'demo-user';
+    const userId = req.user.id;
     const { id } = req.params;
 
     const result = await imageIngestionService.deleteImageSource(id, userId);
@@ -206,9 +207,9 @@ router.delete('/:id', async (req, res) => {
  * @desc Re-analyze image with custom prompt
  * @access Private
  */
-router.post('/:id/reanalyze', async (req, res) => {
+router.post('/:id/reanalyze', auth, async (req, res) => {
   try {
-    const userId = req.user?.id || req.body.userId || 'demo-user';
+    const userId = req.user.id;
     const { id } = req.params;
     const { prompt } = req.body;
 

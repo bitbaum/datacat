@@ -1,15 +1,16 @@
 const express = require('express');
 const router = express.Router();
 const websiteIngestionService = require('../services/websiteIngestionService');
+const auth = require('../middleware/auth');
 
 /**
  * @route POST /api/v1/websites/scrape
  * @desc Scrape and analyze a URL
  * @access Private
  */
-router.post('/scrape', async (req, res) => {
+router.post('/scrape', auth, async (req, res) => {
   try {
-    const userId = req.user?.id || req.body.userId || 'demo-user';
+    const userId = req.user.id;
 
     const {
       url,
@@ -60,9 +61,9 @@ router.post('/scrape', async (req, res) => {
  * @desc Batch scrape multiple URLs
  * @access Private
  */
-router.post('/batch', async (req, res) => {
+router.post('/batch', auth, async (req, res) => {
   try {
-    const userId = req.user?.id || req.body.userId || 'demo-user';
+    const userId = req.user.id;
 
     const { urls, ...options } = req.body;
 
@@ -106,9 +107,9 @@ router.post('/batch', async (req, res) => {
  * @desc Get all website sources for user
  * @access Private
  */
-router.get('/', async (req, res) => {
+router.get('/', auth, async (req, res) => {
   try {
-    const userId = req.user?.id || req.query.userId || 'demo-user';
+    const userId = req.user.id;
     const { limit, offset, status } = req.query;
 
     const result = await websiteIngestionService.getUserWebsiteSources(userId, {
@@ -136,9 +137,9 @@ router.get('/', async (req, res) => {
  * @desc Get single website source by ID
  * @access Private
  */
-router.get('/:id', async (req, res) => {
+router.get('/:id', auth, async (req, res) => {
   try {
-    const userId = req.user?.id || req.query.userId || 'demo-user';
+    const userId = req.user.id;
     const { id } = req.params;
 
     const result = await websiteIngestionService.getWebsiteSource(id, userId);
@@ -162,9 +163,9 @@ router.get('/:id', async (req, res) => {
  * @desc Delete website source
  * @access Private
  */
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', auth, async (req, res) => {
   try {
-    const userId = req.user?.id || req.query.userId || 'demo-user';
+    const userId = req.user.id;
     const { id } = req.params;
 
     const result = await websiteIngestionService.deleteWebsiteSource(id, userId);
@@ -188,9 +189,9 @@ router.delete('/:id', async (req, res) => {
  * @desc Re-scrape a URL
  * @access Private
  */
-router.post('/:id/rescrape', async (req, res) => {
+router.post('/:id/rescrape', auth, async (req, res) => {
   try {
-    const userId = req.user?.id || req.body.userId || 'demo-user';
+    const userId = req.user.id;
     const { id } = req.params;
     const options = req.body;
 

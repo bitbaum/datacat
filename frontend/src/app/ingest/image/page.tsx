@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import ImageIngestion from '../../components/data-ingestion/ImageIngestion';
+import { useAuth } from '../../context/AuthContext';
 
 interface ImageSource {
   id: string;
@@ -26,18 +27,21 @@ export default function ImageIngestionPage() {
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState<ImageSource | null>(null);
   const [filterType, setFilterType] = useState<string>('all');
+  const { token } = useAuth();
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
 
   // Fetch recent images
   useEffect(() => {
-    fetchRecentImages();
+    if (token) fetchRecentImages();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [token]);
 
   const fetchRecentImages = async () => {
     try {
-      const response = await fetch(`${apiUrl}/api/v1/images?limit=20`);
+      const response = await fetch(`${apiUrl}/api/v1/images?limit=20`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+      });
       if (response.ok) {
         const data = await response.json();
         setRecentImages(data.data?.dataSources || []);
@@ -123,6 +127,7 @@ export default function ImageIngestionPage() {
               onUploadComplete={handleUploadComplete}
               onError={(error) => console.error('Upload error:', error)}
               apiUrl={apiUrl}
+              token={token}
             />
           </div>
 

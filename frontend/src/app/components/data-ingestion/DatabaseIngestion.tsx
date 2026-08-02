@@ -31,6 +31,7 @@ interface DatabaseIngestionProps {
   onImportComplete?: (result: unknown) => void;
   onError?: (error: string) => void;
   apiUrl?: string;
+  token?: string | null;
 }
 
 type Step = 'connect' | 'tables' | 'import' | 'results';
@@ -38,7 +39,8 @@ type Step = 'connect' | 'tables' | 'import' | 'results';
 export default function DatabaseIngestion({
   onImportComplete,
   onError,
-  apiUrl = 'http://localhost:5001'
+  apiUrl = 'http://localhost:5001',
+  token
 }: DatabaseIngestionProps) {
   const [step, setStep] = useState<Step>('connect');
   const [loading, setLoading] = useState(false);
@@ -87,7 +89,10 @@ export default function DatabaseIngestion({
     try {
       const response = await fetch(`${apiUrl}/api/v1/db-ingestion/test-connection`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify(connection)
       });
 
@@ -107,14 +112,17 @@ export default function DatabaseIngestion({
       setError(message);
       onError?.(message);
     }
-  }, [connection, apiUrl, onError]);
+  }, [connection, apiUrl, token, onError]);
 
   const fetchTables = useCallback(async () => {
     setLoading(true);
     try {
       const response = await fetch(`${apiUrl}/api/v1/db-ingestion/tables`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify(connection)
       });
 
@@ -132,7 +140,7 @@ export default function DatabaseIngestion({
     } finally {
       setLoading(false);
     }
-  }, [connection, apiUrl]);
+  }, [connection, apiUrl, token]);
 
   const fetchTableSchema = useCallback(async (tableName: string) => {
     setLoading(true);
@@ -141,7 +149,10 @@ export default function DatabaseIngestion({
     try {
       const response = await fetch(`${apiUrl}/api/v1/db-ingestion/schema`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify({ connection, tableName })
       });
 
@@ -164,7 +175,7 @@ export default function DatabaseIngestion({
     } finally {
       setLoading(false);
     }
-  }, [connection, apiUrl]);
+  }, [connection, apiUrl, token]);
 
   const handleImport = useCallback(async () => {
     if (!selectedTable) return;
@@ -175,7 +186,10 @@ export default function DatabaseIngestion({
     try {
       const response = await fetch(`${apiUrl}/api/v1/db-ingestion/import`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify({
           connection,
           tableName: selectedTable,
@@ -212,7 +226,7 @@ export default function DatabaseIngestion({
     } finally {
       setLoading(false);
     }
-  }, [connection, selectedTable, importOptions, apiUrl, onImportComplete, onError]);
+  }, [connection, selectedTable, importOptions, apiUrl, token, onImportComplete, onError]);
 
   const toggleColumn = (columnName: string) => {
     setImportOptions(prev => ({

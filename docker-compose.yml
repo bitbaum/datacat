@@ -85,6 +85,9 @@ services:
       NODE_ENV: development
       NEXT_PUBLIC_API_URL: http://localhost:5001
       NEXT_PUBLIC_BRAND_PRESET: generic
+      # Must match the backend service's JWT_SECRET below — the frontend signs the
+      # session token that the real Express backend verifies on data-ingestion routes.
+      JWT_SECRET: your-super-secret-jwt-key-change-in-production
     ports:
       - "3000:3000"
     depends_on:

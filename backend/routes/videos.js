@@ -3,6 +3,7 @@ const router = express.Router();
 const multer = require('multer');
 const path = require('path');
 const videoIngestionService = require('../services/videoIngestionService');
+const auth = require('../middleware/auth');
 
 // Configure multer for video file uploads
 const storage = multer.diskStorage({
@@ -39,9 +40,9 @@ const upload = multer({
  * @desc Upload and analyze a video file
  * @access Private
  */
-router.post('/upload', upload.single('video'), async (req, res) => {
+router.post('/upload', auth, upload.single('video'), async (req, res) => {
   try {
-    const userId = req.user?.id || req.body.userId || 'demo-user';
+    const userId = req.user.id;
 
     if (!req.file) {
       return res.status(400).json({
@@ -86,9 +87,9 @@ router.post('/upload', upload.single('video'), async (req, res) => {
  * @desc Get all video sources for user
  * @access Private
  */
-router.get('/', async (req, res) => {
+router.get('/', auth, async (req, res) => {
   try {
-    const userId = req.user?.id || req.query.userId || 'demo-user';
+    const userId = req.user.id;
     const { limit, offset, status } = req.query;
 
     const result = await videoIngestionService.getUserVideoSources(userId, {
@@ -116,9 +117,9 @@ router.get('/', async (req, res) => {
  * @desc Get single video source by ID
  * @access Private
  */
-router.get('/:id', async (req, res) => {
+router.get('/:id', auth, async (req, res) => {
   try {
-    const userId = req.user?.id || req.query.userId || 'demo-user';
+    const userId = req.user.id;
     const { id } = req.params;
 
     const result = await videoIngestionService.getVideoSource(id, userId);
@@ -142,9 +143,9 @@ router.get('/:id', async (req, res) => {
  * @desc Delete video source
  * @access Private
  */
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', auth, async (req, res) => {
   try {
-    const userId = req.user?.id || req.query.userId || 'demo-user';
+    const userId = req.user.id;
     const { id } = req.params;
 
     const result = await videoIngestionService.deleteVideoSource(id, userId);

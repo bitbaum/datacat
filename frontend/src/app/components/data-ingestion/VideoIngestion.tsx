@@ -7,6 +7,7 @@ interface VideoIngestionProps {
   onError?: (error: string) => void;
   formId?: string;
   apiUrl?: string;
+  token?: string | null;
 }
 
 interface VideoResult {
@@ -38,7 +39,8 @@ export default function VideoIngestion({
   onUploadComplete,
   onError,
   formId,
-  apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'
+  apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001',
+  token
 }: VideoIngestionProps) {
   // State
   const [uploadState, setUploadState] = useState<UploadState>('idle');
@@ -126,6 +128,7 @@ export default function VideoIngestion({
 
       const response = await fetch(`${apiUrl}/api/v1/videos/upload`, {
         method: 'POST',
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
         body: formData
       });
 
@@ -158,7 +161,7 @@ export default function VideoIngestion({
       setUploadState('error');
       onError?.(errorMsg);
     }
-  }, [selectedFile, frameInterval, maxFrames, transcribeAudio, analyzeFrames, apiUrl, formId, onUploadComplete, onError]);
+  }, [selectedFile, frameInterval, maxFrames, transcribeAudio, analyzeFrames, apiUrl, formId, token, onUploadComplete, onError]);
 
   // Clear selection
   const clearSelection = useCallback(() => {

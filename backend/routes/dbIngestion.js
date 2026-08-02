@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const externalDatabaseService = require('../services/externalDatabaseService');
+const auth = require('../middleware/auth');
 
 /**
  * External Database Ingestion Routes
@@ -12,7 +13,7 @@ const externalDatabaseService = require('../services/externalDatabaseService');
  * @desc Test connection to an external database
  * @access Private
  */
-router.post('/test-connection', async (req, res) => {
+router.post('/test-connection', auth, async (req, res) => {
   try {
     const { type, host, port, database, username, password, ssl } = req.body;
 
@@ -49,7 +50,7 @@ router.post('/test-connection', async (req, res) => {
  * @desc Get list of tables from external database
  * @access Private
  */
-router.post('/tables', async (req, res) => {
+router.post('/tables', auth, async (req, res) => {
   try {
     const { type, host, port, database, username, password, ssl } = req.body;
 
@@ -86,7 +87,7 @@ router.post('/tables', async (req, res) => {
  * @desc Get schema for a specific table
  * @access Private
  */
-router.post('/schema', async (req, res) => {
+router.post('/schema', auth, async (req, res) => {
   try {
     const { connection, tableName } = req.body;
 
@@ -115,9 +116,9 @@ router.post('/schema', async (req, res) => {
  * @desc Import data from external database table
  * @access Private
  */
-router.post('/import', async (req, res) => {
+router.post('/import', auth, async (req, res) => {
   try {
-    const userId = req.user?.id || req.body.userId || 'demo-user';
+    const userId = req.user.id;
     const { connection, tableName, options = {} } = req.body;
 
     if (!connection || !tableName) {
@@ -150,9 +151,9 @@ router.post('/import', async (req, res) => {
  * @desc Execute a custom SELECT query on external database
  * @access Private
  */
-router.post('/query', async (req, res) => {
+router.post('/query', auth, async (req, res) => {
   try {
-    const userId = req.user?.id || req.body.userId || 'demo-user';
+    const userId = req.user.id;
     const { connection, query } = req.body;
 
     if (!connection || !query) {
@@ -180,9 +181,9 @@ router.post('/query', async (req, res) => {
  * @desc Get recent database imports for user
  * @access Private
  */
-router.get('/', async (req, res) => {
+router.get('/', auth, async (req, res) => {
   try {
-    const userId = req.user?.id || req.query.userId || 'demo-user';
+    const userId = req.user.id;
     const { limit, offset } = req.query;
 
     const result = await externalDatabaseService.getRecentImports(userId, {

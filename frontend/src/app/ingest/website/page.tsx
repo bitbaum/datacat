@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import WebsiteIngestion from '../../components/data-ingestion/WebsiteIngestion';
+import { useAuth } from '../../context/AuthContext';
 
 interface WebsiteAnalysis {
   summary: string;
@@ -41,18 +42,21 @@ export default function WebsiteIngestionPage() {
   const [recentWebsites, setRecentWebsites] = useState<WebsiteSource[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedWebsite, setSelectedWebsite] = useState<WebsiteSource | null>(null);
+  const { token } = useAuth();
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
 
   // Fetch recent website sources
   useEffect(() => {
-    fetchRecentWebsites();
+    if (token) fetchRecentWebsites();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [token]);
 
   const fetchRecentWebsites = async () => {
     try {
-      const response = await fetch(`${apiUrl}/api/v1/websites?limit=10`);
+      const response = await fetch(`${apiUrl}/api/v1/websites?limit=10`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+      });
       if (response.ok) {
         const data = await response.json();
         setRecentWebsites(data.data?.dataSources || []);
@@ -120,6 +124,7 @@ export default function WebsiteIngestionPage() {
               onScrapeComplete={handleScrapeComplete}
               onError={(error) => console.error('Scrape error:', error)}
               apiUrl={apiUrl}
+              token={token}
             />
           </div>
 

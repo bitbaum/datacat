@@ -7,6 +7,7 @@ interface AudioIngestionProps {
   onError?: (error: string) => void;
   formId?: string;
   apiUrl?: string;
+  token?: string | null;
 }
 
 interface AudioResult {
@@ -35,7 +36,8 @@ export default function AudioIngestion({
   onUploadComplete,
   onError,
   formId,
-  apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'
+  apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001',
+  token
 }: AudioIngestionProps) {
   // Recording state
   const [recordingState, setRecordingState] = useState<RecordingState>('idle');
@@ -187,6 +189,7 @@ export default function AudioIngestion({
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         body: JSON.stringify({
           audioData: base64Data,
@@ -213,7 +216,7 @@ export default function AudioIngestion({
       setUploadState('error');
       onError?.(errorMsg);
     }
-  }, [audioBlob, apiUrl, formId, onUploadComplete, onError]);
+  }, [audioBlob, apiUrl, formId, token, onUploadComplete, onError]);
 
   // Handle file upload
   const handleFileUpload = useCallback(async (file: File) => {
@@ -231,6 +234,7 @@ export default function AudioIngestion({
 
       const response = await fetch(`${apiUrl}/api/v1/audio/upload`, {
         method: 'POST',
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
         body: formData
       });
 
@@ -255,7 +259,7 @@ export default function AudioIngestion({
       setUploadState('error');
       onError?.(errorMsg);
     }
-  }, [apiUrl, formId, onUploadComplete, onError]);
+  }, [apiUrl, formId, token, onUploadComplete, onError]);
 
   // Handle file input change
   const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {

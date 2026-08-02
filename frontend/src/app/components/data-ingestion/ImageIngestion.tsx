@@ -7,6 +7,7 @@ interface ImageIngestionProps {
   onError?: (error: string) => void;
   formId?: string;
   apiUrl?: string;
+  token?: string | null;
 }
 
 interface ImageResult {
@@ -36,7 +37,8 @@ export default function ImageIngestion({
   onUploadComplete,
   onError,
   formId,
-  apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'
+  apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001',
+  token
 }: ImageIngestionProps) {
   // State
   const [uploadState, setUploadState] = useState<UploadState>('idle');
@@ -124,6 +126,7 @@ export default function ImageIngestion({
 
       const response = await fetch(`${apiUrl}/api/v1/images/upload`, {
         method: 'POST',
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
         body: formData
       });
 
@@ -148,7 +151,7 @@ export default function ImageIngestion({
       setUploadState('error');
       onError?.(errorMsg);
     }
-  }, [selectedFile, documentType, customPrompt, apiUrl, formId, onUploadComplete, onError]);
+  }, [selectedFile, documentType, customPrompt, apiUrl, formId, token, onUploadComplete, onError]);
 
   // Camera functions
   const startCamera = useCallback(async () => {

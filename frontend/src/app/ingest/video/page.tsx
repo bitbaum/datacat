@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import VideoIngestion from '../../components/data-ingestion/VideoIngestion';
+import { useAuth } from '../../context/AuthContext';
 
 interface VideoInfo {
   duration: number;
@@ -53,18 +54,21 @@ export default function VideoIngestionPage() {
   const [recentVideos, setRecentVideos] = useState<VideoSource[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedVideo, setSelectedVideo] = useState<VideoSource | null>(null);
+  const { token } = useAuth();
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
 
   // Fetch recent video sources
   useEffect(() => {
-    fetchRecentVideos();
+    if (token) fetchRecentVideos();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [token]);
 
   const fetchRecentVideos = async () => {
     try {
-      const response = await fetch(`${apiUrl}/api/v1/videos?limit=10`);
+      const response = await fetch(`${apiUrl}/api/v1/videos?limit=10`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+      });
       if (response.ok) {
         const data = await response.json();
         setRecentVideos(data.data?.dataSources || []);
@@ -137,6 +141,7 @@ export default function VideoIngestionPage() {
               onUploadComplete={handleUploadComplete}
               onError={(error) => console.error('Upload error:', error)}
               apiUrl={apiUrl}
+              token={token}
             />
           </div>
 

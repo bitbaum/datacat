@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import DatabaseIngestion from '../../components/data-ingestion/DatabaseIngestion';
+import { useAuth } from '../../context/AuthContext';
 
 interface DatabaseSource {
   id: string;
@@ -36,17 +37,20 @@ export default function DatabaseIngestionPage() {
   const [recentImports, setRecentImports] = useState<DatabaseSource[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedImport, setSelectedImport] = useState<DatabaseSource | null>(null);
+  const { token } = useAuth();
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
 
   useEffect(() => {
-    fetchRecentImports();
+    if (token) fetchRecentImports();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [token]);
 
   const fetchRecentImports = async () => {
     try {
-      const response = await fetch(`${apiUrl}/api/v1/db-ingestion?limit=10`);
+      const response = await fetch(`${apiUrl}/api/v1/db-ingestion?limit=10`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+      });
       if (response.ok) {
         const data = await response.json();
         setRecentImports(data.dataSources || []);
@@ -105,6 +109,7 @@ export default function DatabaseIngestionPage() {
               onImportComplete={handleImportComplete}
               onError={(error) => console.error('Import error:', error)}
               apiUrl={apiUrl}
+              token={token}
             />
           </div>
 
