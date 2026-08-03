@@ -58,19 +58,17 @@ cd ..
 
 ### 3. Database Setup
 
-#### Option A: Docker (Recommended)
+Prisma migrations (`backend/prisma/migrations/`) are the single source of truth for
+the schema — there is no standalone SQL script to load.
+
+#### Option A: Docker Compose (Recommended)
 
 ```bash
-# Start PostgreSQL container
-docker run --name formular-postgres \
-  -e POSTGRES_DB=formbuilder \
-  -e POSTGRES_USER=formbuilder \
-  -e POSTGRES_PASSWORD=devpassword \
-  -p 5432:5432 \
-  -d postgres:14
+# Start PostgreSQL, Redis, backend, frontend
+npm run docker:dev
 
-# Initialize database schema
-docker exec -i formular-postgres psql -U formbuilder -d formbuilder < backend/db/init.sql
+# In a separate terminal, once postgres is healthy: apply Prisma migrations
+npm run docker:migrate
 ```
 
 #### Option B: Local PostgreSQL
@@ -82,7 +80,7 @@ docker exec -i formular-postgres psql -U formbuilder -d formbuilder < backend/db
    CREATE USER formbuilder WITH PASSWORD 'devpassword';
    GRANT ALL PRIVILEGES ON DATABASE formbuilder TO formbuilder;
    ```
-3. Run schema: `psql -U formbuilder -d formbuilder -f backend/db/init.sql`
+3. Apply the schema: `cd backend && npm run migrate` (runs `prisma migrate dev`)
 
 ### 4. Environment Configuration
 
