@@ -4,7 +4,7 @@
 
 import { allPosts } from '../../../../.contentlayer/generated';
 import { notFound } from 'next/navigation';
-import { MDXContent } from './MDXContent';
+import { MDXContentClient } from './MDXContentClient';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -31,7 +31,7 @@ export default async function BlogPostPage({ params }: PageProps) {
       <p className="text-sm text-gray-500 dark:text-gray-400 mb-8">
         {new Date(post.date).toLocaleDateString('de-CH')}
       </p>
-      <MDXContent code={post.body.code} />
+      <MDXContentClient code={post.body.code} />
 
       {/* CTA */}
       <div className="mt-16 border-t pt-10 text-center">
