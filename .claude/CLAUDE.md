@@ -61,15 +61,23 @@ npm run dev:backend
 # Docker
 npm run docker:dev
 
-# Verify a change before declaring it done (mirrors CI: frontend lint + typecheck)
+# Verify a change before declaring it done (mirrors CI: lint + typecheck + build)
 npm run verify
 ```
 
 **Before declaring any change done, run `npm run verify`.** It runs the same
-hermetic gates as CI (`.github/workflows/ci.yml`: frontend lint + typecheck), so
-green locally means green on `main`. Build and the full-stack Playwright e2e are
-not yet gated in CI (build hits a prisma-engine issue; e2e needs both servers +
-a DB) — run those manually until wired.
+hermetic gates as CI (`.github/workflows/ci.yml`: frontend lint + typecheck +
+build), so green locally means green on `main`.
+
+The build is in the gate deliberately. It used to be deferred, and that gap has
+a receipt: contentlayer 0.3.1 reaches into a React internal that React 19
+removed, so `/blog/[slug]` threw `d.getOwner is not a function` during prerender
+and production sat on a stale build for weeks. Lint and typecheck were green the
+whole time — only a build could have caught it.
+
+Note: the build needs Node 18 (`.nvmrc`); contentlayer crashes on exit under
+Node 20+. The full-stack Playwright e2e is still not gated — it needs both
+servers plus a seeded DB, so run it manually until that is wired.
 
 ---
 

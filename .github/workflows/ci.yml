@@ -41,15 +41,18 @@ jobs:
         run: npm ci --legacy-peer-deps
 
       # SSOT: one definition of "verified" lives in the ROOT package.json
-      # `verify` (frontend lint + typecheck), run identically here and locally.
-      # Runs from repo root — the script cds into frontend itself.
+      # `verify` (lint + typecheck + build), run identically here and locally.
+      # Runs from repo root — the scripts cd into frontend themselves.
+      #
+      # Build is IN the gate as of 2026-08-04. It was deferred on a prisma-engine
+      # issue, and the cost of that gap was exact: contentlayer 0.3.1 reaches into
+      # a React internal that React 19 removed, so `/blog/[slug]` threw
+      # "d.getOwner is not a function" during prerender. lint and typecheck were
+      # both green — only a build could have caught it. The breakage sat on main
+      # while every CI run reported success.
       - name: Verify
         run: npm run verify
 
-      # Build is DEFERRED, not skipped silently. `prisma generate` currently
-      # fails in CI on a missing engine (query_engine_bg.postgresql.wasm) — a
-      # repo tooling issue to fix separately, not a gate-worthy signal. The
-      # full-stack Playwright e2e is also deferred (needs both servers + a DB).
-      # This floor gates the frontend signals that never ran before:
-      # lint + typecheck. Add build + e2e once the prisma engine is resolved
-      # (revampit e2e-local pattern in dotfiles/templates/ci/README.md).
+      # The full-stack Playwright e2e is still DEFERRED, not skipped silently:
+      # it needs both servers plus a seeded DB (lift revampit's e2e-local pattern
+      # from dotfiles/templates/ci/README.md once that is wired).
