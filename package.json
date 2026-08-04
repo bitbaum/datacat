@@ -25,7 +25,8 @@
     "test:debug": "npx playwright test --debug",
     "test:headed": "npx playwright test --headed",
     "test:report": "npx playwright show-report",
-    "verify": "npm run lint && cd frontend && npx tsc --noEmit"
+    "typecheck": "cd frontend && npx tsc --noEmit",
+    "verify": "npm run lint && npm run typecheck && npm run build"
   },
   "keywords": [
     "data-capture",
