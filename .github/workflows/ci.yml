@@ -27,7 +27,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           # Node 18: contentlayer (unmaintained) crashes on exit under Node 20+
           # (ERR_INVALID_ARG_TYPE in clipanion) even though it generates docs
