@@ -11,9 +11,25 @@ import { UsageMonitor } from './components/UsageMonitor';
 const geistSans = GeistSans;
 const geistMono = GeistMono;
 
+/**
+ * Where this site actually serves. Load-bearing for the social preview: Next
+ * resolves the generated og:image against `metadataBase`, and without it the
+ * tag is emitted as http://localhost:3000/opengraph-image — present, plausible,
+ * and unfetchable by every scraper. Falls back to the real host, not localhost.
+ */
+const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://datacat.orangecat.ch";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: "Form Builder | KI-gestützter DataCat-Editor",
   description: "Erstellen Sie schöne, intelligente DataCate für jede Branche – nicht nur HR.",
+  openGraph: {
+    title: "DataCat — KI-gestützter Formular-Editor",
+    description: "Erstellen Sie schöne, intelligente Formulare für jede Branche – nicht nur HR.",
+    url: SITE_URL,
+    siteName: "DataCat",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
