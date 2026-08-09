@@ -45,6 +45,7 @@ export function SavedFormsLibrary({
   const { token } = useAuth();
   const [forms, setForms] = useState<SavedForm[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const loginModal = useModal();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilters, setSelectedFilters] = useState<Record<string, string | string[]>>({ status: 'all', tags: [] });
@@ -67,6 +68,7 @@ export function SavedFormsLibrary({
     
     try {
       setLoading(true);
+      setError(null);
       const res = await fetch('/api/v1/forms', { headers: { 'x-auth-token': token } });
       if (!res.ok) throw new Error('Failed to fetch forms');
       const data = await res.json();
@@ -85,8 +87,9 @@ export function SavedFormsLibrary({
         category: form.structure.category,
       }));
       setForms(parsedData);
-    } catch (error) {
-      console.error('Error fetching forms:', error);
+    } catch (err) {
+      console.error('Error fetching forms:', err);
+      setError('Formulare konnten nicht geladen werden.');
     } finally {
       setLoading(false);
     }
@@ -269,6 +272,18 @@ export function SavedFormsLibrary({
           <div className="text-center py-12">
             <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
             <p className="mt-4 text-gray-600 dark:text-gray-400">Formulare werden geladen...</p>
+          </div>
+        ) : error ? (
+          <div className="text-center py-12">
+            <div className="max-w-md mx-auto p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+              <p className="text-red-700 dark:text-red-300 text-sm mb-3">{error}</p>
+              <button
+                onClick={fetchForms}
+                className="text-sm font-medium text-red-700 dark:text-red-300 hover:underline"
+              >
+                Erneut versuchen
+              </button>
+            </div>
           </div>
         ) : (
           <>
