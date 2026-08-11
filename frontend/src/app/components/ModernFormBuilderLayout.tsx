@@ -29,12 +29,14 @@ import { SavedFormsLibrary } from './SavedFormsLibrary';
 
 interface ModernFormBuilderLayoutProps {
   initialState?: Partial<ReturnType<typeof useFormBuilderStore.getState>>;
+  editingForm?: SavedForm;
   onSubmit: (data: FormData) => void;
   onFieldsChange: (fields: FieldConfig[]) => void;
 }
 
 export function ModernFormBuilderLayout({
   initialState,
+  editingForm,
   onSubmit,
   onFieldsChange,
 }: ModernFormBuilderLayoutProps) {
@@ -82,6 +84,20 @@ export function ModernFormBuilderLayout({
       setHasUnsavedChanges(true);
     }
   }, [initialState, setInitialState]);
+
+  useEffect(() => {
+    if (!editingForm) return;
+    setInitialState({
+      fields: editingForm.fields,
+      steps: editingForm.steps || [],
+      isMultiStep: editingForm.isMultiStep,
+    });
+    setFormTitle(editingForm.title);
+    setFormDescription(editingForm.description || '');
+    setEditingFormId(editingForm.id);
+    setCurrentView('builder');
+    setHasUnsavedChanges(false);
+  }, [editingForm, setInitialState]);
 
   useEffect(() => {
     const fetchForms = async () => {
