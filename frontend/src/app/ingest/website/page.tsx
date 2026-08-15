@@ -41,6 +41,7 @@ interface WebsiteSource {
 export default function WebsiteIngestionPage() {
   const [recentWebsites, setRecentWebsites] = useState<WebsiteSource[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [selectedWebsite, setSelectedWebsite] = useState<WebsiteSource | null>(null);
   const { token } = useAuth();
 
@@ -54,15 +55,16 @@ export default function WebsiteIngestionPage() {
 
   const fetchRecentWebsites = async () => {
     try {
+      setError(null);
       const response = await fetch(`${apiUrl}/api/v1/websites?limit=10`, {
         headers: token ? { Authorization: `Bearer ${token}` } : undefined,
       });
-      if (response.ok) {
-        const data = await response.json();
-        setRecentWebsites(data.data?.dataSources || []);
-      }
-    } catch (error) {
-      console.error('Failed to fetch website sources:', error);
+      if (!response.ok) throw new Error('Failed to fetch website sources');
+      const data = await response.json();
+      setRecentWebsites(data.data?.dataSources || []);
+    } catch (err) {
+      console.error('Failed to fetch website sources:', err);
+      setError('Failed to load scraped pages.');
     } finally {
       setLoading(false);
     }
@@ -143,6 +145,18 @@ export default function WebsiteIngestionPage() {
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                 </svg>
+              </div>
+            ) : error ? (
+              <div className="text-center py-12">
+                <div className="max-w-md mx-auto p-4 bg-red-50 border border-red-200 rounded-lg">
+                  <p className="text-red-700 text-sm mb-3">{error}</p>
+                  <button
+                    onClick={fetchRecentWebsites}
+                    className="text-sm font-medium text-red-700 hover:underline"
+                  >
+                    Try again
+                  </button>
+                </div>
               </div>
             ) : recentWebsites.length === 0 ? (
               <div className="text-center py-12">

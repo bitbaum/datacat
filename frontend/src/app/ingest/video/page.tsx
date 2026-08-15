@@ -53,6 +53,7 @@ interface VideoSource {
 export default function VideoIngestionPage() {
   const [recentVideos, setRecentVideos] = useState<VideoSource[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [selectedVideo, setSelectedVideo] = useState<VideoSource | null>(null);
   const { token } = useAuth();
 
@@ -66,15 +67,16 @@ export default function VideoIngestionPage() {
 
   const fetchRecentVideos = async () => {
     try {
+      setError(null);
       const response = await fetch(`${apiUrl}/api/v1/videos?limit=10`, {
         headers: token ? { Authorization: `Bearer ${token}` } : undefined,
       });
-      if (response.ok) {
-        const data = await response.json();
-        setRecentVideos(data.data?.dataSources || []);
-      }
-    } catch (error) {
-      console.error('Failed to fetch video sources:', error);
+      if (!response.ok) throw new Error('Failed to fetch video sources');
+      const data = await response.json();
+      setRecentVideos(data.data?.dataSources || []);
+    } catch (err) {
+      console.error('Failed to fetch video sources:', err);
+      setError('Failed to load video analyses.');
     } finally {
       setLoading(false);
     }
@@ -160,6 +162,18 @@ export default function VideoIngestionPage() {
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                 </svg>
+              </div>
+            ) : error ? (
+              <div className="text-center py-12">
+                <div className="max-w-md mx-auto p-4 bg-red-50 border border-red-200 rounded-lg">
+                  <p className="text-red-700 text-sm mb-3">{error}</p>
+                  <button
+                    onClick={fetchRecentVideos}
+                    className="text-sm font-medium text-red-700 hover:underline"
+                  >
+                    Try again
+                  </button>
+                </div>
               </div>
             ) : recentVideos.length === 0 ? (
               <div className="text-center py-12">
