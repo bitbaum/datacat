@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { 
+import { useAuth } from '../../context/AuthContext';
+import {
   ArrowLeftIcon, 
   ChartBarIcon, 
   ArrowDownTrayIcon, 
@@ -63,9 +64,11 @@ export default function DatabaseDetailPage() {
   const params = useParams();
   const router = useRouter();
   const databaseId = params.id as string;
+  const { token } = useAuth();
 
   const [databaseInfo, setDatabaseInfo] = useState<DatabaseInfo | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortField, setSortField] = useState('_metadata.submittedAt');
@@ -81,11 +84,13 @@ export default function DatabaseDetailPage() {
   const [showAiPanel, setShowAiPanel] = useState(false);
 
   useEffect(() => {
-    fetchDatabaseRecords();
-  }, [databaseId, currentPage, sortField, sortOrder, filters]);
+    if (token) fetchDatabaseRecords();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token, databaseId, currentPage, sortField, sortOrder, filters]);
 
   const fetchDatabaseRecords = async () => {
     try {
+      setError(null);
       const params = new URLSearchParams({
         page: currentPage.toString(),
         limit: '50',
@@ -96,19 +101,21 @@ export default function DatabaseDetailPage() {
 
       const response = await fetch(`/api/v1/databases/${databaseId}/records?${params}`, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${token}`
         }
       });
 
       if (response.ok) {
         const data = await response.json();
         setDatabaseInfo(data);
-      } else {
+      } else if (response.status === 404) {
         router.push('/databases');
+      } else {
+        throw new Error('Failed to fetch database records');
       }
     } catch (error) {
       console.error('Failed to fetch database records:', error);
-      router.push('/databases');
+      setError('Failed to load this database.');
     } finally {
       setLoading(false);
     }
@@ -124,7 +131,7 @@ export default function DatabaseDetailPage() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
           query: aiQuery,
@@ -174,6 +181,22 @@ export default function DatabaseDetailPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="max-w-md mx-auto p-4 bg-red-50 border border-red-200 rounded-lg text-center">
+          <p className="text-red-700 text-sm mb-3">{error}</p>
+          <button
+            onClick={fetchDatabaseRecords}
+            className="text-sm font-medium text-red-700 hover:underline"
+          >
+            Try again
+          </button>
+        </div>
       </div>
     );
   }

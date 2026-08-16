@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { PlusIcon, CircleStackIcon, ChartBarIcon, MagnifyingGlassIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
+import { useAuth } from '../context/AuthContext';
 
 interface Database {
   id: string;
@@ -31,31 +32,36 @@ interface SearchResult {
 }
 
 export default function DatabasesPage() {
+  const { token } = useAuth();
   const [databases, setDatabases] = useState<Database[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<SearchResult | null>(null);
   const [searchLoading, setSearchLoading] = useState(false);
+  const [searchError, setSearchError] = useState<string | null>(null);
   const [selectedDatabases, setSelectedDatabases] = useState<string[]>([]);
 
   useEffect(() => {
-    fetchDatabases();
-  }, []);
+    if (token) fetchDatabases();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token]);
 
   const fetchDatabases = async () => {
     try {
+      setError(null);
       const response = await fetch('/api/v1/databases', {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${token}`
         }
       });
-      
-      if (response.ok) {
-        const data = await response.json();
-        setDatabases(data.databases);
-      }
+
+      if (!response.ok) throw new Error('Failed to fetch databases');
+      const data = await response.json();
+      setDatabases(data.databases);
     } catch (error) {
       console.error('Failed to fetch databases:', error);
+      setError('Failed to load databases.');
     } finally {
       setLoading(false);
     }
@@ -63,14 +69,15 @@ export default function DatabasesPage() {
 
   const handleSearch = async () => {
     if (!searchQuery.trim()) return;
-    
+
     setSearchLoading(true);
+    setSearchError(null);
     try {
       const response = await fetch('/api/v1/databases/search', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
           query: searchQuery,
@@ -79,12 +86,12 @@ export default function DatabasesPage() {
         })
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        setSearchResults(data);
-      }
+      if (!response.ok) throw new Error('Search failed');
+      const data = await response.json();
+      setSearchResults(data);
     } catch (error) {
       console.error('Search failed:', error);
+      setSearchError('Search failed. Please try again.');
     } finally {
       setSearchLoading(false);
     }
@@ -146,6 +153,19 @@ export default function DatabasesPage() {
             </button>
           </div>
 
+          {/* Search Error */}
+          {searchError && (
+            <div className="mt-4 max-w-md p-4 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-red-700 text-sm mb-2">{searchError}</p>
+              <button
+                onClick={handleSearch}
+                className="text-sm font-medium text-red-700 hover:underline"
+              >
+                Try again
+              </button>
+            </div>
+          )}
+
           {/* Search Results */}
           {searchResults && (
             <div className="mt-6">
@@ -192,6 +212,19 @@ export default function DatabasesPage() {
         </div>
 
         {/* Databases Grid */}
+        {error ? (
+          <div className="text-center py-12">
+            <div className="max-w-md mx-auto p-4 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-red-700 text-sm mb-3">{error}</p>
+              <button
+                onClick={fetchDatabases}
+                className="text-sm font-medium text-red-700 hover:underline"
+              >
+                Try again
+              </button>
+            </div>
+          </div>
+        ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {databases.map((database) => (
             <div key={database.id} className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow">
@@ -264,8 +297,9 @@ export default function DatabasesPage() {
             </div>
           ))}
         </div>
+        )}
 
-        {databases.length === 0 && (
+        {!error && databases.length === 0 && (
           <div className="text-center py-12">
             <CircleStackIcon className="mx-auto h-12 w-12 text-gray-400" />
             <h3 className="mt-2 text-sm font-medium text-gray-900">No databases yet</h3>
