@@ -45,8 +45,15 @@ export const getBrandingConfig = (): BrandingConfig => {
 
   return {
     ...defaultBranding,
+    // An UNSET env var is `undefined`, but a var that is present-and-empty is
+    // `''` — and `NEXT_PUBLIC_BRAND_NAME=` is an ordinary line to find in a
+    // .env. Filtering only on `undefined` let that empty string win over the
+    // default, blanking the product name, the logo path or the domain with
+    // nothing to indicate why. An override has to actually override something.
     ...Object.fromEntries(
-      Object.entries(envBranding).filter(([_, value]) => value !== undefined)
+      Object.entries(envBranding).filter(
+        ([, value]) => value !== undefined && value.trim() !== ''
+      )
     )
   };
 };
