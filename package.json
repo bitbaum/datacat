@@ -4,9 +4,9 @@
   "description": "Universal AI-Powered Data Capture System",
   "private": true,
   "scripts": {
-    "dev": "echo '\n🚀 Starting development servers...\n' && concurrently -k -n FRONTEND,BACKEND -c blue,green \"cd frontend && npm run dev\" \"cd backend && npm start\"",
+    "dev": "echo '\n\ud83d\ude80 Starting development servers...\n' && concurrently -k -n FRONTEND,BACKEND -c blue,green \"cd frontend && npm run dev\" \"cd backend && npm start\"",
     "d": "npm run dev",
-    "links": "echo '\n🔗 DEVELOPMENT SERVERS:\n📱 Frontend: http://localhost:3000\n⚙️  Backend: http://localhost:5001\n'",
+    "links": "echo '\n\ud83d\udd17 DEVELOPMENT SERVERS:\n\ud83d\udcf1 Frontend: http://localhost:3000\n\u2699\ufe0f  Backend: http://localhost:5001\n'",
     "build": "cd frontend && npm run build",
     "start": "concurrently -k -n FRONTEND,BACKEND -c blue,green \"cd frontend && npm run start\" \"cd backend && npm run start\"",
     "lint": "cd frontend && npm run lint",
@@ -20,8 +20,8 @@
     "docker:logs": "docker-compose logs -f",
     "dev:backend": "cd backend && npm run dev",
     "dev:frontend": "cd frontend && npm run dev",
-    "test": "vitest run",
-    "test:watch": "vitest",
+    "test": "cd frontend && npx vitest run",
+    "test:watch": "cd frontend && npx vitest",
     "test:e2e": "npx playwright test",
     "test:e2e:ui": "npx playwright test --ui",
     "test:e2e:debug": "npx playwright test --debug",
@@ -42,7 +42,6 @@
   "license": "MIT",
   "devDependencies": {
     "@playwright/test": "^1.62.1",
-    "concurrently": "^10.0.4",
-    "vitest": "^3.2.7"
+    "concurrently": "^10.0.4"
   }
 }
