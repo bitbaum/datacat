@@ -7,9 +7,9 @@
     "postinstall": "npm run contentlayer:build",
     "contentlayer:build": "if [ \"$SKIP_CONTENTLAYER\" != \"true\" ]; then contentlayer build; else echo 'Skipping contentlayer build'; fi",
     "prisma:generate": "prisma generate",
-    "build": "npm run contentlayer:build && npm run prisma:generate && next build",
+    "build": "npm run contentlayer:build && npm run prisma:generate && next build --webpack",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "eslint ."
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
