@@ -36,7 +36,7 @@ export default function Home() {
               </Link>
               <Link
                 href="/ingest"
-                className="inline-flex items-center justify-center rounded-xl bg-emerald-600 px-8 py-4 text-lg font-semibold text-white shadow-lg hover:bg-emerald-500 transition-colors"
+                className="inline-flex items-center justify-center rounded-xl bg-emerald-700 px-8 py-4 text-lg font-semibold text-white shadow-lg hover:bg-emerald-800 transition-colors"
               >
                 <CloudArrowUpIcon className="mr-2 h-5 w-5" />
                 Data Ingestion
