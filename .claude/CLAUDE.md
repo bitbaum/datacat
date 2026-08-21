@@ -16,7 +16,7 @@
 
 | Layer | Technology |
 |-------|------------|
-| Frontend | Next.js 15.3, React 19, TypeScript, Tailwind, Zustand |
+| Frontend | Next.js 16.3, React 19, TypeScript, Tailwind, Zustand |
 | Backend | Node.js, Express.js, tRPC |
 | Database | PostgreSQL (Prisma ORM), Redis |
 | AI | Multi-LLM (OpenAI, Claude, custom) |
@@ -61,13 +61,13 @@ npm run dev:backend
 # Docker
 npm run docker:dev
 
-# Verify a change before declaring it done (mirrors CI: lint + typecheck + build)
+# Verify a change before declaring it done (mirrors CI: lint + typecheck + test + build)
 npm run verify
 ```
 
 **Before declaring any change done, run `npm run verify`.** It runs the same
 hermetic gates as CI (`.github/workflows/ci.yml`: frontend lint + typecheck +
-build), so green locally means green on `main`.
+vitest unit suite + build), so green locally means green on `main`.
 
 The build is in the gate deliberately. It used to be deferred, and that gap has
 a receipt: contentlayer 0.3.1 reaches into a React internal that React 19
@@ -75,9 +75,11 @@ removed, so `/blog/[slug]` threw `d.getOwner is not a function` during prerender
 and production sat on a stale build for weeks. Lint and typecheck were green the
 whole time — only a build could have caught it.
 
-Note: the build needs Node 18 (`.nvmrc`); contentlayer crashes on exit under
-Node 20+. The full-stack Playwright e2e is still not gated — it needs both
-servers plus a seeded DB, so run it manually until that is wired.
+Note: the build needs Node 20 (`.nvmrc`) — next 16 requires Node ≥ 20.9, so the
+old "build under Node 18 for contentlayer" rule is dead; contentlayer's only
+remaining Node 20+ quirk is the harmless exit error described below. The
+full-stack Playwright e2e is still not gated — it needs both servers plus a
+seeded DB, so run it manually until that is wired.
 
 > **Prerequisite:** `verify`'s typecheck reads `frontend/.contentlayer/generated`
 > (git-ignored, produced by `frontend`'s `postinstall` → `contentlayer build`).
@@ -205,4 +207,4 @@ All design tokens live in the main CSS file only. Tailwind config MUST reference
 
 ---
 
-**Last Updated**: 2026-01-23
+**Last Updated**: 2026-08-21
