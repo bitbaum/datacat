@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 // Bundled fonts from the `geist` package — next/font/google fetched these at
 // build time, which fails on the self-host build machine without Google access.
 import { GeistSans } from "geist/font/sans";
@@ -55,6 +56,15 @@ export default function RootLayout({
           </div>
           </footer>
         </Providers>
+
+        {/* FleetCrown feedback widget — env-gated, see docs/architecture/feedback-widget.md */}
+        {process.env.NEXT_PUBLIC_FC_WIDGET_TOKEN && (
+          <Script
+            src="https://fleetcrown.orangecat.ch/widget.js"
+            strategy="afterInteractive"
+            data-fc-project={process.env.NEXT_PUBLIC_FC_WIDGET_TOKEN}
+          />
+        )}
       </body>
     </html>
   );
