@@ -23,3 +23,8 @@ yarn.lock
 # Playwright output, written during the run CI performs before format:check.
 test-results
 playwright-report
+
+# Generated during the build CI runs before format:check, so it never exists
+# locally at check time. Contentlayer output also uses import assertions,
+# which prettier cannot parse.
+.contentlayer

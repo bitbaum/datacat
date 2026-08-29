@@ -19,3 +19,8 @@ yarn.lock
 # is where it is most opinionated and least useful, and it would bury the real
 # diff. Remove this line when you want docs formatted too.
 *.md
+
+# Generated during the build CI runs before format:check, so it never exists
+# locally at check time. Contentlayer output also uses import assertions,
+# which prettier cannot parse.
+.contentlayer
