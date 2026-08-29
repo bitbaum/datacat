@@ -32,8 +32,8 @@
     "test:e2e:report": "npx playwright show-report",
     "typecheck": "cd frontend && npx tsc --noEmit",
     "verify": "npm run format:check && npm run lint && npm run typecheck && npm run test && npm run build",
-    "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format": "cd frontend && npm run format",
+    "format:check": "cd frontend && npm run format:check"
   },
   "keywords": [
     "data-capture",
@@ -47,7 +47,6 @@
   "license": "MIT",
   "devDependencies": {
     "@playwright/test": "^1.62.1",
-    "concurrently": "^10.0.5",
-    "prettier": "3.9.6"
+    "concurrently": "^10.0.5"
   }
 }
