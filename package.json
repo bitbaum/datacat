@@ -1,12 +1,15 @@
 {
   "name": "datacat",
   "version": "1.0.0",
+  "engines": {
+    "node": ">=20"
+  },
   "description": "Universal AI-Powered Data Capture System",
   "private": true,
   "scripts": {
-    "dev": "echo '\n\ud83d\ude80 Starting development servers...\n' && concurrently -k -n FRONTEND,BACKEND -c blue,green \"cd frontend && npm run dev\" \"cd backend && npm start\"",
+    "dev": "echo '\n🚀 Starting development servers...\n' && concurrently -k -n FRONTEND,BACKEND -c blue,green \"cd frontend && npm run dev\" \"cd backend && npm start\"",
     "d": "npm run dev",
-    "links": "echo '\n\ud83d\udd17 DEVELOPMENT SERVERS:\n\ud83d\udcf1 Frontend: http://localhost:3000\n\u2699\ufe0f  Backend: http://localhost:5001\n'",
+    "links": "echo '\n🔗 DEVELOPMENT SERVERS:\n📱 Frontend: http://localhost:3000\n⚙️  Backend: http://localhost:5001\n'",
     "build": "cd frontend && npm run build",
     "start": "concurrently -k -n FRONTEND,BACKEND -c blue,green \"cd frontend && npm run start\" \"cd backend && npm run start\"",
     "lint": "cd frontend && npm run lint",
