@@ -18,4 +18,4 @@ router.get('/form/:formId', auth, submissionController.getSubmissions);
 // @access  Private
 router.get('/:id', auth, submissionController.getSubmission);
 
-module.exports = router; 
+module.exports = router;

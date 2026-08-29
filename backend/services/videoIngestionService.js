@@ -18,7 +18,7 @@ const readdir = promisify(fs.readdir);
 class VideoIngestionService {
   constructor() {
     this.openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY
+      apiKey: process.env.OPENAI_API_KEY,
     });
     this.uploadDir = process.env.UPLOAD_DIR || path.join(__dirname, '../uploads/videos');
     this.tempDir = path.join(__dirname, '../uploads/temp');
@@ -62,7 +62,7 @@ class VideoIngestionService {
       transcribeAudio = true,
       analyzeFrames = true,
       formId = null,
-      organizationId = null
+      organizationId = null,
     } = options;
 
     // Validate file
@@ -90,19 +90,19 @@ class VideoIngestionService {
           maxFrames,
           transcribeAudio,
           analyzeFrames,
-          uploadedAt: new Date().toISOString()
+          uploadedAt: new Date().toISOString(),
         },
         userId,
         organizationId,
-        formId
-      }
+        formId,
+      },
     });
 
     try {
       // Update status to processing
       await prisma.dataSource.update({
         where: { id: dataSource.id },
-        data: { status: 'PROCESSING' }
+        data: { status: 'PROCESSING' },
       });
 
       const startTime = Date.now();
@@ -118,7 +118,7 @@ class VideoIngestionService {
         const frames = await this.extractFrames(file.path, tempDir, {
           interval: frameInterval,
           maxFrames,
-          duration: videoInfo.duration
+          duration: videoInfo.duration,
         });
         frameAnalyses = await this.analyzeFrames(frames);
       }
@@ -147,27 +147,29 @@ class VideoIngestionService {
           extractedText: transcription?.text || '',
           extractedData: {
             videoInfo,
-            frames: frameAnalyses.map(f => ({
+            frames: frameAnalyses.map((f) => ({
               timestamp: f.timestamp,
               description: f.description,
               objects: f.objects,
-              text: f.text
+              text: f.text,
             })),
-            transcription: transcription ? {
-              text: transcription.text,
-              language: transcription.language,
-              duration: transcription.duration,
-              segments: transcription.segments?.slice(0, 20) // Limit segments
-            } : null,
+            transcription: transcription
+              ? {
+                  text: transcription.text,
+                  language: transcription.language,
+                  duration: transcription.duration,
+                  segments: transcription.segments?.slice(0, 20), // Limit segments
+                }
+              : null,
             summary,
             keywords: summary.keywords || [],
-            topics: summary.topics || []
+            topics: summary.topics || [],
           },
           processingTime,
           aiModel: 'gpt-4o + whisper-1',
           confidence: this.calculateConfidence(frameAnalyses, transcription),
-          processedAt: new Date()
-        }
+          processedAt: new Date(),
+        },
       });
 
       return {
@@ -178,17 +180,16 @@ class VideoIngestionService {
         transcription: transcription?.text || null,
         summary,
         processingTime,
-        confidence: updatedDataSource.confidence
+        confidence: updatedDataSource.confidence,
       };
-
     } catch (error) {
       // Update status to failed
       await prisma.dataSource.update({
         where: { id: dataSource.id },
         data: {
           status: 'FAILED',
-          error: error.message
-        }
+          error: error.message,
+        },
       });
 
       throw error;
@@ -201,12 +202,12 @@ class VideoIngestionService {
   async getVideoInfo(videoPath) {
     try {
       const { stdout } = await execPromise(
-        `ffprobe -v quiet -print_format json -show_format -show_streams "${videoPath}"`
+        `ffprobe -v quiet -print_format json -show_format -show_streams "${videoPath}"`,
       );
       const info = JSON.parse(stdout);
 
-      const videoStream = info.streams?.find(s => s.codec_type === 'video');
-      const audioStream = info.streams?.find(s => s.codec_type === 'audio');
+      const videoStream = info.streams?.find((s) => s.codec_type === 'video');
+      const audioStream = info.streams?.find((s) => s.codec_type === 'audio');
 
       return {
         duration: parseFloat(info.format?.duration) || 0,
@@ -217,7 +218,7 @@ class VideoIngestionService {
         bitrate: parseInt(info.format?.bit_rate) || 0,
         hasAudio: !!audioStream,
         audioCodec: audioStream?.codec_name || null,
-        format: info.format?.format_name || 'unknown'
+        format: info.format?.format_name || 'unknown',
       };
     } catch (error) {
       console.error('Failed to get video info:', error);
@@ -230,7 +231,7 @@ class VideoIngestionService {
         bitrate: 0,
         hasAudio: true, // Assume audio exists
         audioCodec: null,
-        format: 'unknown'
+        format: 'unknown',
       };
     }
   }
@@ -242,7 +243,7 @@ class VideoIngestionService {
     if (!fpsString) return 0;
     if (fpsString.includes('/')) {
       const [num, den] = fpsString.split('/').map(Number);
-      return den ? Math.round(num / den * 100) / 100 : 0;
+      return den ? Math.round((num / den) * 100) / 100 : 0;
     }
     return parseFloat(fpsString) || 0;
   }
@@ -275,14 +276,14 @@ class VideoIngestionService {
       const outputPath = path.join(outputDir, `frame_${timestamp.toFixed(1)}.jpg`);
       try {
         await execPromise(
-          `ffmpeg -ss ${timestamp} -i "${videoPath}" -vframes 1 -q:v 2 "${outputPath}" -y`
+          `ffmpeg -ss ${timestamp} -i "${videoPath}" -vframes 1 -q:v 2 "${outputPath}" -y`,
         );
 
         // Check if file was created
         if (fs.existsSync(outputPath)) {
           frames.push({
             path: outputPath,
-            timestamp
+            timestamp,
           });
         }
       } catch (error) {
@@ -328,44 +329,45 @@ Response in JSON:
   "sceneType": "indoor/outdoor/etc",
   "mood": "mood/atmosphere"
 }
-\`\`\``
+\`\`\``,
                 },
                 {
                   type: 'image_url',
                   image_url: {
                     url: `data:image/jpeg;base64,${base64Image}`,
-                    detail: 'low'
-                  }
-                }
-              ]
-            }
+                    detail: 'low',
+                  },
+                },
+              ],
+            },
           ],
           max_tokens: 500,
-          temperature: 0.3
+          temperature: 0.3,
         });
 
         const analysisText = response.choices[0].message.content;
         let analysis;
 
         try {
-          const jsonMatch = analysisText.match(/```json\n?([\s\S]*?)\n?```/) ||
-                            analysisText.match(/\{[\s\S]*\}/);
-          analysis = jsonMatch ? JSON.parse(jsonMatch[1] || jsonMatch[0]) : { description: analysisText };
+          const jsonMatch =
+            analysisText.match(/```json\n?([\s\S]*?)\n?```/) || analysisText.match(/\{[\s\S]*\}/);
+          analysis = jsonMatch
+            ? JSON.parse(jsonMatch[1] || jsonMatch[0])
+            : { description: analysisText };
         } catch {
           analysis = { description: analysisText };
         }
 
         analyses.push({
           timestamp: frame.timestamp,
-          ...analysis
+          ...analysis,
         });
-
       } catch (error) {
         console.error(`Failed to analyze frame at ${frame.timestamp}s:`, error.message);
         analyses.push({
           timestamp: frame.timestamp,
           description: 'Analysis failed',
-          error: error.message
+          error: error.message,
         });
       }
     }
@@ -377,9 +379,7 @@ Response in JSON:
    * Extract audio from video
    */
   async extractAudio(videoPath, audioPath) {
-    await execPromise(
-      `ffmpeg -i "${videoPath}" -vn -acodec libmp3lame -q:a 4 "${audioPath}" -y`
-    );
+    await execPromise(`ffmpeg -i "${videoPath}" -vn -acodec libmp3lame -q:a 4 "${audioPath}" -y`);
     return audioPath;
   }
 
@@ -391,7 +391,7 @@ Response in JSON:
       const response = await this.openai.audio.transcriptions.create({
         file: fs.createReadStream(audioPath),
         model: 'whisper-1',
-        response_format: 'verbose_json'
+        response_format: 'verbose_json',
       });
 
       return response;
@@ -408,8 +408,8 @@ Response in JSON:
     const context = {
       duration: videoInfo.duration,
       resolution: `${videoInfo.width}x${videoInfo.height}`,
-      frames: frameAnalyses.map(f => `[${f.timestamp}s]: ${f.description}`).join('\n'),
-      transcript: transcription?.text?.slice(0, 2000) || 'No audio transcript'
+      frames: frameAnalyses.map((f) => `[${f.timestamp}s]: ${f.description}`).join('\n'),
+      transcript: transcription?.text?.slice(0, 2000) || 'No audio transcript',
     };
 
     try {
@@ -418,7 +418,8 @@ Response in JSON:
         messages: [
           {
             role: 'system',
-            content: 'You analyze video content based on frame descriptions and audio transcripts. Provide comprehensive summaries.'
+            content:
+              'You analyze video content based on frame descriptions and audio transcripts. Provide comprehensive summaries.',
           },
           {
             role: 'user',
@@ -442,11 +443,11 @@ Provide a JSON response:
   "keyMoments": [{ "timestamp": 0, "description": "key moment" }],
   "sentiment": "positive/negative/neutral"
 }
-\`\`\``
-          }
+\`\`\``,
+          },
         ],
         temperature: 0.3,
-        response_format: { type: 'json_object' }
+        response_format: { type: 'json_object' },
       });
 
       return JSON.parse(response.choices[0].message.content);
@@ -456,7 +457,7 @@ Provide a JSON response:
         summary: 'Video analysis completed',
         topics: [],
         keywords: [],
-        contentType: 'unknown'
+        contentType: 'unknown',
       };
     }
   }
@@ -483,7 +484,7 @@ Provide a JSON response:
     let confidence = 0.6;
 
     // Increase confidence based on successful frame analyses
-    const successfulFrames = frameAnalyses.filter(f => !f.error).length;
+    const successfulFrames = frameAnalyses.filter((f) => !f.error).length;
     if (successfulFrames > 0) {
       confidence += (successfulFrames / frameAnalyses.length) * 0.2;
     }
@@ -522,7 +523,7 @@ Provide a JSON response:
 
     const where = {
       userId,
-      type: 'VIDEO'
+      type: 'VIDEO',
     };
 
     if (status) {
@@ -548,10 +549,10 @@ Provide a JSON response:
           processingTime: true,
           confidence: true,
           createdAt: true,
-          processedAt: true
-        }
+          processedAt: true,
+        },
       }),
-      prisma.dataSource.count({ where })
+      prisma.dataSource.count({ where }),
     ]);
 
     return { dataSources, total, limit, offset };
@@ -563,7 +564,7 @@ Provide a JSON response:
   async getVideoSource(id, userId) {
     const dataSource = await prisma.dataSource.findFirst({
       where: { id, userId, type: 'VIDEO' },
-      include: { analyses: true }
+      include: { analyses: true },
     });
 
     if (!dataSource) {
@@ -578,7 +579,7 @@ Provide a JSON response:
    */
   async deleteVideoSource(id, userId) {
     const dataSource = await prisma.dataSource.findFirst({
-      where: { id, userId, type: 'VIDEO' }
+      where: { id, userId, type: 'VIDEO' },
     });
 
     if (!dataSource) {

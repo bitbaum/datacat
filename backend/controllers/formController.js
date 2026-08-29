@@ -20,7 +20,7 @@ exports.saveForm = async (req, res) => {
         isTemplate: isTemplate || false,
         templateTags: templateTags || [],
         userId,
-        isPublished: false
+        isPublished: false,
       },
       select: {
         id: true,
@@ -32,8 +32,8 @@ exports.saveForm = async (req, res) => {
         isTemplate: true,
         templateTags: true,
         createdAt: true,
-        updatedAt: true
-      }
+        updatedAt: true,
+      },
     });
 
     return created(res, { form }, 'Form created successfully');
@@ -49,12 +49,12 @@ exports.getForms = async (req, res) => {
 
   try {
     const skip = (parseInt(page) - 1) * parseInt(limit);
-    
+
     const [forms, total] = await Promise.all([
       prisma.form.findMany({
         where: {
           userId,
-          isTemplate: isTemplate === 'true'
+          isTemplate: isTemplate === 'true',
         },
         select: {
           id: true,
@@ -67,22 +67,22 @@ exports.getForms = async (req, res) => {
           updatedAt: true,
           _count: {
             select: {
-              submissions: true
-            }
-          }
+              submissions: true,
+            },
+          },
         },
         orderBy: {
-          updatedAt: 'desc'
+          updatedAt: 'desc',
         },
         skip,
-        take: parseInt(limit)
+        take: parseInt(limit),
       }),
       prisma.form.count({
         where: {
           userId,
-          isTemplate: isTemplate === 'true'
-        }
-      })
+          isTemplate: isTemplate === 'true',
+        },
+      }),
     ]);
 
     return success(res, {
@@ -91,8 +91,8 @@ exports.getForms = async (req, res) => {
         page: parseInt(page),
         limit: parseInt(limit),
         total,
-        pages: Math.ceil(total / parseInt(limit))
-      }
+        pages: Math.ceil(total / parseInt(limit)),
+      },
     });
   } catch (err) {
     console.error('Get forms error:', err);
@@ -108,7 +108,7 @@ exports.getForm = async (req, res) => {
     const form = await prisma.form.findFirst({
       where: {
         id,
-        userId
+        userId,
       },
       select: {
         id: true,
@@ -123,10 +123,10 @@ exports.getForm = async (req, res) => {
         updatedAt: true,
         _count: {
           select: {
-            submissions: true
-          }
-        }
-      }
+            submissions: true,
+          },
+        },
+      },
     });
 
     if (!form) {
@@ -149,17 +149,17 @@ exports.deleteForm = async (req, res) => {
     const form = await prisma.form.findFirst({
       where: {
         id,
-        userId
+        userId,
       },
       select: {
         id: true,
         title: true,
         _count: {
           select: {
-            submissions: true
-          }
-        }
-      }
+            submissions: true,
+          },
+        },
+      },
     });
 
     if (!form) {
@@ -171,11 +171,11 @@ exports.deleteForm = async (req, res) => {
       // For forms with submissions, we might want to implement soft delete
       // For now, we'll just delete everything
       await prisma.form.delete({
-        where: { id }
+        where: { id },
       });
     } else {
       await prisma.form.delete({
-        where: { id }
+        where: { id },
       });
     }
 
@@ -196,12 +196,12 @@ exports.updateForm = async (req, res) => {
     const existingForm = await prisma.form.findFirst({
       where: {
         id,
-        userId
+        userId,
       },
       select: {
         id: true,
-        currentVersion: true
-      }
+        currentVersion: true,
+      },
     });
 
     if (!existingForm) {
@@ -214,13 +214,13 @@ exports.updateForm = async (req, res) => {
       ...(description !== undefined && { description }),
       ...(settings && { settings }),
       ...(isPublished !== undefined && { isPublished }),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
 
     if (schema) {
       updateData.schema = schema;
       updateData.currentVersion = existingForm.currentVersion + 1;
-      
+
       // Create version record
       await prisma.formVersion.create({
         data: {
@@ -228,8 +228,8 @@ exports.updateForm = async (req, res) => {
           version: existingForm.currentVersion + 1,
           schema,
           settings: settings || {},
-          createdBy: userId
-        }
+          createdBy: userId,
+        },
       });
     }
 
@@ -247,8 +247,8 @@ exports.updateForm = async (req, res) => {
         templateTags: true,
         currentVersion: true,
         createdAt: true,
-        updatedAt: true
-      }
+        updatedAt: true,
+      },
     });
 
     return success(res, { form: updatedForm }, 'Form updated successfully');
@@ -267,12 +267,12 @@ exports.publishForm = async (req, res) => {
     const form = await prisma.form.findFirst({
       where: {
         id,
-        userId
+        userId,
       },
       select: {
         id: true,
-        isPublished: true
-      }
+        isPublished: true,
+      },
     });
 
     if (!form) {
@@ -281,19 +281,23 @@ exports.publishForm = async (req, res) => {
 
     const updatedForm = await prisma.form.update({
       where: { id },
-      data: { 
+      data: {
         isPublished: !form.isPublished,
-        updatedAt: new Date()
+        updatedAt: new Date(),
       },
       select: {
         id: true,
         title: true,
         isPublished: true,
-        updatedAt: true
-      }
+        updatedAt: true,
+      },
     });
 
-    return success(res, { form: updatedForm }, `Form ${updatedForm.isPublished ? 'published' : 'unpublished'} successfully`);
+    return success(
+      res,
+      { form: updatedForm },
+      `Form ${updatedForm.isPublished ? 'published' : 'unpublished'} successfully`,
+    );
   } catch (err) {
     console.error('Publish form error:', err);
     return error(res, 'Server error publishing form', 500, err);
@@ -307,7 +311,7 @@ exports.getPublicForm = async (req, res) => {
     const form = await prisma.form.findFirst({
       where: {
         id,
-        isPublished: true
+        isPublished: true,
       },
       select: {
         id: true,
@@ -318,16 +322,16 @@ exports.getPublicForm = async (req, res) => {
         createdAt: true,
         user: {
           select: {
-            name: true
-          }
-        }
-      }
+            name: true,
+          },
+        },
+      },
     });
 
     if (!form) {
-      return res.status(404).json({ 
-        success: false, 
-        message: 'Form not found or not published' 
+      return res.status(404).json({
+        success: false,
+        message: 'Form not found or not published',
       });
     }
 

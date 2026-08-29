@@ -6,15 +6,15 @@ export const useBranding = (): BrandingConfig => {
   return useMemo(() => {
     // Check if a preset is specified in environment
     const presetName = process.env.NEXT_PUBLIC_BRAND_PRESET;
-    
+
     if (presetName) {
       const preset = getBrandingPreset(presetName);
       return {
         ...branding,
-        ...preset
+        ...preset,
       };
     }
-    
+
     return branding;
   }, []);
 };
@@ -33,6 +33,6 @@ export const useBrandLogo = () => useBrandingValue('logo');
 export const useBrandColors = () => ({
   primary: useBrandingValue('primaryColor'),
   secondary: useBrandingValue('secondaryColor'),
-  accent: useBrandingValue('accentColor')
+  accent: useBrandingValue('accentColor'),
 });
-export const useBrandUseCase = () => useBrandingValue('useCase'); 
+export const useBrandUseCase = () => useBrandingValue('useCase');

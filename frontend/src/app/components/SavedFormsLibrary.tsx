@@ -34,13 +34,13 @@ interface SavedFormsLibraryProps {
   onBack?: () => void;
 }
 
-export function SavedFormsLibrary({ 
-  onLoadForm, 
-  onDuplicateForm, 
-  onDeleteForm, 
-  onPreviewForm, 
+export function SavedFormsLibrary({
+  onLoadForm,
+  onDuplicateForm,
+  onDeleteForm,
+  onPreviewForm,
   onStatusChange,
-  onBack 
+  onBack,
 }: SavedFormsLibraryProps) {
   const { token } = useAuth();
   const [forms, setForms] = useState<SavedForm[]>([]);
@@ -48,8 +48,13 @@ export function SavedFormsLibrary({
   const [error, setError] = useState<string | null>(null);
   const loginModal = useModal();
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedFilters, setSelectedFilters] = useState<Record<string, string | string[]>>({ status: 'all', tags: [] });
-  const [sortBy, setSortBy] = useState<'updatedAt' | 'createdAt' | 'title' | 'submissionCount'>('updatedAt');
+  const [selectedFilters, setSelectedFilters] = useState<Record<string, string | string[]>>({
+    status: 'all',
+    tags: [],
+  });
+  const [sortBy, setSortBy] = useState<'updatedAt' | 'createdAt' | 'title' | 'submissionCount'>(
+    'updatedAt',
+  );
   const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
 
   // Check if user is logged in, show login modal if not
@@ -59,13 +64,13 @@ export function SavedFormsLibrary({
       setLoading(false);
       return;
     }
-    
+
     fetchForms();
   }, [token]);
 
   const fetchForms = async () => {
     if (!token) return;
-    
+
     try {
       setLoading(true);
       setError(null);
@@ -144,7 +149,10 @@ export function SavedFormsLibrary({
   // Filter and sort logic
   const defaultFilters = { status: 'all', tags: [] };
   const defaultSortBy = 'updatedAt';
-  const isFiltered = searchTerm !== '' || sortBy !== defaultSortBy || JSON.stringify(selectedFilters) !== JSON.stringify(defaultFilters);
+  const isFiltered =
+    searchTerm !== '' ||
+    sortBy !== defaultSortBy ||
+    JSON.stringify(selectedFilters) !== JSON.stringify(defaultFilters);
 
   const clearFilters = () => {
     setSearchTerm('');
@@ -152,8 +160,8 @@ export function SavedFormsLibrary({
     setSortBy(defaultSortBy);
   };
 
-  const allTags = [...new Set(forms.flatMap(f => f.tags || []))];
-  const tagOptions: FilterOption[] = allTags.map(tag => ({ value: tag, label: tag }));
+  const allTags = [...new Set(forms.flatMap((f) => f.tags || []))];
+  const tagOptions: FilterOption[] = allTags.map((tag) => ({ value: tag, label: tag }));
 
   const statusOptions: FilterOption[] = [
     { value: 'all', label: 'Alle Status' },
@@ -171,28 +179,30 @@ export function SavedFormsLibrary({
 
   const filters: Filter[] = [
     { id: 'status', label: 'Status', options: statusOptions },
-    { id: 'tags', label: 'Tags', type: 'pills', options: tagOptions }
+    { id: 'tags', label: 'Tags', type: 'pills', options: tagOptions },
   ];
 
   const handleFilterChange = (filterId: string, value: string | string[]) => {
-    setSelectedFilters(prev => ({ ...prev, [filterId]: value }));
+    setSelectedFilters((prev) => ({ ...prev, [filterId]: value }));
   };
 
   const handleSortByChange = (value: string) => {
     setSortBy(value as typeof sortBy);
   };
 
-  const filteredForms = forms.filter(form => {
+  const filteredForms = forms.filter((form) => {
     const searchLower = searchTerm.toLowerCase();
-    const matchesSearch = form.title.toLowerCase().includes(searchLower) ||
-                         (form.description || '').toLowerCase().includes(searchLower) ||
-                         (form.tags || []).some(tag => tag.toLowerCase().includes(searchLower));
-    
+    const matchesSearch =
+      form.title.toLowerCase().includes(searchLower) ||
+      (form.description || '').toLowerCase().includes(searchLower) ||
+      (form.tags || []).some((tag) => tag.toLowerCase().includes(searchLower));
+
     const statusFilter = selectedFilters.status;
     const matchesStatus = statusFilter === 'all' || form.status === statusFilter;
-    
+
     const tagsFilter = selectedFilters.tags as string[];
-    const matchesTags = tagsFilter.length === 0 || tagsFilter.every(tag => (form.tags || []).includes(tag));
+    const matchesTags =
+      tagsFilter.length === 0 || tagsFilter.every((tag) => (form.tags || []).includes(tag));
 
     return matchesSearch && matchesStatus && matchesTags;
   });
@@ -226,19 +236,29 @@ export function SavedFormsLibrary({
 
   const getStatusLabel = (status: SavedForm['status']) => {
     switch (status) {
-      case 'published': return 'Veröffentlicht';
-      case 'draft': return 'Entwurf';
-      case 'archived': return 'Archiviert';
-      default: return status;
+      case 'published':
+        return 'Veröffentlicht';
+      case 'draft':
+        return 'Entwurf';
+      case 'archived':
+        return 'Archiviert';
+      default:
+        return status;
     }
   };
 
-  const getNextStatusAction = (status: SavedForm['status']): { label: string; next: SavedForm['status'] } => {
+  const getNextStatusAction = (
+    status: SavedForm['status'],
+  ): { label: string; next: SavedForm['status'] } => {
     switch (status) {
-      case 'draft': return { label: 'Veröffentlichen', next: 'published' };
-      case 'published': return { label: 'Archivieren', next: 'archived' };
-      case 'archived': return { label: 'Als Entwurf wiederherstellen', next: 'draft' };
-      default: return { label: 'Veröffentlichen', next: 'published' };
+      case 'draft':
+        return { label: 'Veröffentlichen', next: 'published' };
+      case 'published':
+        return { label: 'Archivieren', next: 'archived' };
+      case 'archived':
+        return { label: 'Als Entwurf wiederherstellen', next: 'draft' };
+      default:
+        return { label: 'Veröffentlichen', next: 'published' };
     }
   };
 
@@ -249,7 +269,9 @@ export function SavedFormsLibrary({
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Gespeicherte Formulare</h1>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+                Gespeicherte Formulare
+              </h1>
               <p className="text-gray-600 dark:text-gray-400">
                 Verwalten und bearbeiten Sie Ihre gespeicherten Formulare
               </p>
@@ -260,7 +282,12 @@ export function SavedFormsLibrary({
                 className="flex items-center px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
               >
                 <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 19l-7-7 7-7"
+                  />
                 </svg>
                 Zurück zum Builder
               </button>
@@ -318,10 +345,9 @@ export function SavedFormsLibrary({
                   {isFiltered ? 'Keine Formulare gefunden' : 'Noch keine Formulare gespeichert'}
                 </h3>
                 <p className="text-gray-600 dark:text-gray-400 mb-4">
-                  {isFiltered 
+                  {isFiltered
                     ? 'Versuchen Sie einen anderen Suchbegriff oder ändern Sie die Filter.'
-                    : 'Erstellen Sie Ihr erstes Formular mit dem Builder.'
-                  }
+                    : 'Erstellen Sie Ihr erstes Formular mit dem Builder.'}
                 </p>
                 {isFiltered && (
                   <button
@@ -333,7 +359,9 @@ export function SavedFormsLibrary({
                 )}
               </div>
             ) : (
-              <div className={`grid gap-6 ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}>
+              <div
+                className={`grid gap-6 ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}
+              >
                 {sortedForms.map((form) => (
                   <div
                     key={form.id}
@@ -351,19 +379,30 @@ export function SavedFormsLibrary({
                             </p>
                           )}
                           <div className="flex items-center space-x-2 text-xs text-gray-500">
-                            <span className={`px-2 py-1 rounded-full ${getStatusColor(form.status)}`}>
+                            <span
+                              className={`px-2 py-1 rounded-full ${getStatusColor(form.status)}`}
+                            >
                               {getStatusLabel(form.status)}
                             </span>
                             <span>{form.isMultiStep ? 'Mehrseitig' : 'Einseitig'}</span>
                             <span>•</span>
-                            <span>{form.fields.length + (form.steps?.reduce((acc, step) => acc + step.fields.length, 0) || 0)} Felder</span>
+                            <span>
+                              {form.fields.length +
+                                (form.steps?.reduce((acc, step) => acc + step.fields.length, 0) ||
+                                  0)}{' '}
+                              Felder
+                            </span>
                           </div>
                         </div>
-                        
+
                         {/* Actions Menu */}
                         <Menu as="div" className="relative">
                           <Menu.Button className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
-                            <svg className="w-5 h-5 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
+                            <svg
+                              className="w-5 h-5 text-gray-500"
+                              fill="currentColor"
+                              viewBox="0 0 20 20"
+                            >
                               <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
                             </svg>
                           </Menu.Button>
@@ -404,7 +443,12 @@ export function SavedFormsLibrary({
                                 <Menu.Item>
                                   {({ active }) => (
                                     <button
-                                      onClick={() => onStatusChange(form.id, getNextStatusAction(form.status).next)}
+                                      onClick={() =>
+                                        onStatusChange(
+                                          form.id,
+                                          getNextStatusAction(form.status).next,
+                                        )
+                                      }
                                       className={`${active ? 'bg-gray-100 dark:bg-gray-700' : ''} block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 w-full text-left`}
                                     >
                                       {getNextStatusAction(form.status).label}
@@ -450,7 +494,9 @@ export function SavedFormsLibrary({
 
                       {/* Stats */}
                       <div className="flex items-center justify-between text-xs text-gray-500 mb-4">
-                        <span>Aktualisiert: {new Date(form.updatedAt).toLocaleDateString('de-DE')}</span>
+                        <span>
+                          Aktualisiert: {new Date(form.updatedAt).toLocaleDateString('de-DE')}
+                        </span>
                         <span>{form.submissionCount} Einreichungen</span>
                       </div>
 
@@ -471,4 +517,4 @@ export function SavedFormsLibrary({
       </div>
     </div>
   );
-} 
+}

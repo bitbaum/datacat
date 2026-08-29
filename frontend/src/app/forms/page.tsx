@@ -30,14 +30,19 @@ export default function SavedFormsPage() {
         body: JSON.stringify({
           title: `${form.title} (Kopie)`,
           description: form.description,
-          structure: { fields: form.fields, steps: form.steps, isMultiStep: form.isMultiStep, tags: form.tags },
+          structure: {
+            fields: form.fields,
+            steps: form.steps,
+            isMultiStep: form.isMultiStep,
+            tags: form.tags,
+          },
           status: 'draft',
           isTemplate: true,
         }),
       });
       if (!response.ok) throw new Error('Failed to duplicate form');
       toast.success('Formular dupliziert.');
-      setRefreshKey(k => k + 1);
+      setRefreshKey((k) => k + 1);
     } catch (error) {
       console.error('Error duplicating form:', error);
       toast.error('Formular konnte nicht dupliziert werden.');
@@ -47,16 +52,22 @@ export default function SavedFormsPage() {
   const handleDeleteForm = async (formId: string) => {
     if (!token) return;
     try {
-      const response = await fetch(`/api/v1/forms/${formId}`, { method: 'DELETE', headers: { 'x-auth-token': token } });
+      const response = await fetch(`/api/v1/forms/${formId}`, {
+        method: 'DELETE',
+        headers: { 'x-auth-token': token },
+      });
       if (!response.ok) throw new Error('Failed to delete form');
-      setRefreshKey(k => k + 1);
+      setRefreshKey((k) => k + 1);
     } catch (error) {
       console.error('Error deleting form:', error);
       toast.error('Formular konnte nicht gelöscht werden.');
     }
   };
 
-  const handleStatusChange = async (formId: string, newStatus: 'draft' | 'published' | 'archived') => {
+  const handleStatusChange = async (
+    formId: string,
+    newStatus: 'draft' | 'published' | 'archived',
+  ) => {
     if (!token) return;
     try {
       const response = await fetch(`/api/v1/forms/${formId}/status`, {
@@ -65,7 +76,7 @@ export default function SavedFormsPage() {
         body: JSON.stringify({ status: newStatus }),
       });
       if (!response.ok) throw new Error('Failed to update status');
-      setRefreshKey(k => k + 1);
+      setRefreshKey((k) => k + 1);
     } catch (error) {
       console.error('Error updating status:', error);
       toast.error('Status konnte nicht aktualisiert werden.');

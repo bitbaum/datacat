@@ -8,15 +8,12 @@ interface AutoSaveData {
   timestamp: number;
 }
 
-export function useAutoSave(
-  formData: FormData,
-  fields: FieldConfig[]
-) {
+export function useAutoSave(formData: FormData, fields: FieldConfig[]) {
   const [savedData, setSavedData, removeSavedData] = useLocalStorage<AutoSaveData | null>(
     `autosave-hr-intake-form`,
-    null
+    null,
   );
-  
+
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const lastSaveRef = useRef<number>(0);
 
@@ -28,8 +25,8 @@ export function useAutoSave(
     }
 
     // Only save if there's actual data
-    const hasData = Object.values(formData).some(value => value.trim() !== '');
-    
+    const hasData = Object.values(formData).some((value) => value.trim() !== '');
+
     if (hasData) {
       timeoutRef.current = setTimeout(() => {
         const now = Date.now();
@@ -38,7 +35,7 @@ export function useAutoSave(
           setSavedData({
             formData,
             fields,
-            timestamp: now
+            timestamp: now,
           });
           lastSaveRef.current = now;
         }
@@ -57,7 +54,7 @@ export function useAutoSave(
     setSavedData({
       formData,
       fields,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
     lastSaveRef.current = Date.now();
   };
@@ -70,12 +67,12 @@ export function useAutoSave(
   // Get formatted last save time
   const getLastSaveTime = () => {
     if (!savedData?.timestamp) return undefined;
-    
+
     const now = Date.now();
     const diff = now - savedData.timestamp;
     const minutes = Math.floor(diff / 60000);
     const seconds = Math.floor((diff % 60000) / 1000);
-    
+
     if (minutes > 0) {
       return `vor ${minutes} Minute${minutes !== 1 ? 'n' : ''}`;
     } else if (seconds > 5) {
@@ -90,6 +87,6 @@ export function useAutoSave(
     saveNow,
     clearSavedData,
     getLastSaveTime,
-    hasSavedData: !!savedData
+    hasSavedData: !!savedData,
   };
 }

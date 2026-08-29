@@ -11,7 +11,9 @@ class LLMAnalysisService {
   getOpenAIClient() {
     if (!this.openai) {
       if (!process.env.OPENAI_API_KEY) {
-        throw new Error('OPENAI_API_KEY environment variable is required for LLM analysis. Add it to your .env file or disable LLM features.');
+        throw new Error(
+          'OPENAI_API_KEY environment variable is required for LLM analysis. Add it to your .env file or disable LLM features.',
+        );
       }
       this.openai = new OpenAI({
         apiKey: process.env.OPENAI_API_KEY,
@@ -52,12 +54,8 @@ class LLMAnalysisService {
     for (const analysisType of analysisTypes) {
       try {
         const startTime = Date.now();
-        
-        const result = await this.performAnalysis(
-          analysisType,
-          submission.data,
-          submission.form
-        );
+
+        const result = await this.performAnalysis(analysisType, submission.data, submission.form);
 
         const processingTime = Date.now() - startTime;
 
@@ -80,7 +78,7 @@ class LLMAnalysisService {
         results.push(analysis);
       } catch (error) {
         console.error(`LLM Analysis failed for ${analysisType}:`, error);
-        
+
         // Save failed analysis
         await prisma.lLMAnalysis.create({
           data: {
@@ -141,7 +139,8 @@ Provide a JSON response with:
       messages: [
         {
           role: 'system',
-          content: 'You are an expert sentiment analysis AI. Provide accurate sentiment analysis in the requested JSON format.',
+          content:
+            'You are an expert sentiment analysis AI. Provide accurate sentiment analysis in the requested JSON format.',
         },
         {
           role: 'user',
@@ -189,7 +188,8 @@ Provide a JSON response with:
       messages: [
         {
           role: 'system',
-          content: 'You are an expert content classifier. Analyze and categorize content accurately.',
+          content:
+            'You are an expert content classifier. Analyze and categorize content accurately.',
         },
         {
           role: 'user',
@@ -232,7 +232,8 @@ Provide a JSON response with:
       messages: [
         {
           role: 'system',
-          content: 'You are an expert at extracting key information from structured data. Focus on actionable insights.',
+          content:
+            'You are an expert at extracting key information from structured data. Focus on actionable insights.',
         },
         {
           role: 'user',
@@ -320,7 +321,8 @@ Please provide your analysis in JSON format with at least these fields:
       messages: [
         {
           role: 'system',
-          content: 'You are an expert analyst. Follow the custom prompt instructions carefully and provide results in JSON format.',
+          content:
+            'You are an expert analyst. Follow the custom prompt instructions carefully and provide results in JSON format.',
         },
         {
           role: 'user',
@@ -344,9 +346,9 @@ Please provide your analysis in JSON format with at least these fields:
   // Helper: Extract text fields from submission data
   extractTextFields(submissionData, formSchema) {
     const textFields = [];
-    
+
     if (formSchema && formSchema.fields) {
-      formSchema.fields.forEach(field => {
+      formSchema.fields.forEach((field) => {
         const value = submissionData[field.id];
         if (value && typeof value === 'string' && value.trim()) {
           textFields.push(`${field.label || field.id}: ${value}`);
@@ -421,12 +423,12 @@ Please provide your analysis in JSON format with at least these fields:
       where: {
         formId,
         ...(analysisType && { analysisType }),
-        ...(dateFrom || dateTo) && {
+        ...((dateFrom || dateTo) && {
           createdAt: {
             ...(dateFrom && { gte: dateFrom }),
             ...(dateTo && { lte: dateTo }),
           },
-        },
+        }),
       },
       include: {
         submission: {
@@ -470,17 +472,19 @@ Please provide your analysis in JSON format with at least these fields:
       topCategories: {},
       performanceMetrics: {
         successRate: 100, // All fetched analyses are completed
-        fastestAnalysis: Math.min(...analyses.map(a => a.processingTime || 0)),
-        slowestAnalysis: Math.max(...analyses.map(a => a.processingTime || 0)),
+        fastestAnalysis: Math.min(...analyses.map((a) => a.processingTime || 0)),
+        slowestAnalysis: Math.max(...analyses.map((a) => a.processingTime || 0)),
       },
     };
 
     if (analyses.length > 0) {
-      insights.averageConfidence = analyses.reduce((sum, a) => sum + (a.confidence || 0), 0) / analyses.length;
-      insights.averageProcessingTime = analyses.reduce((sum, a) => sum + (a.processingTime || 0), 0) / analyses.length;
+      insights.averageConfidence =
+        analyses.reduce((sum, a) => sum + (a.confidence || 0), 0) / analyses.length;
+      insights.averageProcessingTime =
+        analyses.reduce((sum, a) => sum + (a.processingTime || 0), 0) / analyses.length;
 
       // Process sentiment distribution
-      analyses.forEach(analysis => {
+      analyses.forEach((analysis) => {
         if (analysis.analysisType === 'SENTIMENT' && analysis.result?.sentiment) {
           insights.sentimentDistribution[analysis.result.sentiment]++;
         }

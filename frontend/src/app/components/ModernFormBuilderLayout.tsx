@@ -62,14 +62,18 @@ export function ModernFormBuilderLayout({
   const [formsLoading, setFormsLoading] = useState(true);
   const [showSaveTemplateModal, setShowSaveTemplateModal] = useState(false);
   const [selectedFieldId, setSelectedFieldId] = useState<string | undefined>(undefined);
-  const [currentView, setCurrentView] = useState<'hub' | 'builder' | 'sections' | 'templates' | 'saved-forms' | 'about'>('hub');
+  const [currentView, setCurrentView] = useState<
+    'hub' | 'builder' | 'sections' | 'templates' | 'saved-forms' | 'about'
+  >('hub');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const sidebarWidthPx = sidebarCollapsed ? 64 : 384;
   const [formTitle, setFormTitle] = useState('Neues Formular');
   const [formDescription, setFormDescription] = useState('');
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
-  const [selectedTemplatePreview, setSelectedTemplatePreview] = useState<TemplateData | SavedForm | null>(null);
+  const [selectedTemplatePreview, setSelectedTemplatePreview] = useState<
+    TemplateData | SavedForm | null
+  >(null);
   const [editingFormId, setEditingFormId] = useState<string | null>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [navigationDirection, setNavigationDirection] = useState<'forward' | 'back'>('forward');
@@ -134,10 +138,10 @@ export function ModernFormBuilderLayout({
     fetchForms();
   }, [token, currentView]);
 
-  const allFields = isMultiStep ? steps.flatMap(s => s.fields) : fields;
+  const allFields = isMultiStep ? steps.flatMap((s) => s.fields) : fields;
   const { hasErrors, errors } = useFormValidation(allFields);
   const { saveNow } = useAutoSave(formData, allFields);
-  
+
   const getStepsWithErrors = useCallback((): Set<string> => {
     const stepErrorSet = new Set<string>();
     if (!hasErrors || !isMultiStep) return stepErrorSet;
@@ -156,7 +160,9 @@ export function ModernFormBuilderLayout({
     setHasUnsavedChanges(allFields.length > 0);
   }, [allFields]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
+  ) => {
     const { name, value } = e.target;
     setFormData(name, value);
     setHasUnsavedChanges(true);
@@ -165,7 +171,7 @@ export function ModernFormBuilderLayout({
   const handleDragEnd = (event: any) => {
     const { active, over } = event;
     if (over && active.id !== over.id) {
-      const flatFields = isMultiStep ? steps.flatMap(s => s.fields) : fields;
+      const flatFields = isMultiStep ? steps.flatMap((s) => s.fields) : fields;
       const oldIndex = flatFields.findIndex((f) => f.id === active.id);
       const newIndex = flatFields.findIndex((f) => f.id === over.id);
       if (oldIndex !== -1 && newIndex !== -1) {
@@ -174,13 +180,13 @@ export function ModernFormBuilderLayout({
       }
     }
   };
-  
+
   const handleSelectField = (fieldId?: string) => {
     if (fieldId === undefined) {
       setSelectedFieldId(undefined);
       return;
     }
-    setSelectedFieldId(currentId => (currentId === fieldId ? undefined : fieldId));
+    setSelectedFieldId((currentId) => (currentId === fieldId ? undefined : fieldId));
   };
 
   const handleSaveForm = async () => {
@@ -211,9 +217,13 @@ export function ModernFormBuilderLayout({
     if (!response.ok) throw new Error(`Failed to ${isUpdating ? 'update' : 'save'} form`);
     const savedForm = await response.json();
     if (isUpdating) {
-      setSavedForms(prev => prev.map(f => f.id === editingFormId ? { ...f, ...savedForm, ...savedForm.structure } : f));
+      setSavedForms((prev) =>
+        prev.map((f) =>
+          f.id === editingFormId ? { ...f, ...savedForm, ...savedForm.structure } : f,
+        ),
+      );
     } else {
-      setSavedForms(prev => [savedForm, ...prev]);
+      setSavedForms((prev) => [savedForm, ...prev]);
       setEditingFormId(savedForm.id);
     }
     setShowSaveTemplateModal(false);
@@ -239,11 +249,16 @@ export function ModernFormBuilderLayout({
   };
 
   const handleDeleteForm = async (formId: string) => {
-    if (!token) { return; }
+    if (!token) {
+      return;
+    }
     try {
-      const response = await fetch(`/api/v1/forms/${formId}`, { method: 'DELETE', headers: { 'x-auth-token': token } });
+      const response = await fetch(`/api/v1/forms/${formId}`, {
+        method: 'DELETE',
+        headers: { 'x-auth-token': token },
+      });
       if (!response.ok) throw new Error('Failed to delete form');
-      setSavedForms(prev => prev.filter(f => f.id !== formId));
+      setSavedForms((prev) => prev.filter((f) => f.id !== formId));
     } catch (error) {
       console.error('Error deleting form:', error);
       toast.error('Formular konnte nicht gelöscht werden.');
@@ -251,7 +266,9 @@ export function ModernFormBuilderLayout({
   };
 
   const handleDuplicateForm = async (form: SavedForm) => {
-    if (!token) { return; }
+    if (!token) {
+      return;
+    }
     try {
       const response = await fetch('/api/v1/forms', {
         method: 'POST',
@@ -259,14 +276,19 @@ export function ModernFormBuilderLayout({
         body: JSON.stringify({
           title: `${form.title} (Kopie)`,
           description: form.description,
-          structure: { fields: form.fields, steps: form.steps, isMultiStep: form.isMultiStep, tags: form.tags },
+          structure: {
+            fields: form.fields,
+            steps: form.steps,
+            isMultiStep: form.isMultiStep,
+            tags: form.tags,
+          },
           status: 'draft',
           isTemplate: true,
         }),
       });
       if (!response.ok) throw new Error('Failed to duplicate form');
       const duplicated = await response.json();
-      setSavedForms(prev => [duplicated, ...prev]);
+      setSavedForms((prev) => [duplicated, ...prev]);
       toast.success('Formular dupliziert.');
     } catch (error) {
       console.error('Error duplicating form:', error);
@@ -274,8 +296,13 @@ export function ModernFormBuilderLayout({
     }
   };
 
-  const handleStatusChange = async (formId: string, newStatus: 'draft' | 'published' | 'archived') => {
-    if (!token) { return; }
+  const handleStatusChange = async (
+    formId: string,
+    newStatus: 'draft' | 'published' | 'archived',
+  ) => {
+    if (!token) {
+      return;
+    }
     try {
       const response = await fetch(`/api/v1/forms/${formId}/status`, {
         method: 'PUT',
@@ -283,7 +310,7 @@ export function ModernFormBuilderLayout({
         body: JSON.stringify({ status: newStatus }),
       });
       if (!response.ok) throw new Error('Failed to update status');
-      setSavedForms(prev => prev.map(f => (f.id === formId ? { ...f, status: newStatus } : f)));
+      setSavedForms((prev) => prev.map((f) => (f.id === formId ? { ...f, status: newStatus } : f)));
     } catch (error) {
       console.error('Error updating status:', error);
       toast.error('Status konnte nicht aktualisiert werden.');
@@ -336,10 +363,12 @@ export function ModernFormBuilderLayout({
     }, 150);
   };
 
-  const handleMethodSelect = (method: 'fields' | 'sections' | 'templates' | 'saved-forms' | 'upload') => {
+  const handleMethodSelect = (
+    method: 'fields' | 'sections' | 'templates' | 'saved-forms' | 'upload',
+  ) => {
     setIsTransitioning(true);
     setNavigationDirection('forward');
-    
+
     setTimeout(() => {
       switch (method) {
         case 'fields':
@@ -441,7 +470,7 @@ export function ModernFormBuilderLayout({
       selectedFieldId,
       errors,
     };
-    
+
     switch (currentView) {
       case 'hub':
         return (
@@ -466,7 +495,13 @@ export function ModernFormBuilderLayout({
           />
         );
       case 'templates':
-        return <TemplateLibrary onUseTemplate={handleUseTemplate} onPreviewTemplate={setSelectedTemplatePreview} onBack={handleBackToBuilder} />;
+        return (
+          <TemplateLibrary
+            onUseTemplate={handleUseTemplate}
+            onPreviewTemplate={setSelectedTemplatePreview}
+            onBack={handleBackToBuilder}
+          />
+        );
       case 'saved-forms':
         return (
           <SavedFormsLibrary
@@ -483,7 +518,11 @@ export function ModernFormBuilderLayout({
       case 'builder':
       default:
         return isMultiStep ? (
-          <MultiStepFormBuilder {...builderProps} steps={steps} stepsWithErrors={getStepsWithErrors()} />
+          <MultiStepFormBuilder
+            {...builderProps}
+            steps={steps}
+            stepsWithErrors={getStepsWithErrors()}
+          />
         ) : (
           <div className="max-w-4xl mx-auto">
             <ModernFormBuilder {...builderProps} fields={fields} />
@@ -494,53 +533,55 @@ export function ModernFormBuilderLayout({
 
   const getPreviewTemplate = (): FormTemplate | null => {
     if (selectedTemplatePreview) {
-        const isSavedForm = 'title' in selectedTemplatePreview;
-        return {
-            id: selectedTemplatePreview.id,
-            name: isSavedForm ? selectedTemplatePreview.title : selectedTemplatePreview.name,
-            description: selectedTemplatePreview.description || '',
-            fields: (selectedTemplatePreview.fields || []).map((field: any) => 
-                field.id ? field : { ...field, id: `field_${Date.now()}_${Math.random()}` }
-            ),
-            steps: selectedTemplatePreview.steps || [],
-            isMultiStep: selectedTemplatePreview.isMultiStep || false,
-        };
+      const isSavedForm = 'title' in selectedTemplatePreview;
+      return {
+        id: selectedTemplatePreview.id,
+        name: isSavedForm ? selectedTemplatePreview.title : selectedTemplatePreview.name,
+        description: selectedTemplatePreview.description || '',
+        fields: (selectedTemplatePreview.fields || []).map((field: any) =>
+          field.id ? field : { ...field, id: `field_${Date.now()}_${Math.random()}` },
+        ),
+        steps: selectedTemplatePreview.steps || [],
+        isMultiStep: selectedTemplatePreview.isMultiStep || false,
+      };
     }
     return null;
   };
-  
+
   return (
     <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
       <div className="flex h-screen bg-gray-50 dark:bg-gray-900 font-sans">
         <ModernSidebar
-            onSaveForm={handleSaveForm}
-            collapsed={sidebarCollapsed}
-            onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
-            selectedFieldId={selectedFieldId}
-            onFieldSelect={handleSelectField}
-            onFieldUpdate={(id, updates) => {
-                updateField(id, updates);
-                setHasUnsavedChanges(true);
-            }}
-            onShowTemplateLibrary={handleShowTemplateLibrary}
-            onShowSavedForms={handleShowSavedForms}
-            currentView={currentView}
-            onBackToBuilder={handleBackToBuilder}
+          onSaveForm={handleSaveForm}
+          collapsed={sidebarCollapsed}
+          onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
+          selectedFieldId={selectedFieldId}
+          onFieldSelect={handleSelectField}
+          onFieldUpdate={(id, updates) => {
+            updateField(id, updates);
+            setHasUnsavedChanges(true);
+          }}
+          onShowTemplateLibrary={handleShowTemplateLibrary}
+          onShowSavedForms={handleShowSavedForms}
+          currentView={currentView}
+          onBackToBuilder={handleBackToBuilder}
         />
         <div className="flex-1 flex flex-col overflow-hidden">
           <main className="flex-1 overflow-y-auto p-8 relative">
             <div className="max-w-4xl mx-auto">
               <BreadcrumbNavigation items={getBreadcrumbItems()} />
             </div>
-            
+
             {/* Main Content with Smooth Transitions */}
-            <div className={`transition-all duration-300 ease-in-out ${
-              isTransitioning ? 
-                navigationDirection === 'forward' ? 
-                  'opacity-0 transform translate-x-8' : 
-                  'opacity-0 transform -translate-x-8'
-                : 'opacity-100 transform translate-x-0'
-            }`}>
+            <div
+              className={`transition-all duration-300 ease-in-out ${
+                isTransitioning
+                  ? navigationDirection === 'forward'
+                    ? 'opacity-0 transform translate-x-8'
+                    : 'opacity-0 transform -translate-x-8'
+                  : 'opacity-100 transform translate-x-0'
+              }`}
+            >
               {currentView === 'builder' && (
                 <div className="max-w-4xl mx-auto mb-8">
                   <input
@@ -554,7 +595,7 @@ export function ModernFormBuilderLayout({
               )}
               {renderContent()}
             </div>
-            
+
             {/* Loading overlay during transitions */}
             {isTransitioning && (
               <div className="absolute inset-0 bg-gray-50/50 dark:bg-gray-900/50 backdrop-blur-sm flex items-center justify-center z-10">
@@ -597,7 +638,7 @@ export function ModernFormBuilderLayout({
             form={{
               title: formTitle,
               description: formDescription,
-              fields: isMultiStep ? steps.flatMap(s => s.fields) : fields
+              fields: isMultiStep ? steps.flatMap((s) => s.fields) : fields,
             }}
           />
         )}

@@ -2,7 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { PlusIcon, CircleStackIcon, ChartBarIcon, MagnifyingGlassIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
+import {
+  PlusIcon,
+  CircleStackIcon,
+  ChartBarIcon,
+  MagnifyingGlassIcon,
+  ArrowDownTrayIcon,
+} from '@heroicons/react/24/outline';
 import { useAuth } from '../context/AuthContext';
 
 interface Database {
@@ -52,8 +58,8 @@ export default function DatabasesPage() {
       setError(null);
       const response = await fetch('/api/v1/databases', {
         headers: {
-          'Authorization': `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       if (!response.ok) throw new Error('Failed to fetch databases');
@@ -77,13 +83,13 @@ export default function DatabasesPage() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           query: searchQuery,
           databases: selectedDatabases,
-          limit: 50
-        })
+          limit: 50,
+        }),
       });
 
       if (!response.ok) throw new Error('Search failed');
@@ -170,13 +176,17 @@ export default function DatabasesPage() {
           {searchResults && (
             <div className="mt-6">
               <h3 className="text-md font-medium text-gray-900 mb-4">
-                Found {searchResults.totalMatches} results across {searchResults.totalDatabases} databases
+                Found {searchResults.totalMatches} results across {searchResults.totalDatabases}{' '}
+                databases
               </h3>
               <div className="space-y-4">
                 {searchResults.results.map((result) => (
                   <div key={result.databaseId} className="border border-gray-200 rounded-lg p-4">
                     <h4 className="font-medium text-gray-900 mb-2">
-                      <Link href={`/databases/${result.databaseId}`} className="hover:text-blue-600">
+                      <Link
+                        href={`/databases/${result.databaseId}`}
+                        className="hover:text-blue-600"
+                      >
                         {result.databaseName}
                       </Link>
                     </h4>
@@ -185,16 +195,21 @@ export default function DatabasesPage() {
                         <div key={match.id} className="bg-gray-50 p-3 rounded text-sm">
                           <div className="flex justify-between items-start mb-2">
                             <span className="text-xs text-gray-500">
-                              Score: {match.relevanceScore} | {new Date(match.submittedAt).toLocaleDateString()}
+                              Score: {match.relevanceScore} |{' '}
+                              {new Date(match.submittedAt).toLocaleDateString()}
                             </span>
                           </div>
                           <div className="grid grid-cols-2 gap-2">
-                            {Object.entries(match.data).slice(0, 4).map(([key, value]) => (
-                              <div key={key}>
-                                <span className="font-medium text-gray-700">{key}:</span>{' '}
-                                <span className="text-gray-600">{String(value).substring(0, 50)}...</span>
-                              </div>
-                            ))}
+                            {Object.entries(match.data)
+                              .slice(0, 4)
+                              .map(([key, value]) => (
+                                <div key={key}>
+                                  <span className="font-medium text-gray-700">{key}:</span>{' '}
+                                  <span className="text-gray-600">
+                                    {String(value).substring(0, 50)}...
+                                  </span>
+                                </div>
+                              ))}
                           </div>
                         </div>
                       ))}
@@ -225,78 +240,83 @@ export default function DatabasesPage() {
             </div>
           </div>
         ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {databases.map((database) => (
-            <div key={database.id} className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow">
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <CircleStackIcon className="h-8 w-8 text-blue-600" />
-                  <span className="text-sm text-gray-500">
-                    {database.recordCount} records
-                  </span>
-                </div>
-                
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
-                  <Link href={`/databases/${database.id}`} className="hover:text-blue-600">
-                    {database.name}
-                  </Link>
-                </h3>
-                
-                {database.description && (
-                  <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                    {database.description}
-                  </p>
-                )}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {databases.map((database) => (
+              <div
+                key={database.id}
+                className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow"
+              >
+                <div className="p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <CircleStackIcon className="h-8 w-8 text-blue-600" />
+                    <span className="text-sm text-gray-500">{database.recordCount} records</span>
+                  </div>
 
-                {/* Schema Preview */}
-                <div className="mb-4">
-                  <h4 className="text-sm font-medium text-gray-700 mb-2">Fields:</h4>
-                  <div className="flex flex-wrap gap-1">
-                    {Object.keys(database.tableSchema).slice(0, 4).map((field) => (
-                      <span
-                        key={field}
-                        className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
-                      >
-                        {field}
-                      </span>
-                    ))}
-                    {Object.keys(database.tableSchema).length > 4 && (
-                      <span className="text-xs text-gray-500">
-                        +{Object.keys(database.tableSchema).length - 4} more
-                      </span>
-                    )}
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">
+                    <Link href={`/databases/${database.id}`} className="hover:text-blue-600">
+                      {database.name}
+                    </Link>
+                  </h3>
+
+                  {database.description && (
+                    <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                      {database.description}
+                    </p>
+                  )}
+
+                  {/* Schema Preview */}
+                  <div className="mb-4">
+                    <h4 className="text-sm font-medium text-gray-700 mb-2">Fields:</h4>
+                    <div className="flex flex-wrap gap-1">
+                      {Object.keys(database.tableSchema)
+                        .slice(0, 4)
+                        .map((field) => (
+                          <span
+                            key={field}
+                            className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+                          >
+                            {field}
+                          </span>
+                        ))}
+                      {Object.keys(database.tableSchema).length > 4 && (
+                        <span className="text-xs text-gray-500">
+                          +{Object.keys(database.tableSchema).length - 4} more
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex space-x-2">
+                    <Link
+                      href={`/databases/${database.id}`}
+                      className="flex-1 inline-flex items-center justify-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                    >
+                      View Records
+                    </Link>
+                    <Link
+                      href={`/databases/${database.id}/analytics`}
+                      className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+                    >
+                      <ChartBarIcon className="h-4 w-4" />
+                    </Link>
+                    <button
+                      onClick={() =>
+                        window.open(`/api/v1/databases/${database.id}/export?format=json`, '_blank')
+                      }
+                      className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                    >
+                      <ArrowDownTrayIcon className="h-4 w-4" />
+                    </button>
+                  </div>
+
+                  <div className="mt-4 text-xs text-gray-500">
+                    Created: {new Date(database.createdAt).toLocaleDateString()}
                   </div>
                 </div>
-
-                {/* Actions */}
-                <div className="flex space-x-2">
-                  <Link
-                    href={`/databases/${database.id}`}
-                    className="flex-1 inline-flex items-center justify-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-                  >
-                    View Records
-                  </Link>
-                  <Link
-                    href={`/databases/${database.id}/analytics`}
-                    className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
-                  >
-                    <ChartBarIcon className="h-4 w-4" />
-                  </Link>
-                  <button
-                    onClick={() => window.open(`/api/v1/databases/${database.id}/export?format=json`, '_blank')}
-                    className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-                  >
-                    <ArrowDownTrayIcon className="h-4 w-4" />
-                  </button>
-                </div>
-
-                <div className="mt-4 text-xs text-gray-500">
-                  Created: {new Date(database.createdAt).toLocaleDateString()}
-                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
         )}
 
         {!error && databases.length === 0 && (

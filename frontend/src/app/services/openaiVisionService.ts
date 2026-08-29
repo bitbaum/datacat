@@ -17,7 +17,7 @@ interface UsageStats {
 
 class OpenAIVisionService {
   private isEnabled: boolean = false;
-  private maxMonthlyCost: number = 5.00;
+  private maxMonthlyCost: number = 5.0;
   private dailyRequestLimit: number = 20;
 
   constructor() {
@@ -30,23 +30,23 @@ class OpenAIVisionService {
   private getUsageStats(): UsageStats {
     const today = new Date().toISOString().split('T')[0];
     const month = new Date().toISOString().substring(0, 7);
-    
+
     const stored = localStorage.getItem('openai_usage_stats');
     const defaultStats: UsageStats = {
       today: { requests: 0, estimatedCost: 0, date: today },
-      monthly: { requests: 0, estimatedCost: 0, month: month }
+      monthly: { requests: 0, estimatedCost: 0, month: month },
     };
 
     if (!stored) return defaultStats;
 
     try {
       const stats = JSON.parse(stored);
-      
+
       // Reset daily stats if it's a new day
       if (stats.today.date !== today) {
         stats.today = { requests: 0, estimatedCost: 0, date: today };
       }
-      
+
       // Reset monthly stats if it's a new month
       if (stats.monthly.month !== month) {
         stats.monthly = { requests: 0, estimatedCost: 0, month: month };
@@ -67,17 +67,17 @@ class OpenAIVisionService {
 
     // Check daily limit
     if (stats.today.requests >= this.dailyRequestLimit) {
-      return { 
-        allowed: false, 
-        reason: `Daily limit reached (${this.dailyRequestLimit} requests). Try again tomorrow.` 
+      return {
+        allowed: false,
+        reason: `Daily limit reached (${this.dailyRequestLimit} requests). Try again tomorrow.`,
       };
     }
 
     // Check monthly cost limit
     if (stats.monthly.estimatedCost >= this.maxMonthlyCost) {
-      return { 
-        allowed: false, 
-        reason: `Monthly cost limit reached ($${this.maxMonthlyCost}). Wait for next month or increase limit.` 
+      return {
+        allowed: false,
+        reason: `Monthly cost limit reached ($${this.maxMonthlyCost}). Wait for next month or increase limit.`,
       };
     }
 
@@ -86,7 +86,7 @@ class OpenAIVisionService {
 
   private trackUsage(estimatedCost: number): void {
     const stats = this.getUsageStats();
-    
+
     stats.today.requests += 1;
     stats.today.estimatedCost += estimatedCost;
     stats.monthly.requests += 1;
@@ -99,28 +99,28 @@ class OpenAIVisionService {
     // GPT-4o Mini Vision pricing: ~$0.003 per image analysis
     // We use a conservative estimate based on file size and type
     const baseCost = 0.003; // $0.003 for GPT-4o mini
-    
+
     // PDF files might need more processing
     if (file.type === 'application/pdf') {
       return baseCost * 1.5; // ~$0.0045 for PDFs
     }
-    
+
     // Large images might cost more
     const sizeMultiplier = file.size > 1024 * 1024 ? 1.2 : 1.0; // 20% more for files > 1MB
-    
+
     return baseCost * sizeMultiplier;
   }
 
   async analyzeImage(
     file: File,
-    onProgress?: (progress: VisionAnalysisProgress) => void
+    onProgress?: (progress: VisionAnalysisProgress) => void,
   ): Promise<VisionAnalysisResult> {
     return this.analyzeFile(file, onProgress, false);
   }
 
   async analyzePDF(
     file: File,
-    onProgress?: (progress: VisionAnalysisProgress) => void
+    onProgress?: (progress: VisionAnalysisProgress) => void,
   ): Promise<VisionAnalysisResult> {
     return this.analyzeFile(file, onProgress, true);
   }
@@ -128,12 +128,14 @@ class OpenAIVisionService {
   private async analyzeFile(
     file: File,
     onProgress?: (progress: VisionAnalysisProgress) => void,
-    isPDF: boolean = false
+    isPDF: boolean = false,
   ): Promise<VisionAnalysisResult> {
     try {
       // Check if Vision API feature is enabled
       if (!this.isEnabled) {
-        throw new Error('OpenAI Vision API ist nicht aktiviert. Bitte NEXT_PUBLIC_ENABLE_VISION_API=true setzen.');
+        throw new Error(
+          'OpenAI Vision API ist nicht aktiviert. Bitte NEXT_PUBLIC_ENABLE_VISION_API=true setzen.',
+        );
       }
 
       // Check usage limits
@@ -148,16 +150,16 @@ class OpenAIVisionService {
       onProgress?.({
         stage: 'uploading',
         progress: 10,
-        message: isPDF ? 'PDF wird hochgeladen...' : 'Bild wird hochgeladen...'
+        message: isPDF ? 'PDF wird hochgeladen...' : 'Bild wird hochgeladen...',
       });
 
       // Convert file to base64
       const base64 = await this.fileToBase64(file);
-      
+
       onProgress?.({
         stage: 'processing',
         progress: 30,
-        message: 'Datei wird für KI-Analyse vorbereitet...'
+        message: 'Datei wird für KI-Analyse vorbereitet...',
       });
 
       // Prepare the prompt
@@ -166,20 +168,20 @@ class OpenAIVisionService {
       onProgress?.({
         stage: 'analyzing',
         progress: 60,
-        message: 'OpenAI analysiert die Formularstruktur...'
+        message: 'OpenAI analysiert die Formularstruktur...',
       });
 
       // Call server-side API to keep credentials safe
       const response = await fetch('/api/v1/vision', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           file: { mimeType: file.type, base64 },
           prompt,
-          isPDF
-        })
+          isPDF,
+        }),
       });
 
       if (!response.ok) {
@@ -192,7 +194,7 @@ class OpenAIVisionService {
       onProgress?.({
         stage: 'generating',
         progress: 85,
-        message: 'Formularfelder werden generiert...'
+        message: 'Formularfelder werden generiert...',
       });
 
       // Parse the response
@@ -204,7 +206,7 @@ class OpenAIVisionService {
       onProgress?.({
         stage: 'complete',
         progress: 100,
-        message: 'Analyse erfolgreich abgeschlossen!'
+        message: 'Analyse erfolgreich abgeschlossen!',
       });
 
       return {
@@ -212,14 +214,13 @@ class OpenAIVisionService {
         fields,
         confidence: 0.85, // High confidence for real AI
         processingTime: Date.now(),
-        originalImageUrl: isPDF ? undefined : URL.createObjectURL(file)
+        originalImageUrl: isPDF ? undefined : URL.createObjectURL(file),
       };
-
     } catch (error) {
       onProgress?.({
         stage: 'error',
         progress: 0,
-        message: `Fehler: ${error instanceof Error ? error.message : 'Unbekannter Fehler'}`
+        message: `Fehler: ${error instanceof Error ? error.message : 'Unbekannter Fehler'}`,
       });
 
       return {
@@ -227,7 +228,7 @@ class OpenAIVisionService {
         fields: [],
         confidence: 0,
         processingTime: Date.now(),
-        error: error instanceof Error ? error.message : 'Analyse fehlgeschlagen'
+        error: error instanceof Error ? error.message : 'Analyse fehlgeschlagen',
       };
     }
   }
@@ -300,8 +301,8 @@ Antworte NUR mit dem JSON-Format, keine zusätzlichen Erklärungen.`;
           type: 'text',
           label: 'Erkanntes Textfeld',
           name: 'detectedField',
-          required: false
-        }
+          required: false,
+        },
       ];
     }
   }
@@ -313,7 +314,7 @@ Antworte NUR mit dem JSON-Format, keine zusätzlichen Erklärungen.`;
       daily: stats.today.requests,
       monthly: Math.round(stats.monthly.estimatedCost * 100) / 100,
       monthlyBudget: this.maxMonthlyCost,
-      dailyLimit: this.dailyRequestLimit
+      dailyLimit: this.dailyRequestLimit,
     };
   }
 

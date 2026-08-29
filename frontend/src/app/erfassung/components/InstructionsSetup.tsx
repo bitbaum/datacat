@@ -1,7 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { DocumentTextIcon, CloudArrowUpIcon, CheckCircleIcon, ExclamationTriangleIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
+import {
+  DocumentTextIcon,
+  CloudArrowUpIcon,
+  CheckCircleIcon,
+  ExclamationTriangleIcon,
+  PlusIcon,
+  TrashIcon,
+} from '@heroicons/react/24/outline';
 
 interface InstructionsSetupProps {
   onInstructionsComplete: (instructions: InstructionsConfig) => void;
@@ -66,7 +73,7 @@ const defaultInstructions: Partial<InstructionsConfig> = {
       label: 'Produkttitel',
       type: 'text',
       required: true,
-      description: 'Der vollständige Name des Produkts wie er auf der Verpackung steht'
+      description: 'Der vollständige Name des Produkts wie er auf der Verpackung steht',
     },
     {
       id: 'manufacturer',
@@ -74,7 +81,7 @@ const defaultInstructions: Partial<InstructionsConfig> = {
       label: 'Hersteller',
       type: 'text',
       required: true,
-      description: 'Der Markenname oder Herstellername'
+      description: 'Der Markenname oder Herstellername',
     },
     {
       id: 'articleNumber',
@@ -82,7 +89,7 @@ const defaultInstructions: Partial<InstructionsConfig> = {
       label: 'Artikelnummer',
       type: 'text',
       required: true,
-      description: 'Die eindeutige Produktnummer des Herstellers'
+      description: 'Die eindeutige Produktnummer des Herstellers',
     },
     {
       id: 'price',
@@ -90,7 +97,7 @@ const defaultInstructions: Partial<InstructionsConfig> = {
       label: 'Preis',
       type: 'currency',
       required: false,
-      description: 'Verkaufspreis in Euro'
+      description: 'Verkaufspreis in Euro',
     },
     {
       id: 'dimensions',
@@ -98,7 +105,7 @@ const defaultInstructions: Partial<InstructionsConfig> = {
       label: 'Abmessungen',
       type: 'dimensions',
       required: false,
-      description: 'Länge × Breite × Höhe in mm'
+      description: 'Länge × Breite × Höhe in mm',
     },
     {
       id: 'weight',
@@ -106,8 +113,8 @@ const defaultInstructions: Partial<InstructionsConfig> = {
       label: 'Gewicht',
       type: 'number',
       required: false,
-      description: 'Gewicht in kg'
-    }
+      description: 'Gewicht in kg',
+    },
   ],
   extractionPrompt: `Analysiere das Produktbild und extrahiere folgende Informationen:
 
@@ -127,15 +134,18 @@ Achte besonders auf:
 Gib für jedes Feld eine Konfidenz von 0-1 an, basierend auf der Klarheit der Information.`,
   confidenceThresholds: {
     high: 0.8,
-    medium: 0.6
+    medium: 0.6,
   },
   knowledgeBase: [],
-  validationRules: []
+  validationRules: [],
 };
 
-export function InstructionsSetup({ onInstructionsComplete, existingInstructions }: InstructionsSetupProps) {
+export function InstructionsSetup({
+  onInstructionsComplete,
+  existingInstructions,
+}: InstructionsSetupProps) {
   const [instructions, setInstructions] = useState<Partial<InstructionsConfig>>(
-    existingInstructions || defaultInstructions
+    existingInstructions || defaultInstructions,
   );
   const [dragActive, setDragActive] = useState(false);
 
@@ -153,25 +163,25 @@ export function InstructionsSetup({ onInstructionsComplete, existingInstructions
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-    
+
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       handleFiles(e.dataTransfer.files);
     }
   };
 
   const handleFiles = (files: FileList) => {
-    const newFiles: KnowledgeBaseFile[] = Array.from(files).map(file => ({
+    const newFiles: KnowledgeBaseFile[] = Array.from(files).map((file) => ({
       id: Date.now().toString() + Math.random().toString(),
       filename: file.name,
       type: getFileType(file.name),
       size: file.size,
       uploadedAt: new Date(),
-      processed: false
+      processed: false,
     }));
 
-    setInstructions(prev => ({
+    setInstructions((prev) => ({
       ...prev,
-      knowledgeBase: [...(prev.knowledgeBase || []), ...newFiles]
+      knowledgeBase: [...(prev.knowledgeBase || []), ...newFiles],
     }));
   };
 
@@ -190,28 +200,28 @@ export function InstructionsSetup({ onInstructionsComplete, existingInstructions
       label: 'Neues Feld',
       type: 'text',
       required: false,
-      description: ''
+      description: '',
     };
 
-    setInstructions(prev => ({
+    setInstructions((prev) => ({
       ...prev,
-      fieldDefinitions: [...(prev.fieldDefinitions || []), newField]
+      fieldDefinitions: [...(prev.fieldDefinitions || []), newField],
     }));
   };
 
   const updateFieldDefinition = (id: string, updates: Partial<FieldDefinition>) => {
-    setInstructions(prev => ({
+    setInstructions((prev) => ({
       ...prev,
-      fieldDefinitions: prev.fieldDefinitions?.map(field => 
-        field.id === id ? { ...field, ...updates } : field
-      )
+      fieldDefinitions: prev.fieldDefinitions?.map((field) =>
+        field.id === id ? { ...field, ...updates } : field,
+      ),
     }));
   };
 
   const removeFieldDefinition = (id: string) => {
-    setInstructions(prev => ({
+    setInstructions((prev) => ({
       ...prev,
-      fieldDefinitions: prev.fieldDefinitions?.filter(field => field.id !== id)
+      fieldDefinitions: prev.fieldDefinitions?.filter((field) => field.id !== id),
     }));
   };
 
@@ -226,7 +236,7 @@ export function InstructionsSetup({ onInstructionsComplete, existingInstructions
       validationRules: instructions.validationRules || [],
       confidenceThresholds: instructions.confidenceThresholds || { high: 0.8, medium: 0.6 },
       createdAt: existingInstructions?.createdAt || new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
 
     onInstructionsComplete(completeInstructions);
@@ -249,7 +259,7 @@ export function InstructionsSetup({ onInstructionsComplete, existingInstructions
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
           Grundkonfiguration
         </h3>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -258,12 +268,12 @@ export function InstructionsSetup({ onInstructionsComplete, existingInstructions
             <input
               type="text"
               value={instructions.name || ''}
-              onChange={(e) => setInstructions(prev => ({ ...prev, name: e.target.value }))}
+              onChange={(e) => setInstructions((prev) => ({ ...prev, name: e.target.value }))}
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
               placeholder="z.B. Elektronikprodukte, Werkzeuge, etc."
             />
           </div>
-          
+
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Beschreibung
@@ -271,7 +281,9 @@ export function InstructionsSetup({ onInstructionsComplete, existingInstructions
             <input
               type="text"
               value={instructions.description || ''}
-              onChange={(e) => setInstructions(prev => ({ ...prev, description: e.target.value }))}
+              onChange={(e) =>
+                setInstructions((prev) => ({ ...prev, description: e.target.value }))
+              }
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
               placeholder="Kurze Beschreibung des Anwendungsbereichs"
             />
@@ -296,7 +308,10 @@ export function InstructionsSetup({ onInstructionsComplete, existingInstructions
 
         <div className="space-y-4">
           {instructions.fieldDefinitions?.map((field) => (
-            <div key={field.id} className="border border-gray-200 dark:border-gray-600 rounded-lg p-4">
+            <div
+              key={field.id}
+              className="border border-gray-200 dark:border-gray-600 rounded-lg p-4"
+            >
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div>
                   <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
@@ -309,7 +324,7 @@ export function InstructionsSetup({ onInstructionsComplete, existingInstructions
                     className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
                   />
                 </div>
-                
+
                 <div>
                   <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
                     Anzeigename
@@ -321,14 +336,18 @@ export function InstructionsSetup({ onInstructionsComplete, existingInstructions
                     className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
                   />
                 </div>
-                
+
                 <div>
                   <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
                     Feldtyp
                   </label>
                   <select
                     value={field.type}
-                    onChange={(e) => updateFieldDefinition(field.id, { type: e.target.value as FieldDefinition['type'] })}
+                    onChange={(e) =>
+                      updateFieldDefinition(field.id, {
+                        type: e.target.value as FieldDefinition['type'],
+                      })
+                    }
                     className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
                   >
                     <option value="text">Text</option>
@@ -339,18 +358,18 @@ export function InstructionsSetup({ onInstructionsComplete, existingInstructions
                     <option value="boolean">Ja/Nein</option>
                   </select>
                 </div>
-                
+
                 <div className="flex items-end">
                   <div className="flex items-center space-x-2">
                     <input
                       type="checkbox"
                       checked={field.required}
-                      onChange={(e) => updateFieldDefinition(field.id, { required: e.target.checked })}
+                      onChange={(e) =>
+                        updateFieldDefinition(field.id, { required: e.target.checked })
+                      }
                       className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
                     />
-                    <label className="text-xs text-gray-500 dark:text-gray-400">
-                      Pflichtfeld
-                    </label>
+                    <label className="text-xs text-gray-500 dark:text-gray-400">Pflichtfeld</label>
                   </div>
                   <button
                     onClick={() => removeFieldDefinition(field.id)}
@@ -360,7 +379,7 @@ export function InstructionsSetup({ onInstructionsComplete, existingInstructions
                   </button>
                 </div>
               </div>
-              
+
               <div className="mt-3">
                 <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
                   Beschreibung für KI
@@ -389,8 +408,8 @@ export function InstructionsSetup({ onInstructionsComplete, existingInstructions
 
         <div
           className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
-            dragActive 
-              ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20' 
+            dragActive
+              ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20'
               : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500'
           }`}
           onDragEnter={handleDrag}
@@ -400,10 +419,13 @@ export function InstructionsSetup({ onInstructionsComplete, existingInstructions
         >
           <CloudArrowUpIcon className="mx-auto h-12 w-12 text-gray-400" />
           <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-            <label htmlFor="file-upload" className="font-medium text-indigo-600 hover:text-indigo-500 cursor-pointer">
+            <label
+              htmlFor="file-upload"
+              className="font-medium text-indigo-600 hover:text-indigo-500 cursor-pointer"
+            >
               Dateien hochladen
-            </label>
-            {' '}oder per Drag & Drop
+            </label>{' '}
+            oder per Drag & Drop
           </p>
           <p className="text-xs text-gray-500">PDF, DOC, XLS, TXT bis zu 10MB</p>
           <input
@@ -421,7 +443,10 @@ export function InstructionsSetup({ onInstructionsComplete, existingInstructions
         {instructions.knowledgeBase && instructions.knowledgeBase.length > 0 && (
           <div className="mt-4 space-y-2">
             {instructions.knowledgeBase.map((file) => (
-              <div key={file.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-md">
+              <div
+                key={file.id}
+                className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-md"
+              >
                 <div className="flex items-center">
                   <DocumentTextIcon className="h-5 w-5 text-gray-400 mr-3" />
                   <div>
@@ -448,16 +473,16 @@ export function InstructionsSetup({ onInstructionsComplete, existingInstructions
 
       {/* AI Prompt */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-          KI-Anweisungen
-        </h3>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">KI-Anweisungen</h3>
         <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
           Detaillierte Anweisungen für die KI zur Datenextraktion
         </p>
-        
+
         <textarea
           value={instructions.extractionPrompt || ''}
-          onChange={(e) => setInstructions(prev => ({ ...prev, extractionPrompt: e.target.value }))}
+          onChange={(e) =>
+            setInstructions((prev) => ({ ...prev, extractionPrompt: e.target.value }))
+          }
           rows={12}
           className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-700 dark:text-white font-mono text-sm"
           placeholder="Beschreiben Sie der KI genau, wie sie die Daten aus den Bildern extrahieren soll..."
@@ -469,7 +494,7 @@ export function InstructionsSetup({ onInstructionsComplete, existingInstructions
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
           Vertrauenswerte-Schwellenwerte
         </h3>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -482,14 +507,16 @@ export function InstructionsSetup({ onInstructionsComplete, existingInstructions
                 max="1"
                 step="0.01"
                 value={instructions.confidenceThresholds?.high || 0.8}
-                onChange={(e) => setInstructions(prev => ({
-                  ...prev,
-                  confidenceThresholds: {
-                    ...prev.confidenceThresholds,
-                    high: parseFloat(e.target.value),
-                    medium: prev.confidenceThresholds?.medium || 0.6
-                  }
-                }))}
+                onChange={(e) =>
+                  setInstructions((prev) => ({
+                    ...prev,
+                    confidenceThresholds: {
+                      ...prev.confidenceThresholds,
+                      high: parseFloat(e.target.value),
+                      medium: prev.confidenceThresholds?.medium || 0.6,
+                    },
+                  }))
+                }
                 className="flex-1 mr-3"
               />
               <span className="text-sm font-medium text-gray-900 dark:text-white w-12">
@@ -497,7 +524,7 @@ export function InstructionsSetup({ onInstructionsComplete, existingInstructions
               </span>
             </div>
           </div>
-          
+
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Mittlere Konfidenz (Gelb) ab
@@ -509,13 +536,15 @@ export function InstructionsSetup({ onInstructionsComplete, existingInstructions
                 max="1"
                 step="0.01"
                 value={instructions.confidenceThresholds?.medium || 0.6}
-                onChange={(e) => setInstructions(prev => ({
-                  ...prev,
-                  confidenceThresholds: {
-                    high: prev.confidenceThresholds?.high || 0.8,
-                    medium: parseFloat(e.target.value)
-                  }
-                }))}
+                onChange={(e) =>
+                  setInstructions((prev) => ({
+                    ...prev,
+                    confidenceThresholds: {
+                      high: prev.confidenceThresholds?.high || 0.8,
+                      medium: parseFloat(e.target.value),
+                    },
+                  }))
+                }
                 className="flex-1 mr-3"
               />
               <span className="text-sm font-medium text-gray-900 dark:text-white w-12">
@@ -524,9 +553,10 @@ export function InstructionsSetup({ onInstructionsComplete, existingInstructions
             </div>
           </div>
         </div>
-        
+
         <div className="mt-4 text-xs text-gray-500 dark:text-gray-400">
-          Werte unter {Math.round((instructions.confidenceThresholds?.medium || 0.6) * 100)}% werden als niedrige Konfidenz (Rot) markiert
+          Werte unter {Math.round((instructions.confidenceThresholds?.medium || 0.6) * 100)}% werden
+          als niedrige Konfidenz (Rot) markiert
         </div>
       </div>
 

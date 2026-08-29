@@ -13,7 +13,7 @@ function makeRequest(options, data = null) {
   return new Promise((resolve, reject) => {
     const req = http.request(options, (res) => {
       let body = '';
-      res.on('data', chunk => body += chunk);
+      res.on('data', (chunk) => (body += chunk));
       res.on('end', () => {
         try {
           const jsonData = JSON.parse(body);
@@ -25,22 +25,22 @@ function makeRequest(options, data = null) {
     });
 
     req.on('error', reject);
-    
+
     if (data) {
       req.write(JSON.stringify(data));
     }
-    
+
     req.end();
   });
 }
 
 async function runAuthTests() {
   console.log('🧪 Starting Authentication Integration Tests\n');
-  
+
   const testUser = {
     email: `test-${Date.now()}@example.com`,
     password: 'testpass123',
-    name: 'Integration Test User'
+    name: 'Integration Test User',
   };
   let userToken = '';
 
@@ -53,14 +53,14 @@ async function runAuthTests() {
       path: '/api/v1/auth/register',
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
-      }
+        'Content-Type': 'application/json',
+      },
     };
-    
+
     const registerResponse = await makeRequest(registerOptions, testUser);
     console.log(`   Status: ${registerResponse.status}`);
     console.log(`   Message: ${registerResponse.data.message}`);
-    
+
     if (registerResponse.status === 201 && registerResponse.data.success) {
       console.log('   ✅ Registration successful');
       console.log(`   ✅ User ID: ${registerResponse.data.user.id.substring(0, 10)}...`);
@@ -79,18 +79,18 @@ async function runAuthTests() {
       path: '/api/v1/auth/login',
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
-      }
+        'Content-Type': 'application/json',
+      },
     };
-    
+
     const loginResponse = await makeRequest(loginOptions, {
       email: testUser.email,
-      password: testUser.password
+      password: testUser.password,
     });
-    
+
     console.log(`   Status: ${loginResponse.status}`);
     console.log(`   Message: ${loginResponse.data.message}`);
-    
+
     if (loginResponse.status === 200 && loginResponse.data.success) {
       console.log('   ✅ Login successful');
       userToken = loginResponse.data.token;
@@ -107,13 +107,13 @@ async function runAuthTests() {
       path: '/api/v1/auth/profile',
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${userToken}`
-      }
+        Authorization: `Bearer ${userToken}`,
+      },
     };
-    
+
     const profileResponse = await makeRequest(profileOptions);
     console.log(`   Status: ${profileResponse.status}`);
-    
+
     if (profileResponse.status === 200 && profileResponse.data.success) {
       console.log('   ✅ Protected endpoint access successful');
       console.log(`   ✅ User profile retrieved: ${profileResponse.data.user.email}`);
@@ -129,13 +129,13 @@ async function runAuthTests() {
       path: '/api/v1/auth/profile',
       method: 'GET',
       headers: {
-        'Authorization': 'Bearer invalid-token-here'
-      }
+        Authorization: 'Bearer invalid-token-here',
+      },
     };
-    
+
     const invalidResponse = await makeRequest(invalidTokenOptions);
     console.log(`   Status: ${invalidResponse.status}`);
-    
+
     if (invalidResponse.status === 401 && !invalidResponse.data.success) {
       console.log('   ✅ Invalid token correctly rejected');
     } else {
@@ -150,13 +150,13 @@ async function runAuthTests() {
       path: '/api/v1/auth/verify',
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${userToken}`
-      }
+        Authorization: `Bearer ${userToken}`,
+      },
     };
-    
+
     const verifyResponse = await makeRequest(verifyOptions);
     console.log(`   Status: ${verifyResponse.status}`);
-    
+
     if (verifyResponse.status === 200 && verifyResponse.data.success) {
       console.log('   ✅ Token verification successful');
     } else {
@@ -167,11 +167,11 @@ async function runAuthTests() {
     console.log('\n6️⃣ Testing Invalid Login Credentials...');
     const invalidLoginResponse = await makeRequest(loginOptions, {
       email: testUser.email,
-      password: 'wrongpassword'
+      password: 'wrongpassword',
     });
-    
+
     console.log(`   Status: ${invalidLoginResponse.status}`);
-    
+
     if (invalidLoginResponse.status === 401 && !invalidLoginResponse.data.success) {
       console.log('   ✅ Invalid credentials correctly rejected');
     } else {
@@ -188,7 +188,6 @@ async function runAuthTests() {
     console.log('   🔄 CRUD Operations: Create users, read profiles');
 
     console.log('\n✅ All Authentication Tests Completed Successfully! 🎉');
-
   } catch (error) {
     console.error('\n❌ Test Suite Failed:', error.message);
   }

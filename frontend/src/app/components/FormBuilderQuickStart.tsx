@@ -1,7 +1,13 @@
 'use client';
 
 import React, { useState } from 'react';
-import { CameraIcon, DocumentArrowUpIcon, SquaresPlusIcon, RocketLaunchIcon, SparklesIcon } from '@heroicons/react/24/outline';
+import {
+  CameraIcon,
+  DocumentArrowUpIcon,
+  SquaresPlusIcon,
+  RocketLaunchIcon,
+  SparklesIcon,
+} from '@heroicons/react/24/outline';
 import { fieldBlocks } from '../data/fieldBlocks';
 import { fieldTemplates } from '../data/fieldTemplates';
 import { visionService, VisionAnalysisProgress } from '../services/visionService';
@@ -27,15 +33,16 @@ export function FormBuilderQuickStart({ onMethodSelect }: FormBuilderQuickStartP
     setAnalysisProgress(null);
 
     try {
-      const result = file.type === 'application/pdf' 
-        ? await visionService.analyzePDF(file, setAnalysisProgress)
-        : await visionService.analyzeImage(file, setAnalysisProgress);
+      const result =
+        file.type === 'application/pdf'
+          ? await visionService.analyzePDF(file, setAnalysisProgress)
+          : await visionService.analyzeImage(file, setAnalysisProgress);
 
       if (result.success) {
         const stepId = isMultiStep ? steps[currentStep]?.id : undefined;
-        
+
         // Add analyzed fields to the form
-        result.fields.forEach(fieldConfig => {
+        result.fields.forEach((fieldConfig) => {
           addField(fieldConfig.type, stepId);
           // Note: Field configuration would be updated here in a real implementation
         });
@@ -77,7 +84,7 @@ export function FormBuilderQuickStart({ onMethodSelect }: FormBuilderQuickStartP
                       {analysisProgress.message}
                     </p>
                     <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                      <div 
+                      <div
                         className="bg-blue-600 h-2 rounded-full transition-all duration-300"
                         style={{ width: `${analysisProgress.progress}%` }}
                       ></div>
@@ -106,7 +113,7 @@ export function FormBuilderQuickStart({ onMethodSelect }: FormBuilderQuickStartP
         {/* Creation Methods Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           {/* Manual Creation + Upload */}
-          <div 
+          <div
             onClick={() => onMethodSelect('manual')}
             className="group cursor-pointer bg-white dark:bg-gray-800 rounded-xl border-2 border-gray-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-500 p-6 transition-all duration-200 hover:shadow-lg"
           >
@@ -118,13 +125,12 @@ export function FormBuilderQuickStart({ onMethodSelect }: FormBuilderQuickStartP
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
                   Felder hinzufügen
                 </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-300">
-                  Manuell oder per Upload
-                </p>
+                <p className="text-sm text-gray-600 dark:text-gray-300">Manuell oder per Upload</p>
               </div>
             </div>
             <p className="text-gray-600 dark:text-gray-300 mb-4">
-              Einzelne Felder, Bausteine oder Upload von Screenshots/PDFs. KI erstellt automatisch Felder aus Ihren Bildern.
+              Einzelne Felder, Bausteine oder Upload von Screenshots/PDFs. KI erstellt automatisch
+              Felder aus Ihren Bildern.
             </p>
             <div className="flex items-center justify-between mb-3">
               <span className="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 text-xs rounded-full">
@@ -137,13 +143,18 @@ export function FormBuilderQuickStart({ onMethodSelect }: FormBuilderQuickStartP
             <div className="flex items-center text-blue-600 dark:text-blue-400 text-sm font-medium group-hover:translate-x-2 transition-transform">
               <span>Jetzt starten</span>
               <svg className="ml-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
               </svg>
             </div>
           </div>
 
           {/* Field Blocks */}
-          <div 
+          <div
             onClick={() => onMethodSelect('blocks')}
             className="group cursor-pointer bg-white dark:bg-gray-800 rounded-xl border-2 border-gray-200 dark:border-gray-700 hover:border-green-500 dark:hover:border-green-500 p-6 transition-all duration-200 hover:shadow-lg"
           >
@@ -155,17 +166,19 @@ export function FormBuilderQuickStart({ onMethodSelect }: FormBuilderQuickStartP
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
                   Mit Bausteinen
                 </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-300">
-                  Fertige Feldgruppen
-                </p>
+                <p className="text-sm text-gray-600 dark:text-gray-300">Fertige Feldgruppen</p>
               </div>
             </div>
             <p className="text-gray-600 dark:text-gray-300 mb-4">
-              Effizient: Kombinieren Sie vorgefertigte Bausteine wie Kontaktdaten, Adresse oder Firmendaten.
+              Effizient: Kombinieren Sie vorgefertigte Bausteine wie Kontaktdaten, Adresse oder
+              Firmendaten.
             </p>
             <div className="flex flex-wrap gap-2 mb-4">
-              {fieldBlocks.slice(0, 3).map(block => (
-                <span key={block.id} className="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 text-xs rounded-full">
+              {fieldBlocks.slice(0, 3).map((block) => (
+                <span
+                  key={block.id}
+                  className="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 text-xs rounded-full"
+                >
                   {block.name}
                 </span>
               ))}
@@ -173,13 +186,18 @@ export function FormBuilderQuickStart({ onMethodSelect }: FormBuilderQuickStartP
             <div className="flex items-center text-green-600 dark:text-green-400 text-sm font-medium group-hover:translate-x-2 transition-transform">
               <span>Bausteine ansehen</span>
               <svg className="ml-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
               </svg>
             </div>
           </div>
 
           {/* Templates */}
-          <div 
+          <div
             onClick={() => onMethodSelect('templates')}
             className="group cursor-pointer bg-white dark:bg-gray-800 rounded-xl border-2 border-gray-200 dark:border-gray-700 hover:border-amber-500 dark:hover:border-amber-500 p-6 transition-all duration-200 hover:shadow-lg"
           >
@@ -188,20 +206,20 @@ export function FormBuilderQuickStart({ onMethodSelect }: FormBuilderQuickStartP
                 <RocketLaunchIcon className="h-8 w-8 text-amber-600 dark:text-amber-400" />
               </div>
               <div>
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-                  Aus Vorlage
-                </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-300">
-                  Bewährte Formulare
-                </p>
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Aus Vorlage</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-300">Bewährte Formulare</p>
               </div>
             </div>
             <p className="text-gray-600 dark:text-gray-300 mb-4">
-              Schnellstart: Verwenden Sie professionelle Vorlagen und passen Sie diese an Ihre Bedürfnisse an.
+              Schnellstart: Verwenden Sie professionelle Vorlagen und passen Sie diese an Ihre
+              Bedürfnisse an.
             </p>
             <div className="flex flex-wrap gap-2 mb-4">
-              {fieldTemplates.slice(0, 3).map(template => (
-                <span key={template.id} className="px-2 py-1 bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-300 text-xs rounded-full">
+              {fieldTemplates.slice(0, 3).map((template) => (
+                <span
+                  key={template.id}
+                  className="px-2 py-1 bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-300 text-xs rounded-full"
+                >
                   {template.name}
                 </span>
               ))}
@@ -209,7 +227,12 @@ export function FormBuilderQuickStart({ onMethodSelect }: FormBuilderQuickStartP
             <div className="flex items-center text-amber-600 dark:text-amber-400 text-sm font-medium group-hover:translate-x-2 transition-transform">
               <span>Vorlagen durchsuchen</span>
               <svg className="ml-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
               </svg>
             </div>
           </div>
@@ -227,10 +250,11 @@ export function FormBuilderQuickStart({ onMethodSelect }: FormBuilderQuickStartP
         {/* Bottom help text */}
         <div className="text-center text-gray-500 dark:text-gray-400">
           <p className="text-sm">
-            💡 Sie können jederzeit zwischen den Methoden wechseln und verschiedene Ansätze kombinieren
+            💡 Sie können jederzeit zwischen den Methoden wechseln und verschiedene Ansätze
+            kombinieren
           </p>
         </div>
       </div>
     </div>
   );
-} 
+}

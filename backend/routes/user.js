@@ -23,4 +23,4 @@ router.delete('/me', auth, userController.deleteUser);
 // @access  Private
 router.get('/stats', auth, userController.getUserStats);
 
-module.exports = router; 
+module.exports = router;

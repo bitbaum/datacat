@@ -40,7 +40,7 @@ export function useModal(options: UseModalOptions = {}): UseModalReturn {
     isOpen,
     open,
     close,
-    toggle
+    toggle,
   };
 }
 
@@ -48,12 +48,12 @@ export function useModal(options: UseModalOptions = {}): UseModalReturn {
 export function useModals<T extends string>(modalNames: T[]): Record<T, UseModalReturn> {
   return useMemo(() => {
     const modals = {} as Record<T, UseModalReturn>;
-    modalNames.forEach(name => {
+    modalNames.forEach((name) => {
       modals[name] = {
         isOpen: false,
         open: () => {},
         close: () => {},
-        toggle: () => {}
+        toggle: () => {},
       };
     });
     return modals;
@@ -65,10 +65,13 @@ export function useModalWithData<T = any>(options: UseModalOptions = {}) {
   const modal = useModal(options);
   const [data, setData] = useState<T | null>(null);
 
-  const openWithData = useCallback((modalData: T) => {
-    setData(modalData);
-    modal.open();
-  }, [modal]);
+  const openWithData = useCallback(
+    (modalData: T) => {
+      setData(modalData);
+      modal.open();
+    },
+    [modal],
+  );
 
   const closeAndClearData = useCallback(() => {
     modal.close();
@@ -80,6 +83,6 @@ export function useModalWithData<T = any>(options: UseModalOptions = {}) {
     data,
     openWithData,
     closeAndClearData,
-    setData
+    setData,
   };
 }

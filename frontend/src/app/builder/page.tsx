@@ -38,11 +38,7 @@ export default function FormBuilderPage() {
   };
 
   if (!showFormBuilder) {
-    return (
-      <FormCaptureLanding
-        onStartBuilding={handleStartBuilding}
-      />
-    );
+    return <FormCaptureLanding onStartBuilding={handleStartBuilding} />;
   }
 
   return (
@@ -52,4 +48,4 @@ export default function FormBuilderPage() {
       onFieldsChange={handleFieldsChange}
     />
   );
-} 
+}

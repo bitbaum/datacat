@@ -8,7 +8,7 @@ const OpenAI = require('openai');
 class AIAnalysisService {
   constructor() {
     this.openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY
+      apiKey: process.env.OPENAI_API_KEY,
     });
   }
 
@@ -20,7 +20,7 @@ class AIAnalysisService {
 
     // Get form and submissions data
     const formData = await this.getFormDataForAnalysis(formId, userId);
-    
+
     if (!formData) {
       throw new Error('Database not found or access denied');
     }
@@ -33,23 +33,23 @@ class AIAnalysisService {
         prompt: query,
         model,
         userId,
-        status: 'PROCESSING'
-      }
+        status: 'PROCESSING',
+      },
     });
 
     try {
       const startTime = Date.now();
-      
+
       // Prepare data context for AI
       const dataContext = this.prepareDataContext(formData);
-      
+
       // Generate AI prompt based on analysis type
       const systemPrompt = this.generateSystemPrompt(analysisType, formData.schema);
       const userPrompt = this.generateUserPrompt(query, dataContext);
 
       // Call AI model
       const aiResponse = await this.callAIModel(model, systemPrompt, userPrompt);
-      
+
       const processingTime = Date.now() - startTime;
 
       // Update analysis with results
@@ -58,8 +58,8 @@ class AIAnalysisService {
         data: {
           result: aiResponse,
           processingTime,
-          status: 'COMPLETED'
-        }
+          status: 'COMPLETED',
+        },
       });
 
       return {
@@ -70,18 +70,17 @@ class AIAnalysisService {
         databaseInfo: {
           name: formData.title,
           recordCount: formData.submissions.length,
-          fields: Object.keys(formData.schema)
-        }
+          fields: Object.keys(formData.schema),
+        },
       };
-
     } catch (error) {
       // Update analysis with error
       await prisma.lLMAnalysis.update({
         where: { id: analysis.id },
         data: {
           status: 'FAILED',
-          error: error.message
-        }
+          error: error.message,
+        },
       });
 
       throw error;
@@ -93,7 +92,7 @@ class AIAnalysisService {
    */
   async generateInsights(formId, userId, insightType = 'comprehensive') {
     const formData = await this.getFormDataForAnalysis(formId, userId);
-    
+
     if (!formData || formData.submissions.length === 0) {
       throw new Error('Insufficient data for analysis');
     }
@@ -101,7 +100,7 @@ class AIAnalysisService {
     const insights = await this.analyzeDatabase(formId, userId, {
       query: this.getInsightPrompt(insightType, formData),
       analysisType: 'SUMMARY',
-      model: 'gpt-4'
+      model: 'gpt-4',
     });
 
     return insights;
@@ -118,7 +117,7 @@ class AIAnalysisService {
       where: {
         userId,
         isPublished: true,
-        ...(databases.length > 0 && { id: { in: databases } })
+        ...(databases.length > 0 && { id: { in: databases } }),
       },
       select: {
         id: true,
@@ -126,15 +125,15 @@ class AIAnalysisService {
         description: true,
         schema: true,
         _count: {
-          select: { submissions: true }
-        }
-      }
+          select: { submissions: true },
+        },
+      },
     });
 
     const searchResults = {
       query: searchQuery,
       databases: [],
-      overallInsights: null
+      overallInsights: null,
     };
 
     // Search each database
@@ -145,7 +144,7 @@ class AIAnalysisService {
         const analysis = await this.analyzeDatabase(form.id, userId, {
           query: `Search and analyze this database for: "${searchQuery}". Provide relevant matches and insights.`,
           analysisType: 'EXTRACTION',
-          model: 'gpt-4'
+          model: 'gpt-4',
         });
 
         searchResults.databases.push({
@@ -153,9 +152,8 @@ class AIAnalysisService {
           databaseName: form.title,
           recordCount: form._count.submissions,
           analysis: analysis.result,
-          relevanceScore: this.calculateDatabaseRelevance(searchQuery, form, analysis.result)
+          relevanceScore: this.calculateDatabaseRelevance(searchQuery, form, analysis.result),
         });
-
       } catch (error) {
         console.error(`Search failed for database ${form.id}:`, error.message);
       }
@@ -164,8 +162,8 @@ class AIAnalysisService {
     // Generate overall insights if requested
     if (includeInsights && searchResults.databases.length > 0) {
       searchResults.overallInsights = await this.generateCrossDatabaseInsights(
-        searchQuery, 
-        searchResults.databases
+        searchQuery,
+        searchResults.databases,
       );
     }
 
@@ -180,7 +178,7 @@ class AIAnalysisService {
    */
   async analyzePredictiveInsights(formId, userId) {
     const formData = await this.getFormDataForAnalysis(formId, userId);
-    
+
     if (!formData || formData.submissions.length < 10) {
       throw new Error('Need at least 10 submissions for predictive analysis');
     }
@@ -193,13 +191,13 @@ class AIAnalysisService {
       4. Data quality issues
       5. Recommendations for optimization`,
       analysisType: 'SUMMARY',
-      model: 'gpt-4'
+      model: 'gpt-4',
     });
 
     return {
       ...analysis,
       type: 'predictive_insights',
-      recommendations: await this.generateFormOptimizationSuggestions(formData)
+      recommendations: await this.generateFormOptimizationSuggestions(formData),
     };
   }
 
@@ -210,16 +208,16 @@ class AIAnalysisService {
     const analysis = await prisma.lLMAnalysis.findFirst({
       where: {
         id: analysisId,
-        userId
+        userId,
       },
       include: {
         form: {
           select: {
             title: true,
-            description: true
-          }
-        }
-      }
+            description: true,
+          },
+        },
+      },
     });
 
     if (!analysis) {
@@ -235,7 +233,7 @@ class AIAnalysisService {
       model: analysis.model,
       processingTime: analysis.processingTime,
       confidence: analysis.confidence,
-      createdAt: analysis.createdAt
+      createdAt: analysis.createdAt,
     };
 
     switch (format.toLowerCase()) {
@@ -254,7 +252,7 @@ class AIAnalysisService {
     const form = await prisma.form.findFirst({
       where: {
         id: formId,
-        userId
+        userId,
       },
       select: {
         id: true,
@@ -266,28 +264,29 @@ class AIAnalysisService {
             id: true,
             data: true,
             submittedAt: true,
-            status: true
+            status: true,
           },
           orderBy: {
-            submittedAt: 'desc'
-          }
-        }
-      }
+            submittedAt: 'desc',
+          },
+        },
+      },
     });
 
     if (!form) return null;
 
     return {
       ...form,
-      schema: form.schema.fields ? 
-        form.schema.fields.reduce((acc, field) => {
-          acc[field.name] = {
-            type: field.type,
-            label: field.label,
-            required: field.required
-          };
-          return acc;
-        }, {}) : {}
+      schema: form.schema.fields
+        ? form.schema.fields.reduce((acc, field) => {
+            acc[field.name] = {
+              type: field.type,
+              label: field.label,
+              required: field.required,
+            };
+            return acc;
+          }, {})
+        : {},
     };
   }
 
@@ -297,8 +296,8 @@ class AIAnalysisService {
       description: formData.description,
       schema: formData.schema,
       recordCount: formData.submissions.length,
-      sampleRecords: formData.submissions.slice(0, 10).map(s => s.data),
-      submissionDates: formData.submissions.map(s => s.submittedAt)
+      sampleRecords: formData.submissions.slice(0, 10).map((s) => s.data),
+      submissionDates: formData.submissions.map((s) => s.submittedAt),
     };
   }
 
@@ -315,11 +314,11 @@ Instructions:
 - Be concise but thorough`;
 
     const typeSpecificPrompts = {
-      'SENTIMENT': 'Focus on emotional tone and sentiment analysis of text responses.',
-      'CLASSIFICATION': 'Categorize and classify the data into meaningful groups.',
-      'EXTRACTION': 'Extract specific information and data points as requested.',
-      'SUMMARY': 'Provide comprehensive summaries and key insights.',
-      'CUSTOM': 'Follow the specific analysis request provided by the user.'
+      SENTIMENT: 'Focus on emotional tone and sentiment analysis of text responses.',
+      CLASSIFICATION: 'Categorize and classify the data into meaningful groups.',
+      EXTRACTION: 'Extract specific information and data points as requested.',
+      SUMMARY: 'Provide comprehensive summaries and key insights.',
+      CUSTOM: 'Follow the specific analysis request provided by the user.',
     };
 
     return `${basePrompt}\n\nSpecific Focus: ${typeSpecificPrompts[analysisType] || typeSpecificPrompts.CUSTOM}`;
@@ -346,18 +345,17 @@ Please analyze this data and respond to the query above.`;
         model: model === 'gpt-4' ? 'gpt-4-turbo-preview' : 'gpt-3.5-turbo',
         messages: [
           { role: 'system', content: systemPrompt },
-          { role: 'user', content: userPrompt }
+          { role: 'user', content: userPrompt },
         ],
         temperature: 0.3,
-        max_tokens: 2000
+        max_tokens: 2000,
       });
 
       return {
         content: response.choices[0].message.content,
         usage: response.usage,
-        model: response.model
+        model: response.model,
       };
-
     } catch (error) {
       console.error('AI model call failed:', error);
       throw new Error(`AI analysis failed: ${error.message}`);
@@ -366,22 +364,22 @@ Please analyze this data and respond to the query above.`;
 
   getInsightPrompt(insightType, formData) {
     const prompts = {
-      'comprehensive': `Analyze this database comprehensively and provide:
+      comprehensive: `Analyze this database comprehensively and provide:
         1. Key trends and patterns in the data
         2. Notable correlations between fields
         3. Data quality assessment
         4. Completion rate analysis
         5. Actionable recommendations for improvement`,
-      
-      'completion_analysis': `Focus on analyzing form completion patterns:
+
+      completion_analysis: `Focus on analyzing form completion patterns:
         1. Which fields have the highest/lowest completion rates?
         2. Where do users typically drop off?
         3. How can we improve completion rates?`,
-      
-      'trend_analysis': `Analyze temporal trends in the submissions:
+
+      trend_analysis: `Analyze temporal trends in the submissions:
         1. How has submission volume changed over time?
         2. Are there patterns by day/time/season?
-        3. What trends can we predict for the future?`
+        3. What trends can we predict for the future?`,
     };
 
     return prompts[insightType] || prompts.comprehensive;
@@ -390,21 +388,21 @@ Please analyze this data and respond to the query above.`;
   calculateDatabaseRelevance(query, form, analysisResult) {
     let score = 0;
     const queryLower = query.toLowerCase();
-    
+
     // Title relevance
     if (form.title.toLowerCase().includes(queryLower)) score += 10;
-    
+
     // Description relevance
     if (form.description?.toLowerCase().includes(queryLower)) score += 5;
-    
+
     // Schema field relevance
     if (form.schema.fields) {
-      form.schema.fields.forEach(field => {
+      form.schema.fields.forEach((field) => {
         if (field.label.toLowerCase().includes(queryLower)) score += 3;
         if (field.name.toLowerCase().includes(queryLower)) score += 2;
       });
     }
-    
+
     // Analysis result relevance (simple keyword matching)
     if (analysisResult.content && analysisResult.content.toLowerCase().includes(queryLower)) {
       score += 15;
@@ -414,21 +412,22 @@ Please analyze this data and respond to the query above.`;
   }
 
   async generateCrossDatabaseInsights(query, databaseResults) {
-    const combinedContext = databaseResults.map(db => ({
+    const combinedContext = databaseResults.map((db) => ({
       name: db.databaseName,
       records: db.recordCount,
-      insights: db.analysis.content
+      insights: db.analysis.content,
     }));
 
     try {
-      const response = await this.callAIModel('gpt-4', 
+      const response = await this.callAIModel(
+        'gpt-4',
         'You are analyzing insights across multiple databases. Identify patterns, correlations, and insights that span across the different databases.',
         `Original Query: ${query}
 
         Database Results:
         ${JSON.stringify(combinedContext, null, 2)}
 
-        Provide cross-database insights, patterns, and recommendations.`
+        Provide cross-database insights, patterns, and recommendations.`,
       );
 
       return response.content;
@@ -441,14 +440,14 @@ Please analyze this data and respond to the query above.`;
   async generateFormOptimizationSuggestions(formData) {
     // Analyze completion rates, field types, and patterns
     const fieldAnalysis = {};
-    
-    formData.submissions.forEach(submission => {
+
+    formData.submissions.forEach((submission) => {
       Object.entries(formData.schema).forEach(([fieldName, fieldInfo]) => {
         if (!fieldAnalysis[fieldName]) {
           fieldAnalysis[fieldName] = {
             total: 0,
             completed: 0,
-            fieldInfo
+            fieldInfo,
           };
         }
         fieldAnalysis[fieldName].total++;
@@ -459,16 +458,16 @@ Please analyze this data and respond to the query above.`;
     });
 
     const suggestions = [];
-    
+
     Object.entries(fieldAnalysis).forEach(([fieldName, analysis]) => {
       const completionRate = analysis.completed / analysis.total;
-      
+
       if (completionRate < 0.7) {
         suggestions.push({
           field: fieldName,
           issue: 'Low completion rate',
           recommendation: `Consider making ${fieldName} optional or simplifying the input`,
-          priority: 'high'
+          priority: 'high',
         });
       }
     });
@@ -481,7 +480,7 @@ Please analyze this data and respond to the query above.`;
     return {
       data,
       mimeType: 'application/pdf',
-      filename: `analysis_${data.analysisId}.pdf`
+      filename: `analysis_${data.analysisId}.pdf`,
     };
   }
 
@@ -490,7 +489,7 @@ Please analyze this data and respond to the query above.`;
     return {
       data,
       mimeType: 'text/csv',
-      filename: `analysis_${data.analysisId}.csv`
+      filename: `analysis_${data.analysisId}.csv`,
     };
   }
 }

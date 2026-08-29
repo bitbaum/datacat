@@ -21,13 +21,13 @@ router.post('/scrape', auth, async (req, res) => {
       screenshot = false,
       customPrompt,
       formId,
-      organizationId
+      organizationId,
     } = req.body;
 
     if (!url) {
       return res.status(400).json({
         success: false,
-        error: 'URL is required'
+        error: 'URL is required',
       });
     }
 
@@ -39,20 +39,23 @@ router.post('/scrape', auth, async (req, res) => {
       screenshot,
       customPrompt,
       formId,
-      organizationId
+      organizationId,
     });
 
     res.json({
       success: true,
-      data: result
+      data: result,
     });
-
   } catch (error) {
     console.error('Website scrape error:', error);
-    res.status(error.message.includes('Invalid URL') || error.message.includes('not allowed') ? 400 : 500).json({
-      success: false,
-      error: error.message
-    });
+    res
+      .status(
+        error.message.includes('Invalid URL') || error.message.includes('not allowed') ? 400 : 500,
+      )
+      .json({
+        success: false,
+        error: error.message,
+      });
   }
 });
 
@@ -70,14 +73,14 @@ router.post('/batch', auth, async (req, res) => {
     if (!urls || !Array.isArray(urls) || urls.length === 0) {
       return res.status(400).json({
         success: false,
-        error: 'URLs array is required'
+        error: 'URLs array is required',
       });
     }
 
     if (urls.length > 10) {
       return res.status(400).json({
         success: false,
-        error: 'Maximum 10 URLs per batch'
+        error: 'Maximum 10 URLs per batch',
       });
     }
 
@@ -87,17 +90,16 @@ router.post('/batch', auth, async (req, res) => {
       success: true,
       data: {
         total: urls.length,
-        successful: results.filter(r => r.success).length,
-        failed: results.filter(r => !r.success).length,
-        results
-      }
+        successful: results.filter((r) => r.success).length,
+        failed: results.filter((r) => !r.success).length,
+        results,
+      },
     });
-
   } catch (error) {
     console.error('Batch scrape error:', error);
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -115,19 +117,18 @@ router.get('/', auth, async (req, res) => {
     const result = await websiteIngestionService.getUserWebsiteSources(userId, {
       limit: parseInt(limit) || 50,
       offset: parseInt(offset) || 0,
-      status
+      status,
     });
 
     res.json({
       success: true,
-      data: result
+      data: result,
     });
-
   } catch (error) {
     console.error('Get website sources error:', error);
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -146,14 +147,13 @@ router.get('/:id', auth, async (req, res) => {
 
     res.json({
       success: true,
-      data: result
+      data: result,
     });
-
   } catch (error) {
     console.error('Get website source error:', error);
     res.status(error.message.includes('not found') ? 404 : 500).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -172,14 +172,13 @@ router.delete('/:id', auth, async (req, res) => {
 
     res.json({
       success: true,
-      data: result
+      data: result,
     });
-
   } catch (error) {
     console.error('Delete website source error:', error);
     res.status(error.message.includes('not found') ? 404 : 500).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -199,14 +198,13 @@ router.post('/:id/rescrape', auth, async (req, res) => {
 
     res.json({
       success: true,
-      data: result
+      data: result,
     });
-
   } catch (error) {
     console.error('Rescrape URL error:', error);
     res.status(error.message.includes('not found') ? 404 : 500).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -226,15 +224,15 @@ router.get('/meta/info', async (req, res) => {
         customSelectors: true,
         batchScraping: true,
         structuredExtraction: true,
-        aiAnalysis: true
+        aiAnalysis: true,
       },
       limits: {
         maxBatchSize: 10,
         maxContentLength: '100KB',
-        timeout: '30s'
+        timeout: '30s',
       },
-      blockedDomains: ['localhost', '127.0.0.1', 'private networks']
-    }
+      blockedDomains: ['localhost', '127.0.0.1', 'private networks'],
+    },
   });
 });
 

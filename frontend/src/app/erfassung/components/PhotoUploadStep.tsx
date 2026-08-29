@@ -16,27 +16,23 @@ export function PhotoUploadStep({ onPhotosUploaded, product }: PhotoUploadStepPr
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
-    
-    const files = Array.from(e.dataTransfer.files).filter(
-      file => file.type.startsWith('image/')
-    );
-    
+
+    const files = Array.from(e.dataTransfer.files).filter((file) => file.type.startsWith('image/'));
+
     if (files.length > 0) {
-      setPhotos(prev => [...prev, ...files].slice(0, 10)); // Max 10 photos
+      setPhotos((prev) => [...prev, ...files].slice(0, 10)); // Max 10 photos
     }
   }, []);
 
   const handleFileInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      const files = Array.from(e.target.files).filter(
-        file => file.type.startsWith('image/')
-      );
-      setPhotos(prev => [...prev, ...files].slice(0, 10));
+      const files = Array.from(e.target.files).filter((file) => file.type.startsWith('image/'));
+      setPhotos((prev) => [...prev, ...files].slice(0, 10));
     }
   }, []);
 
   const removePhoto = useCallback((index: number) => {
-    setPhotos(prev => prev.filter((_, i) => i !== index));
+    setPhotos((prev) => prev.filter((_, i) => i !== index));
   }, []);
 
   const handleContinue = useCallback(() => {
@@ -53,7 +49,8 @@ export function PhotoUploadStep({ onPhotosUploaded, product }: PhotoUploadStepPr
           Produktfotos hochladen
         </h2>
         <p className="text-gray-600 dark:text-gray-400">
-          Laden Sie 1-10 Fotos Ihres Produkts hoch. Verschiedene Winkel und Details helfen der KI bei der Analyse.
+          Laden Sie 1-10 Fotos Ihres Produkts hoch. Verschiedene Winkel und Details helfen der KI
+          bei der Analyse.
         </p>
       </div>
 

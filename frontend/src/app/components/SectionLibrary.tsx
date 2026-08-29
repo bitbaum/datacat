@@ -15,30 +15,48 @@ export function SectionLibrary({ onUseSection, onPreviewSection, onBack }: Secti
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
   // Get unique categories from templates
-  const categories = ['all', ...Array.from(new Set(microTemplates.map(t => {
-    if (t.id.includes('contact') || t.id.includes('personal')) return 'personal';
-    if (t.id.includes('address') || t.id.includes('location')) return 'address';
-    if (t.id.includes('work') || t.id.includes('employment') || t.id.includes('job')) return 'work';
-    if (t.id.includes('education') || t.id.includes('school')) return 'education';
-    if (t.id.includes('emergency') || t.id.includes('medical')) return 'emergency';
-    if (t.id.includes('financial') || t.id.includes('bank')) return 'financial';
-    return 'other';
-  })))];
+  const categories = [
+    'all',
+    ...Array.from(
+      new Set(
+        microTemplates.map((t) => {
+          if (t.id.includes('contact') || t.id.includes('personal')) return 'personal';
+          if (t.id.includes('address') || t.id.includes('location')) return 'address';
+          if (t.id.includes('work') || t.id.includes('employment') || t.id.includes('job'))
+            return 'work';
+          if (t.id.includes('education') || t.id.includes('school')) return 'education';
+          if (t.id.includes('emergency') || t.id.includes('medical')) return 'emergency';
+          if (t.id.includes('financial') || t.id.includes('bank')) return 'financial';
+          return 'other';
+        }),
+      ),
+    ),
+  ];
 
-  const filteredSections = microTemplates.filter(section => {
-    const matchesSearch = section.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         section.description.toLowerCase().includes(searchTerm.toLowerCase());
-    
+  const filteredSections = microTemplates.filter((section) => {
+    const matchesSearch =
+      section.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      section.description.toLowerCase().includes(searchTerm.toLowerCase());
+
     if (selectedCategory === 'all') return matchesSearch;
-    
-    const sectionCategory = section.id.includes('contact') || section.id.includes('personal') ? 'personal' :
-                           section.id.includes('address') || section.id.includes('location') ? 'address' :
-                           section.id.includes('work') || section.id.includes('employment') || section.id.includes('job') ? 'work' :
-                           section.id.includes('education') || section.id.includes('school') ? 'education' :
-                           section.id.includes('emergency') || section.id.includes('medical') ? 'emergency' :
-                           section.id.includes('financial') || section.id.includes('bank') ? 'financial' :
-                           'other';
-    
+
+    const sectionCategory =
+      section.id.includes('contact') || section.id.includes('personal')
+        ? 'personal'
+        : section.id.includes('address') || section.id.includes('location')
+          ? 'address'
+          : section.id.includes('work') ||
+              section.id.includes('employment') ||
+              section.id.includes('job')
+            ? 'work'
+            : section.id.includes('education') || section.id.includes('school')
+              ? 'education'
+              : section.id.includes('emergency') || section.id.includes('medical')
+                ? 'emergency'
+                : section.id.includes('financial') || section.id.includes('bank')
+                  ? 'financial'
+                  : 'other';
+
     return matchesSearch && sectionCategory === selectedCategory;
   });
 
@@ -51,7 +69,7 @@ export function SectionLibrary({ onUseSection, onPreviewSection, onBack }: Secti
       education: 'Bildung',
       emergency: 'Notfall',
       financial: 'Finanzen',
-      other: 'Andere'
+      other: 'Andere',
     };
     return labels[category] || category;
   };
@@ -63,7 +81,9 @@ export function SectionLibrary({ onUseSection, onPreviewSection, onBack }: Secti
         <div className="mb-8 animate-in slide-in-from-top duration-700">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Sektionen-Bibliothek</h1>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+                Sektionen-Bibliothek
+              </h1>
               <p className="text-gray-600 dark:text-gray-400">
                 Verwenden Sie vorgefertigte Feldgruppen für häufige Formular-Abschnitte
               </p>
@@ -73,8 +93,18 @@ export function SectionLibrary({ onUseSection, onPreviewSection, onBack }: Secti
                 onClick={onBack}
                 className="flex items-center px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200 hover:scale-105 active:scale-95 group"
               >
-                <svg className="w-4 h-4 mr-2 transition-transform duration-200 group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                <svg
+                  className="w-4 h-4 mr-2 transition-transform duration-200 group-hover:-translate-x-1"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 19l-7-7 7-7"
+                  />
                 </svg>
                 Zurück zum Builder
               </button>
@@ -99,7 +129,7 @@ export function SectionLibrary({ onUseSection, onPreviewSection, onBack }: Secti
               onChange={(e) => setSelectedCategory(e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 hover:shadow-md"
             >
-              {categories.map(category => (
+              {categories.map((category) => (
                 <option key={category} value={category}>
                   {getCategoryLabel(category)}
                 </option>
@@ -119,7 +149,9 @@ export function SectionLibrary({ onUseSection, onPreviewSection, onBack }: Secti
               <div className="p-6">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center space-x-3">
-                    <span className="text-2xl transition-transform duration-300 group-hover:scale-110">{section.icon}</span>
+                    <span className="text-2xl transition-transform duration-300 group-hover:scale-110">
+                      {section.icon}
+                    </span>
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors duration-300">
                         {section.name}
@@ -130,7 +162,7 @@ export function SectionLibrary({ onUseSection, onPreviewSection, onBack }: Secti
                     </div>
                   </div>
                 </div>
-                
+
                 {/* Field Preview */}
                 <div className="mb-4">
                   <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
@@ -197,40 +229,56 @@ export function SectionLibrary({ onUseSection, onPreviewSection, onBack }: Secti
           </div>
         )}
       </div>
-      
+
       {/* Custom CSS for animations */}
       <style jsx>{`
         .animate-in {
           animation-fill-mode: both;
         }
-        
+
         .fade-in {
           animation: fadeIn 0.5s ease-out;
         }
-        
+
         .slide-in-from-top {
           animation: slideInFromTop 0.7s ease-out;
         }
-        
+
         .slide-in-from-bottom {
           animation: slideInFromBottom 0.7s ease-out;
         }
-        
+
         @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
         }
-        
+
         @keyframes slideInFromTop {
-          from { opacity: 0; transform: translateY(-20px); }
-          to { opacity: 1; transform: translateY(0); }
+          from {
+            opacity: 0;
+            transform: translateY(-20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
         }
-        
+
         @keyframes slideInFromBottom {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
         }
       `}</style>
     </div>
   );
-} 
+}

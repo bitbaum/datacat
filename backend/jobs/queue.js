@@ -13,7 +13,7 @@ const redis = new Redis({
 // Create job queues
 const analysisQueue = new Bull('llm-analysis', {
   redis: {
-    host: process.env.REDIS_HOST || 'localhost',  
+    host: process.env.REDIS_HOST || 'localhost',
     port: process.env.REDIS_PORT || 6379,
     password: process.env.REDIS_PASSWORD,
   },
@@ -63,21 +63,25 @@ const exportQueue = new Bull('data-export', {
 class QueueManager {
   static async addAnalysisJob(submissionId, options = {}) {
     const { analysisTypes = ['SENTIMENT', 'CLASSIFICATION'], priority = 1, delay = 0 } = options;
-    
-    return analysisQueue.add('analyze-submission', {
-      submissionId,
-      analysisTypes,
-      timestamp: new Date(),
-    }, {
-      priority,
-      delay,
-      attempts: 3,
-    });
+
+    return analysisQueue.add(
+      'analyze-submission',
+      {
+        submissionId,
+        analysisTypes,
+        timestamp: new Date(),
+      },
+      {
+        priority,
+        delay,
+        attempts: 3,
+      },
+    );
   }
 
   static async addEmailJob(emailData, options = {}) {
     const { priority = 2, delay = 0 } = options;
-    
+
     return emailQueue.add('send-notification', emailData, {
       priority,
       delay,
@@ -87,7 +91,7 @@ class QueueManager {
 
   static async addExportJob(exportData, options = {}) {
     const { priority = 3, delay = 0 } = options;
-    
+
     return exportQueue.add('export-data', exportData, {
       priority,
       delay,
@@ -139,7 +143,7 @@ class QueueManager {
   // Queue cleanup
   static async cleanupQueues() {
     const olderThan = 24 * 60 * 60 * 1000; // 24 hours
-    
+
     await Promise.all([
       analysisQueue.clean(olderThan, 'completed'),
       analysisQueue.clean(olderThan, 'failed'),
@@ -185,12 +189,8 @@ class QueueManager {
   // Graceful shutdown
   static async shutdown() {
     console.log('Shutting down queues gracefully...');
-    
-    await Promise.all([
-      analysisQueue.close(),
-      emailQueue.close(),
-      exportQueue.close(),
-    ]);
+
+    await Promise.all([analysisQueue.close(), emailQueue.close(), exportQueue.close()]);
 
     await redis.disconnect();
     console.log('All queues shut down successfully');

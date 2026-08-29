@@ -45,7 +45,7 @@ export function FormCreationHub({ onMethodSelect, onShowTemplateLibrary }: FormC
         setSavedTemplates(
           data
             .filter((form: { is_template?: boolean }) => form.is_template)
-            .map((form: { id: string; title: string }) => ({ id: form.id, title: form.title }))
+            .map((form: { id: string; title: string }) => ({ id: form.id, title: form.title })),
         );
       } catch (error) {
         console.error('Error fetching saved templates:', error);
@@ -68,15 +68,16 @@ export function FormCreationHub({ onMethodSelect, onShowTemplateLibrary }: FormC
     setAnalysisProgress(null);
 
     try {
-      const result = file.type === 'application/pdf' 
-        ? await visionService.analyzePDF(file, setAnalysisProgress)
-        : await visionService.analyzeImage(file, setAnalysisProgress);
+      const result =
+        file.type === 'application/pdf'
+          ? await visionService.analyzePDF(file, setAnalysisProgress)
+          : await visionService.analyzeImage(file, setAnalysisProgress);
 
       if (result.success) {
         const stepId = isMultiStep ? steps[currentStep]?.id : undefined;
-        
+
         // Add analyzed fields to the form
-        result.fields.forEach(fieldConfig => {
+        result.fields.forEach((fieldConfig) => {
           addField(fieldConfig.type, stepId);
           // Update the newly added field with the analyzed configuration
           const currentFields = isMultiStep ? steps[currentStep]?.fields || [] : fields;
@@ -87,7 +88,7 @@ export function FormCreationHub({ onMethodSelect, onShowTemplateLibrary }: FormC
               name: fieldConfig.name,
               required: fieldConfig.required,
               placeholder: fieldConfig.placeholder,
-              options: fieldConfig.options
+              options: fieldConfig.options,
             });
           }
         });
@@ -128,7 +129,9 @@ export function FormCreationHub({ onMethodSelect, onShowTemplateLibrary }: FormC
     return (
       <div className="h-full">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Vorlagen-Bibliothek</h2>
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+            Vorlagen-Bibliothek
+          </h2>
           <button
             onClick={() => setShowTemplateLibrary(false)}
             className="px-4 py-2 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
@@ -136,7 +139,7 @@ export function FormCreationHub({ onMethodSelect, onShowTemplateLibrary }: FormC
             Zurück
           </button>
         </div>
-        <TemplateLibrary 
+        <TemplateLibrary
           onUseTemplate={(template) => {
             // Handle template selection
             setShowTemplateLibrary(false);
@@ -168,7 +171,7 @@ export function FormCreationHub({ onMethodSelect, onShowTemplateLibrary }: FormC
                       {analysisProgress.message}
                     </p>
                     <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                      <div 
+                      <div
                         className="bg-blue-600 h-2 rounded-full transition-all duration-300"
                         style={{ width: `${analysisProgress.progress}%` }}
                       ></div>
@@ -192,14 +195,15 @@ export function FormCreationHub({ onMethodSelect, onShowTemplateLibrary }: FormC
             Fügen Sie Ihr erstes Feld hinzu
           </h1>
           <p className="text-lg text-gray-600 dark:text-gray-300">
-            Beginnen Sie mit einem einzelnen Feld oder fügen Sie eine vordefinierte Sektion hinzu, um Ihr perfektes Formular zu erstellen.
+            Beginnen Sie mit einem einzelnen Feld oder fügen Sie eine vordefinierte Sektion hinzu,
+            um Ihr perfektes Formular zu erstellen.
           </p>
         </div>
 
         {/* Creation Methods Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {/* Individual Fields */}
-          <div 
+          <div
             onClick={() => onMethodSelect('fields')}
             className="group cursor-pointer bg-white dark:bg-gray-800 rounded-xl border-2 border-gray-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-500 p-6 transition-all duration-200 hover:shadow-lg"
           >
@@ -216,14 +220,19 @@ export function FormCreationHub({ onMethodSelect, onShowTemplateLibrary }: FormC
               <div className="flex items-center justify-center text-blue-600 dark:text-blue-400 text-sm font-medium group-hover:translate-x-1 transition-transform">
                 <span>Felder hinzufügen</span>
                 <svg className="ml-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
                 </svg>
               </div>
             </div>
           </div>
 
           {/* Field Sections */}
-          <div 
+          <div
             onClick={() => onMethodSelect('templates')}
             className="group cursor-pointer bg-white dark:bg-gray-800 rounded-xl border-2 border-gray-200 dark:border-gray-700 hover:border-green-500 dark:hover:border-green-500 p-6 transition-all duration-200 hover:shadow-lg"
           >
@@ -238,8 +247,11 @@ export function FormCreationHub({ onMethodSelect, onShowTemplateLibrary }: FormC
                 Persönliche Daten, Kontaktdaten, Adresse, Berufsinformationen
               </p>
               <div className="flex flex-wrap gap-1 mb-4 justify-center">
-                {microTemplates.slice(0, 3).map(template => (
-                  <span key={template.id} className="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 text-xs rounded-full">
+                {microTemplates.slice(0, 3).map((template) => (
+                  <span
+                    key={template.id}
+                    className="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 text-xs rounded-full"
+                  >
                     {template.name}
                   </span>
                 ))}
@@ -247,14 +259,19 @@ export function FormCreationHub({ onMethodSelect, onShowTemplateLibrary }: FormC
               <div className="flex items-center justify-center text-green-600 dark:text-green-400 text-sm font-medium group-hover:translate-x-1 transition-transform">
                 <span>Sektionen ansehen</span>
                 <svg className="ml-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
                 </svg>
               </div>
             </div>
           </div>
 
           {/* Complete Templates */}
-          <div 
+          <div
             onClick={handleTemplateLibraryClick}
             className="group cursor-pointer bg-white dark:bg-gray-800 rounded-xl border-2 border-gray-200 dark:border-gray-700 hover:border-amber-500 dark:hover:border-amber-500 p-6 transition-all duration-200 hover:shadow-lg"
           >
@@ -269,8 +286,11 @@ export function FormCreationHub({ onMethodSelect, onShowTemplateLibrary }: FormC
                 HR Mitarbeiter-Erfassung, HR Mitarbeiter-Onboarding (Mehrstufig)
               </p>
               <div className="flex flex-wrap gap-1 mb-4 justify-center">
-                {formTemplates.slice(0, 2).map(template => (
-                  <span key={template.id} className="px-2 py-1 bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-300 text-xs rounded-full">
+                {formTemplates.slice(0, 2).map((template) => (
+                  <span
+                    key={template.id}
+                    className="px-2 py-1 bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-300 text-xs rounded-full"
+                  >
                     {template.name}
                   </span>
                 ))}
@@ -278,14 +298,19 @@ export function FormCreationHub({ onMethodSelect, onShowTemplateLibrary }: FormC
               <div className="flex items-center justify-center text-amber-600 dark:text-amber-400 text-sm font-medium group-hover:translate-x-1 transition-transform">
                 <span>Bibliothek durchsuchen</span>
                 <svg className="ml-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
                 </svg>
               </div>
             </div>
           </div>
 
           {/* File Upload */}
-          <div 
+          <div
             onClick={() => document.getElementById('hub-file-input')?.click()}
             className="group cursor-pointer bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-xl border-2 border-indigo-200 dark:border-indigo-700 hover:border-indigo-500 dark:hover:border-indigo-500 p-6 transition-all duration-200 hover:shadow-lg"
           >
@@ -295,7 +320,9 @@ export function FormCreationHub({ onMethodSelect, onShowTemplateLibrary }: FormC
               </div>
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                 Datei hochladen
-                <span className="ml-2 px-2 py-1 bg-indigo-600 text-white text-xs rounded-full">KI</span>
+                <span className="ml-2 px-2 py-1 bg-indigo-600 text-white text-xs rounded-full">
+                  KI
+                </span>
               </h3>
               <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
                 Screenshot oder PDF hochladen und automatisch ein Formular generieren lassen
@@ -303,7 +330,12 @@ export function FormCreationHub({ onMethodSelect, onShowTemplateLibrary }: FormC
               <div className="flex items-center justify-center text-indigo-600 dark:text-indigo-400 text-sm font-medium group-hover:translate-x-1 transition-transform">
                 <span>Datei auswählen</span>
                 <svg className="ml-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
                 </svg>
               </div>
             </div>
@@ -313,8 +345,10 @@ export function FormCreationHub({ onMethodSelect, onShowTemplateLibrary }: FormC
         {/* Saved Templates Row - Only when logged in */}
         {isLoggedIn && savedTemplates.length > 0 && (
           <div className="mb-8">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Ihre gespeicherten Vorlagen</h3>
-            <div 
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              Ihre gespeicherten Vorlagen
+            </h3>
+            <div
               onClick={handleSavedTemplatesClick}
               className="group cursor-pointer bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl border-2 border-purple-200 dark:border-purple-700 hover:border-purple-500 dark:hover:border-purple-500 p-6 transition-all duration-200 hover:shadow-lg"
             >
@@ -323,8 +357,12 @@ export function FormCreationHub({ onMethodSelect, onShowTemplateLibrary }: FormC
                   <div className="text-2xl">⭐</div>
                 </div>
                 <div>
-                  <h4 className="text-lg font-semibold text-gray-900 dark:text-white">Gespeicherte Vorlagen</h4>
-                  <p className="text-sm text-gray-600 dark:text-gray-300">Ihre eigenen, gespeicherten Formular-Vorlagen</p>
+                  <h4 className="text-lg font-semibold text-gray-900 dark:text-white">
+                    Gespeicherte Vorlagen
+                  </h4>
+                  <p className="text-sm text-gray-600 dark:text-gray-300">
+                    Ihre eigenen, gespeicherten Formular-Vorlagen
+                  </p>
                 </div>
               </div>
             </div>
@@ -343,10 +381,11 @@ export function FormCreationHub({ onMethodSelect, onShowTemplateLibrary }: FormC
         {/* Bottom help text */}
         <div className="text-center text-gray-500 dark:text-gray-400">
           <p className="text-sm">
-            💡 Sie können jederzeit zwischen den Methoden wechseln und verschiedene Ansätze kombinieren
+            💡 Sie können jederzeit zwischen den Methoden wechseln und verschiedene Ansätze
+            kombinieren
           </p>
         </div>
       </div>
     </div>
   );
-} 
+}

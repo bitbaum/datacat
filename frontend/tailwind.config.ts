@@ -1,4 +1,4 @@
-import type { Config } from 'tailwindcss'
+import type { Config } from 'tailwindcss';
 
 const config: Config = {
   content: [
@@ -21,40 +21,40 @@ const config: Config = {
         'fade-in': 'fade-in 0.8s ease-out forwards',
         'slide-up': 'slide-up 0.6s ease-out forwards',
         'scale-in': 'scale-in 0.5s ease-out forwards',
-        'float': 'float 3s ease-in-out infinite',
+        float: 'float 3s ease-in-out infinite',
       },
       keyframes: {
         'fade-in': {
-          'from': {
+          from: {
             opacity: '0',
             transform: 'translateY(20px)',
           },
-          'to': {
+          to: {
             opacity: '1',
             transform: 'translateY(0)',
           },
         },
         'slide-up': {
-          'from': {
+          from: {
             opacity: '0',
             transform: 'translateY(30px)',
           },
-          'to': {
+          to: {
             opacity: '1',
             transform: 'translateY(0)',
           },
         },
         'scale-in': {
-          'from': {
+          from: {
             opacity: '0',
             transform: 'scale(0.95)',
           },
-          'to': {
+          to: {
             opacity: '1',
             transform: 'scale(1)',
           },
         },
-        'float': {
+        float: {
           '0%, 100%': {
             transform: 'translateY(0px)',
           },
@@ -66,6 +66,6 @@ const config: Config = {
     },
   },
   plugins: [],
-}
+};
 
-export default config 
+export default config;

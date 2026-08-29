@@ -41,7 +41,7 @@ export default function WebsiteIngestion({
   onScrapeComplete,
   onError,
   apiUrl = 'http://localhost:5001',
-  token
+  token,
 }: WebsiteIngestionProps) {
   const [url, setUrl] = useState('');
   const [name, setName] = useState('');
@@ -103,7 +103,6 @@ export default function WebsiteIngestion({
 
       setResult(data.data);
       onScrapeComplete?.(data.data);
-
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Scraping failed';
       setError(message);
@@ -130,7 +129,12 @@ export default function WebsiteIngestion({
       <div className="flex items-center gap-3 mb-6">
         <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
           <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"
+            />
           </svg>
         </div>
         <div>
@@ -144,14 +148,22 @@ export default function WebsiteIngestion({
         <div className="space-y-4">
           {/* Main URL Input */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              URL to Scrape
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">URL to Scrape</label>
             <div className="flex gap-2">
               <div className="flex-1 relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                  <svg
+                    className="w-5 h-5 text-gray-400"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
+                    />
                   </svg>
                 </div>
                 <input
@@ -168,9 +180,7 @@ export default function WebsiteIngestion({
 
           {/* Name (Optional) */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Name (Optional)
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Name (Optional)</label>
             <input
               type="text"
               value={name}
@@ -183,9 +193,7 @@ export default function WebsiteIngestion({
 
           {/* Extract Type */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Content Type
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Content Type</label>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {extractTypes.map((type) => (
                 <button
@@ -198,9 +206,11 @@ export default function WebsiteIngestion({
                   }`}
                   disabled={isScraping}
                 >
-                  <p className={`text-sm font-medium ${
-                    extractType === type.value ? 'text-indigo-700' : 'text-gray-700'
-                  }`}>
+                  <p
+                    className={`text-sm font-medium ${
+                      extractType === type.value ? 'text-indigo-700' : 'text-gray-700'
+                    }`}
+                  >
                     {type.label}
                   </p>
                   <p className="text-xs text-gray-500 mt-0.5">{type.description}</p>
@@ -271,9 +281,7 @@ export default function WebsiteIngestion({
                   rows={3}
                   disabled={isScraping}
                 />
-                <p className="text-xs text-gray-500 mt-1">
-                  Custom instructions for AI analysis
-                </p>
+                <p className="text-xs text-gray-500 mt-1">Custom instructions for AI analysis</p>
               </div>
             </div>
           )}
@@ -283,7 +291,12 @@ export default function WebsiteIngestion({
             <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
               <div className="flex items-center gap-2 text-red-700">
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
                 </svg>
                 <span className="font-medium">Error</span>
               </div>
@@ -304,15 +317,31 @@ export default function WebsiteIngestion({
             {isScraping ? (
               <>
                 <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  />
                 </svg>
                 Scraping...
               </>
             ) : (
               <>
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                  />
                 </svg>
                 Scrape URL
               </>
@@ -328,16 +357,23 @@ export default function WebsiteIngestion({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 text-green-600">
               <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
               </svg>
               <span className="font-medium">Scraping Complete!</span>
             </div>
-            <button
-              onClick={handleReset}
-              className="text-gray-500 hover:text-gray-700"
-            >
+            <button onClick={handleReset} className="text-gray-500 hover:text-gray-700">
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
           </div>
@@ -397,8 +433,18 @@ export default function WebsiteIngestion({
                   <ul className="space-y-1">
                     {result.analysis.keyPoints.map((point, idx) => (
                       <li key={idx} className="flex items-start gap-2 text-gray-600">
-                        <svg className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        <svg
+                          className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M5 13l4 4L19 7"
+                          />
                         </svg>
                         {point}
                       </li>
@@ -408,28 +454,34 @@ export default function WebsiteIngestion({
               )}
 
               {/* Entities */}
-              {result.analysis.entities && Object.keys(result.analysis.entities).some(k => result.analysis.entities[k]?.length > 0) && (
-                <div className="p-4 bg-gray-50 rounded-lg">
-                  <h3 className="font-semibold text-gray-700 mb-2">Extracted Entities</h3>
-                  <div className="space-y-2">
-                    {Object.entries(result.analysis.entities).map(([type, values]) => {
-                      if (!values || values.length === 0) return null;
-                      return (
-                        <div key={type}>
-                          <p className="text-xs text-gray-500 uppercase">{type}</p>
-                          <div className="flex flex-wrap gap-1 mt-1">
-                            {values.map((value, idx) => (
-                              <span key={idx} className="px-2 py-1 text-sm bg-white border border-gray-200 rounded">
-                                {value}
-                              </span>
-                            ))}
+              {result.analysis.entities &&
+                Object.keys(result.analysis.entities).some(
+                  (k) => result.analysis.entities[k]?.length > 0,
+                ) && (
+                  <div className="p-4 bg-gray-50 rounded-lg">
+                    <h3 className="font-semibold text-gray-700 mb-2">Extracted Entities</h3>
+                    <div className="space-y-2">
+                      {Object.entries(result.analysis.entities).map(([type, values]) => {
+                        if (!values || values.length === 0) return null;
+                        return (
+                          <div key={type}>
+                            <p className="text-xs text-gray-500 uppercase">{type}</p>
+                            <div className="flex flex-wrap gap-1 mt-1">
+                              {values.map((value, idx) => (
+                                <span
+                                  key={idx}
+                                  className="px-2 py-1 text-sm bg-white border border-gray-200 rounded"
+                                >
+                                  {value}
+                                </span>
+                              ))}
+                            </div>
                           </div>
-                        </div>
-                      );
-                    })}
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
             </div>
           )}
 

@@ -7,7 +7,9 @@ import { FieldConfig } from '../types/form';
 interface FormFieldBuilderProps {
   field: FieldConfig;
   value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
+  onChange: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
+  ) => void;
   onBlur: () => void;
   onRemove: () => void;
   onEdit: () => void;
@@ -23,12 +25,12 @@ export function FormFieldBuilder({
   onRemove,
   onEdit,
   error,
-  isEditing = false
+  isEditing = false,
 }: FormFieldBuilderProps) {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <div 
+    <div
       className={`relative group transition-all duration-200 ${
         isEditing ? 'ring-2 ring-blue-500 ring-offset-2' : ''
       }`}
@@ -52,9 +54,11 @@ export function FormFieldBuilder({
       />
 
       {/* Controls */}
-      <div className={`absolute -top-2 -right-2 flex space-x-1 transition-opacity duration-200 ${
-        isHovered || isEditing ? 'opacity-100' : 'opacity-0'
-      }`}>
+      <div
+        className={`absolute -top-2 -right-2 flex space-x-1 transition-opacity duration-200 ${
+          isHovered || isEditing ? 'opacity-100' : 'opacity-0'
+        }`}
+      >
         {/* Edit Button */}
         <button
           type="button"
@@ -63,7 +67,12 @@ export function FormFieldBuilder({
           title="Feld bearbeiten"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+            />
           </svg>
         </button>
 
@@ -75,7 +84,12 @@ export function FormFieldBuilder({
           title="Feld entfernen"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+            />
           </svg>
         </button>
       </div>
@@ -88,7 +102,10 @@ export function FormFieldBuilder({
       )}
 
       {error && (
-        <div className="absolute -top-1 -left-1 w-3 h-3 bg-red-500 rounded-full animate-pulse" title="Validierungsfehler" />
+        <div
+          className="absolute -top-1 -left-1 w-3 h-3 bg-red-500 rounded-full animate-pulse"
+          title="Validierungsfehler"
+        />
       )}
     </div>
   );

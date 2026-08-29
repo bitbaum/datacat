@@ -24,7 +24,11 @@ export default function ProfilePage() {
     const load = async () => {
       if (!token) return;
       try {
-        const data = await http.get<ApiSuccess<{ user: ProfileUser }>>('/api/v1/user/me', true, token);
+        const data = await http.get<ApiSuccess<{ user: ProfileUser }>>(
+          '/api/v1/user/me',
+          true,
+          token,
+        );
         setProfile(data.user);
         setName(data.user.name ?? '');
       } catch (e) {
@@ -40,7 +44,12 @@ export default function ProfilePage() {
     setError(null);
     setMessage(null);
     try {
-      const data = await http.put<ApiSuccess<{ user: ProfileUser }>>('/api/v1/user/me', { name }, true, token);
+      const data = await http.put<ApiSuccess<{ user: ProfileUser }>>(
+        '/api/v1/user/me',
+        { name },
+        true,
+        token,
+      );
       setProfile(data.user);
       setMessage('Profil aktualisiert');
     } catch (e) {
@@ -65,21 +74,36 @@ export default function ProfilePage() {
       <div className="space-y-4 bg-white dark:bg-gray-800 p-4 rounded-md border border-gray-200 dark:border-gray-700">
         <div>
           <label className="block text-sm text-gray-600 dark:text-gray-300 mb-1">E-Mail</label>
-          <input disabled value={profile?.email ?? ''} className="w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900" />
+          <input
+            disabled
+            value={profile?.email ?? ''}
+            className="w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900"
+          />
         </div>
         <div>
           <label className="block text-sm text-gray-600 dark:text-gray-300 mb-1">Name</label>
-          <input value={name} onChange={(e) => setName(e.target.value)} className="w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900" />
+          <input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900"
+          />
         </div>
         <div className="flex items-center gap-2">
-          <button onClick={onSave} disabled={saving} className="px-4 py-2 bg-indigo-600 text-white rounded-md disabled:bg-indigo-400">{saving ? 'Speichern…' : 'Speichern'}</button>
-          <button onClick={logout} className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md">Logout</button>
+          <button
+            onClick={onSave}
+            disabled={saving}
+            className="px-4 py-2 bg-indigo-600 text-white rounded-md disabled:bg-indigo-400"
+          >
+            {saving ? 'Speichern…' : 'Speichern'}
+          </button>
+          <button
+            onClick={logout}
+            className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md"
+          >
+            Logout
+          </button>
         </div>
       </div>
     </div>
   );
 }
-
-
-
-

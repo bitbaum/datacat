@@ -5,12 +5,12 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '../../context/AuthContext';
 import {
-  ArrowLeftIcon, 
-  ChartBarIcon, 
-  ArrowDownTrayIcon, 
+  ArrowLeftIcon,
+  ChartBarIcon,
+  ArrowDownTrayIcon,
   MagnifyingGlassIcon,
   AdjustmentsHorizontalIcon,
-  SparklesIcon 
+  SparklesIcon,
 } from '@heroicons/react/24/outline';
 
 interface DatabaseRecord {
@@ -29,12 +29,15 @@ interface DatabaseRecord {
 
 interface DatabaseInfo {
   databaseName: string;
-  schema: Record<string, {
-    type: string;
-    label: string;
-    required: boolean;
-    options?: Array<{ label: string; value: string }>;
-  }>;
+  schema: Record<
+    string,
+    {
+      type: string;
+      label: string;
+      required: boolean;
+      options?: Array<{ label: string; value: string }>;
+    }
+  >;
   records: DatabaseRecord[];
   pagination: {
     page: number;
@@ -75,7 +78,7 @@ export default function DatabaseDetailPage() {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [showFilters, setShowFilters] = useState(false);
   const [filters, setFilters] = useState<Record<string, string>>({});
-  
+
   // AI Analysis state
   const [aiQuery, setAiQuery] = useState('');
   const [aiAnalysis, setAiAnalysis] = useState<AIAnalysis | null>(null);
@@ -96,13 +99,13 @@ export default function DatabaseDetailPage() {
         limit: '50',
         sort: sortField,
         sortOrder,
-        filters: JSON.stringify(filters)
+        filters: JSON.stringify(filters),
       });
 
       const response = await fetch(`/api/v1/databases/${databaseId}/records?${params}`, {
         headers: {
-          'Authorization': `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       if (response.ok) {
@@ -131,13 +134,13 @@ export default function DatabaseDetailPage() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           query: aiQuery,
           analysisType: 'CUSTOM',
-          model: 'gpt-4'
-        })
+          model: 'gpt-4',
+        }),
       });
 
       const data = await response.json();
@@ -170,9 +173,9 @@ export default function DatabaseDetailPage() {
   };
 
   const handleFilterChange = (field: string, value: string) => {
-    setFilters(prev => ({
+    setFilters((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
     setCurrentPage(1);
   };
@@ -237,7 +240,7 @@ export default function DatabaseDetailPage() {
                 </p>
               </div>
             </div>
-            
+
             <div className="flex items-center space-x-3">
               <button
                 onClick={() => setShowAiPanel(!showAiPanel)}
@@ -261,12 +264,21 @@ export default function DatabaseDetailPage() {
                   <ArrowDownTrayIcon className="h-4 w-4 mr-2" />
                   Export
                 </button>
-                <div id="export-menu" className="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
+                <div
+                  id="export-menu"
+                  className="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10"
+                >
                   <div className="py-1">
-                    <button onClick={() => handleExport('json')} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left">
+                    <button
+                      onClick={() => handleExport('json')}
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                    >
                       Export as JSON
                     </button>
-                    <button onClick={() => handleExport('csv')} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left">
+                    <button
+                      onClick={() => handleExport('csv')}
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                    >
                       Export as CSV
                     </button>
                   </div>
@@ -298,8 +310,8 @@ export default function DatabaseDetailPage() {
                   <button
                     onClick={() => setShowFilters(!showFilters)}
                     className={`inline-flex items-center px-3 py-2 border text-sm font-medium rounded-md ${
-                      showFilters 
-                        ? 'border-blue-500 text-blue-700 bg-blue-50' 
+                      showFilters
+                        ? 'border-blue-500 text-blue-700 bg-blue-50'
                         : 'border-gray-300 text-gray-700 bg-white hover:bg-gray-50'
                     }`}
                   >
@@ -363,20 +375,17 @@ export default function DatabaseDetailPage() {
                     {databaseInfo.records.map((record) => (
                       <tr key={record.id} className="hover:bg-gray-50">
                         {schemaFields.map((field) => (
-                          <td key={field} className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            <div className="max-w-xs truncate">
-                              {record[field] || '-'}
-                            </div>
+                          <td
+                            key={field}
+                            className="px-6 py-4 whitespace-nowrap text-sm text-gray-900"
+                          >
+                            <div className="max-w-xs truncate">{record[field] || '-'}</div>
                           </td>
                         ))}
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          <div>
-                            {new Date(record._metadata.submittedAt).toLocaleDateString()}
-                          </div>
+                          <div>{new Date(record._metadata.submittedAt).toLocaleDateString()}</div>
                           {record._metadata.submittedBy?.name && (
-                            <div className="text-xs">
-                              by {record._metadata.submittedBy.name}
-                            </div>
+                            <div className="text-xs">by {record._metadata.submittedBy.name}</div>
                           )}
                         </td>
                       </tr>
@@ -397,7 +406,9 @@ export default function DatabaseDetailPage() {
                       Previous
                     </button>
                     <button
-                      onClick={() => setCurrentPage(Math.min(databaseInfo.pagination.pages, currentPage + 1))}
+                      onClick={() =>
+                        setCurrentPage(Math.min(databaseInfo.pagination.pages, currentPage + 1))
+                      }
                       disabled={currentPage === databaseInfo.pagination.pages}
                       className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
                     >
@@ -413,30 +424,36 @@ export default function DatabaseDetailPage() {
                         </span>{' '}
                         to{' '}
                         <span className="font-medium">
-                          {Math.min(currentPage * databaseInfo.pagination.limit, databaseInfo.pagination.total)}
+                          {Math.min(
+                            currentPage * databaseInfo.pagination.limit,
+                            databaseInfo.pagination.total,
+                          )}
                         </span>{' '}
-                        of{' '}
-                        <span className="font-medium">{databaseInfo.pagination.total}</span> results
+                        of <span className="font-medium">{databaseInfo.pagination.total}</span>{' '}
+                        results
                       </p>
                     </div>
                     <div>
                       <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
-                        {Array.from({ length: Math.min(5, databaseInfo.pagination.pages) }, (_, i) => {
-                          const page = i + Math.max(1, currentPage - 2);
-                          return (
-                            <button
-                              key={page}
-                              onClick={() => setCurrentPage(page)}
-                              className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
-                                page === currentPage
-                                  ? 'z-10 bg-blue-50 border-blue-500 text-blue-600'
-                                  : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
-                              }`}
-                            >
-                              {page}
-                            </button>
-                          );
-                        })}
+                        {Array.from(
+                          { length: Math.min(5, databaseInfo.pagination.pages) },
+                          (_, i) => {
+                            const page = i + Math.max(1, currentPage - 2);
+                            return (
+                              <button
+                                key={page}
+                                onClick={() => setCurrentPage(page)}
+                                className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
+                                  page === currentPage
+                                    ? 'z-10 bg-blue-50 border-blue-500 text-blue-600'
+                                    : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
+                                }`}
+                              >
+                                {page}
+                              </button>
+                            );
+                          },
+                        )}
                       </nav>
                     </div>
                   </div>

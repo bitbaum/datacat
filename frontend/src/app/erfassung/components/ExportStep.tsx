@@ -16,50 +16,50 @@ const exportFormats = [
     name: 'CSV (Kivitendo)',
     description: 'Kivitendo-kompatibles CSV Format',
     icon: '📄',
-    recommended: true
+    recommended: true,
   },
   {
     id: 'xlsx',
     name: 'Excel (XLSX)',
     description: 'Microsoft Excel Arbeitsmappe',
     icon: '📊',
-    recommended: false
+    recommended: false,
   },
   {
     id: 'json',
     name: 'JSON',
     description: 'JavaScript Object Notation',
     icon: '🔧',
-    recommended: false
+    recommended: false,
   },
   {
     id: 'xml',
     name: 'XML',
     description: 'Extensible Markup Language',
     icon: '📋',
-    recommended: false
+    recommended: false,
   },
   {
     id: 'medusa_json',
     name: 'Medusa JS',
     description: 'Medusa E-Commerce Format',
     icon: '🛒',
-    recommended: false
+    recommended: false,
   },
   {
     id: 'shopify_product_json',
     name: 'Shopify Produkt (JSON)',
     description: 'Importierbares Shopify JSON',
     icon: '🛍️',
-    recommended: false
+    recommended: false,
   },
   {
     id: 'shopware_product_json',
     name: 'Shopware Produkt (JSON)',
     description: 'Shopware 6 kompatibles JSON',
     icon: '🧱',
-    recommended: false
-  }
+    recommended: false,
+  },
 ];
 
 export function ExportStep({ productData, onExportComplete, product }: ExportStepProps) {
@@ -70,17 +70,17 @@ export function ExportStep({ productData, onExportComplete, product }: ExportSte
 
   const handleExport = async () => {
     setIsExporting(true);
-    
+
     // Simulate export process
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    const selectedFormatData = exportFormats.filter(f => selectedFormats.includes(f.id));
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
+    const selectedFormatData = exportFormats.filter((f) => selectedFormats.includes(f.id));
     const result = {
-      format: selectedFormatData.map(f => f.name).join(', ') || 'Unknown',
+      format: selectedFormatData.map((f) => f.name).join(', ') || 'Unknown',
       downloadUrl: `#download-${Date.now()}`,
-      recordCount: 1
+      recordCount: 1,
     };
-    
+
     setExportResult(result);
     setExportComplete(true);
     setIsExporting(false);
@@ -94,29 +94,33 @@ export function ExportStep({ productData, onExportComplete, product }: ExportSte
 
   const generatePreviewData = () => {
     const primary = selectedFormats[0];
-    const format = exportFormats.find(f => f.id === primary);
-    
+    const format = exportFormats.find((f) => f.id === primary);
+
     if (primary === 'csv_kivitendo') {
       return `title,manufacturer,articleNumber,shortDescription,price,weight
 "${productData.title}","${productData.manufacturer}","${productData.articleNumber}","${productData.shortDescription}",${productData.price},${productData.weight}`;
     }
-    
+
     if (primary === 'json') {
-      return JSON.stringify({
-        title: productData.title,
-        manufacturer: productData.manufacturer,
-        articleNumber: productData.articleNumber,
-        shortDescription: productData.shortDescription,
-        price: productData.price,
-        weight: productData.weight,
-        dimensions: {
-          length: productData.length,
-          width: productData.width,
-          height: productData.height
-        }
-      }, null, 2);
+      return JSON.stringify(
+        {
+          title: productData.title,
+          manufacturer: productData.manufacturer,
+          articleNumber: productData.articleNumber,
+          shortDescription: productData.shortDescription,
+          price: productData.price,
+          weight: productData.weight,
+          dimensions: {
+            length: productData.length,
+            width: productData.width,
+            height: productData.height,
+          },
+        },
+        null,
+        2,
+      );
     }
-    
+
     if (primary === 'xml') {
       return `<?xml version="1.0" encoding="UTF-8"?>
 <product>
@@ -128,7 +132,7 @@ export function ExportStep({ productData, onExportComplete, product }: ExportSte
   <weight>${productData.weight}</weight>
 </product>`;
     }
-    
+
     return `${format?.name} Export Preview`;
   };
 
@@ -136,9 +140,7 @@ export function ExportStep({ productData, onExportComplete, product }: ExportSte
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-8">
       <div className="text-center mb-8">
         <DocumentArrowDownIcon className="h-12 w-12 text-indigo-600 dark:text-indigo-400 mx-auto mb-4" />
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-          Daten exportieren
-        </h2>
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Daten exportieren</h2>
         <p className="text-gray-600 dark:text-gray-400">
           Wählen Sie das gewünschte Exportformat für Ihre Produktdaten.
         </p>
@@ -160,11 +162,13 @@ export function ExportStep({ productData, onExportComplete, product }: ExportSte
                       ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20'
                       : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'
                   }`}
-                  onClick={() => setSelectedFormats(prev => (
-                    prev.includes(format.id)
-                      ? prev.filter(id => id !== format.id)
-                      : [...prev, format.id]
-                  ))}
+                  onClick={() =>
+                    setSelectedFormats((prev) =>
+                      prev.includes(format.id)
+                        ? prev.filter((id) => id !== format.id)
+                        : [...prev, format.id],
+                    )
+                  }
                 >
                   {format.recommended && (
                     <div className="absolute -top-2 -right-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full">
@@ -174,18 +178,18 @@ export function ExportStep({ productData, onExportComplete, product }: ExportSte
                   <div className="flex items-center space-x-3">
                     <div className="text-2xl">{format.icon}</div>
                     <div>
-                      <h4 className="font-semibold text-gray-900 dark:text-white">
-                        {format.name}
-                      </h4>
+                      <h4 className="font-semibold text-gray-900 dark:text-white">{format.name}</h4>
                       <p className="text-sm text-gray-500 dark:text-gray-400">
                         {format.description}
                       </p>
                     </div>
-                    <div className={`ml-auto w-5 h-5 rounded-sm border-2 ${
-                      selectedFormats.includes(format.id)
-                        ? 'border-indigo-500 bg-indigo-500'
-                        : 'border-gray-300 dark:border-gray-600'
-                    }`} />
+                    <div
+                      className={`ml-auto w-5 h-5 rounded-sm border-2 ${
+                        selectedFormats.includes(format.id)
+                          ? 'border-indigo-500 bg-indigo-500'
+                          : 'border-gray-300 dark:border-gray-600'
+                      }`}
+                    />
                   </div>
                 </div>
               ))}
@@ -254,17 +258,11 @@ export function ExportStep({ productData, onExportComplete, product }: ExportSte
                 <div className="text-2xl font-bold text-gray-900 dark:text-white">
                   {exportResult?.format}
                 </div>
-                <div className="text-sm text-gray-500 dark:text-gray-400">
-                  Exportformat
-                </div>
+                <div className="text-sm text-gray-500 dark:text-gray-400">Exportformat</div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-gray-900 dark:text-white">
-                  ✅
-                </div>
-                <div className="text-sm text-gray-500 dark:text-gray-400">
-                  Status
-                </div>
+                <div className="text-2xl font-bold text-gray-900 dark:text-white">✅</div>
+                <div className="text-sm text-gray-500 dark:text-gray-400">Status</div>
               </div>
             </div>
           </div>

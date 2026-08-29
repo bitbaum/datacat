@@ -11,7 +11,7 @@ const { URL } = require('url');
 class WebsiteIngestionService {
   constructor() {
     this.openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY
+      apiKey: process.env.OPENAI_API_KEY,
     });
     this.maxContentLength = 100000; // 100KB text limit
     this.timeout = 30000; // 30 second timeout
@@ -61,7 +61,7 @@ class WebsiteIngestionService {
       waitForSelector = null,
       screenshot = false,
       fullPage = false,
-      extractType = 'auto'
+      extractType = 'auto',
     } = options;
 
     let browser;
@@ -73,8 +73,8 @@ class WebsiteIngestionService {
           '--disable-setuid-sandbox',
           '--disable-dev-shm-usage',
           '--disable-accelerated-2d-canvas',
-          '--disable-gpu'
-        ]
+          '--disable-gpu',
+        ],
       });
 
       const page = await browser.newPage();
@@ -84,13 +84,13 @@ class WebsiteIngestionService {
 
       // Set user agent
       await page.setUserAgent(
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
       );
 
       // Navigate to URL
       await page.goto(url, {
         waitUntil: 'networkidle2',
-        timeout: this.timeout
+        timeout: this.timeout,
       });
 
       // Wait for specific selector if provided
@@ -109,7 +109,7 @@ class WebsiteIngestionService {
         const screenshotBuffer = await page.screenshot({
           fullPage,
           type: 'jpeg',
-          quality: 80
+          quality: 80,
         });
         screenshotBase64 = screenshotBuffer.toString('base64');
       }
@@ -129,7 +129,7 @@ class WebsiteIngestionService {
           ogImage: getMeta('og:image'),
           ogType: getMeta('og:type'),
           canonical: document.querySelector('link[rel="canonical"]')?.href,
-          language: document.documentElement.lang
+          language: document.documentElement.lang,
         };
       });
 
@@ -140,9 +140,8 @@ class WebsiteIngestionService {
         title: pageTitle,
         url: pageUrl,
         metadata,
-        screenshot: screenshotBase64
+        screenshot: screenshotBase64,
       };
-
     } catch (error) {
       if (browser) await browser.close();
       throw error;
@@ -183,7 +182,7 @@ class WebsiteIngestionService {
       links: [],
       images: [],
       tables: [],
-      lists: []
+      lists: [],
     };
 
     // Extract headings
@@ -191,7 +190,7 @@ class WebsiteIngestionService {
       const $el = $(el);
       structuredData.headings.push({
         level: parseInt(el.tagName.slice(1)),
-        text: $el.text().trim().slice(0, 200)
+        text: $el.text().trim().slice(0, 200),
       });
     });
 
@@ -202,7 +201,7 @@ class WebsiteIngestionService {
       if (href && !href.startsWith('#') && !href.startsWith('javascript:')) {
         structuredData.links.push({
           text: $el.text().trim().slice(0, 100),
-          href: href.slice(0, 500)
+          href: href.slice(0, 500),
         });
       }
     });
@@ -217,14 +216,14 @@ class WebsiteIngestionService {
       structuredData.images.push({
         src: $el.attr('src'),
         alt: $el.attr('alt') || '',
-        title: $el.attr('title') || ''
+        title: $el.attr('title') || '',
       });
     });
     structuredData.images = structuredData.images.slice(0, 50);
 
     return {
       text: mainContent,
-      structured: structuredData
+      structured: structuredData,
     };
   }
 
@@ -236,8 +235,10 @@ class WebsiteIngestionService {
 
     const typePrompts = {
       auto: 'Analyze this webpage content and extract key information.',
-      article: 'Extract the main article content, including title, author, publication date, and key points.',
-      product: 'Extract product information including name, price, description, specifications, and reviews.',
+      article:
+        'Extract the main article content, including title, author, publication date, and key points.',
+      product:
+        'Extract product information including name, price, description, specifications, and reviews.',
       contact: 'Extract contact information including names, emails, phone numbers, and addresses.',
       listing: 'Extract all items from this listing or catalog page.',
       form: 'Identify all form fields and their purposes on this page.',
@@ -251,7 +252,7 @@ class WebsiteIngestionService {
         messages: [
           {
             role: 'system',
-            content: `You are a web content analyzer. ${systemPrompt} Return structured JSON.`
+            content: `You are a web content analyzer. ${systemPrompt} Return structured JSON.`,
           },
           {
             role: 'user',
@@ -265,7 +266,10 @@ Content:
 ${content.text.slice(0, 8000)}
 
 Headings:
-${content.structured.headings.slice(0, 20).map(h => `${'#'.repeat(h.level)} ${h.text}`).join('\n')}
+${content.structured.headings
+  .slice(0, 20)
+  .map((h) => `${'#'.repeat(h.level)} ${h.text}`)
+  .join('\n')}
 
 Extract and return JSON:
 \`\`\`json
@@ -285,11 +289,11 @@ Extract and return JSON:
   "language": "detected language",
   "extractedData": {}
 }
-\`\`\``
-          }
+\`\`\``,
+          },
         ],
         temperature: 0.3,
-        response_format: { type: 'json_object' }
+        response_format: { type: 'json_object' },
       });
 
       return JSON.parse(response.choices[0].message.content);
@@ -301,7 +305,7 @@ Extract and return JSON:
         mainTopic: 'unknown',
         keyPoints: [],
         entities: {},
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -318,7 +322,7 @@ Extract and return JSON:
       screenshot = false,
       customPrompt = null,
       formId = null,
-      organizationId = null
+      organizationId = null,
     } = options;
 
     // Validate URL
@@ -336,19 +340,19 @@ Extract and return JSON:
           extractType,
           waitForSelector,
           screenshot,
-          scrapedAt: new Date().toISOString()
+          scrapedAt: new Date().toISOString(),
         },
         userId,
         organizationId,
-        formId
-      }
+        formId,
+      },
     });
 
     try {
       // Update status to processing
       await prisma.dataSource.update({
         where: { id: dataSource.id },
-        data: { status: 'PROCESSING' }
+        data: { status: 'PROCESSING' },
       });
 
       const startTime = Date.now();
@@ -357,18 +361,22 @@ Extract and return JSON:
       const scrapeResult = await this.scrapeUrl(validatedUrl, {
         waitForSelector,
         screenshot,
-        extractType
+        extractType,
       });
 
       // Extract content
       const content = this.extractContent(scrapeResult.html, extractType);
 
       // Analyze with AI
-      const analysis = await this.analyzeContent(content, {
-        title: scrapeResult.title,
-        url: scrapeResult.url,
-        description: scrapeResult.metadata?.description
-      }, { extractType, customPrompt });
+      const analysis = await this.analyzeContent(
+        content,
+        {
+          title: scrapeResult.title,
+          url: scrapeResult.url,
+          description: scrapeResult.metadata?.description,
+        },
+        { extractType, customPrompt },
+      );
 
       const processingTime = Date.now() - startTime;
 
@@ -386,13 +394,15 @@ Extract and return JSON:
             links: content.structured.links.slice(0, 50),
             images: content.structured.images.slice(0, 20),
             analysis,
-            screenshot: scrapeResult.screenshot ? `data:image/jpeg;base64,${scrapeResult.screenshot}` : null
+            screenshot: scrapeResult.screenshot
+              ? `data:image/jpeg;base64,${scrapeResult.screenshot}`
+              : null,
           },
           processingTime,
           aiModel: 'gpt-4-turbo-preview',
           confidence: this.calculateConfidence(content, analysis),
-          processedAt: new Date()
-        }
+          processedAt: new Date(),
+        },
       });
 
       return {
@@ -403,17 +413,16 @@ Extract and return JSON:
         contentLength: content.text.length,
         analysis,
         processingTime,
-        confidence: updatedDataSource.confidence
+        confidence: updatedDataSource.confidence,
       };
-
     } catch (error) {
       // Update status to failed
       await prisma.dataSource.update({
         where: { id: dataSource.id },
         data: {
           status: 'FAILED',
-          error: error.message
-        }
+          error: error.message,
+        },
       });
 
       throw error;
@@ -453,7 +462,10 @@ Extract and return JSON:
     if (analysis && !analysis.error) {
       confidence += 0.1;
       if (analysis.keyPoints?.length > 0) confidence += 0.05;
-      if (analysis.entities && Object.keys(analysis.entities).some(k => analysis.entities[k]?.length > 0)) {
+      if (
+        analysis.entities &&
+        Object.keys(analysis.entities).some((k) => analysis.entities[k]?.length > 0)
+      ) {
         confidence += 0.05;
       }
     }
@@ -469,7 +481,7 @@ Extract and return JSON:
 
     const where = {
       userId,
-      type: 'WEBSITE'
+      type: 'WEBSITE',
     };
 
     if (status) {
@@ -494,10 +506,10 @@ Extract and return JSON:
           confidence: true,
           createdAt: true,
           processedAt: true,
-          error: true
-        }
+          error: true,
+        },
       }),
-      prisma.dataSource.count({ where })
+      prisma.dataSource.count({ where }),
     ]);
 
     return { dataSources, total, limit, offset };
@@ -509,7 +521,7 @@ Extract and return JSON:
   async getWebsiteSource(id, userId) {
     const dataSource = await prisma.dataSource.findFirst({
       where: { id, userId, type: 'WEBSITE' },
-      include: { analyses: true }
+      include: { analyses: true },
     });
 
     if (!dataSource) {
@@ -524,7 +536,7 @@ Extract and return JSON:
    */
   async deleteWebsiteSource(id, userId) {
     const dataSource = await prisma.dataSource.findFirst({
-      where: { id, userId, type: 'WEBSITE' }
+      where: { id, userId, type: 'WEBSITE' },
     });
 
     if (!dataSource) {
@@ -541,7 +553,7 @@ Extract and return JSON:
    */
   async rescrapeUrl(id, userId, options = {}) {
     const dataSource = await prisma.dataSource.findFirst({
-      where: { id, userId, type: 'WEBSITE' }
+      where: { id, userId, type: 'WEBSITE' },
     });
 
     if (!dataSource) {
@@ -552,7 +564,7 @@ Extract and return JSON:
     const result = await this.processUrl(dataSource.fileUrl, userId, {
       name: dataSource.name,
       description: dataSource.description,
-      ...options
+      ...options,
     });
 
     // Delete the old record after successful rescrape

@@ -20,11 +20,7 @@ export function Callout({ children, type = 'info' }: CalloutProps) {
     warn: 'my-6 rounded-lg border-l-4 border-yellow-500 bg-yellow-50 dark:bg-yellow-900/20 p-4',
     danger: 'my-6 rounded-lg border-l-4 border-red-500 bg-red-50 dark:bg-red-900/20 p-4',
   }[type];
-  return (
-    <div className={styles}> 
-      {children}
-    </div>
-  );
+  return <div className={styles}>{children}</div>;
 }
 
 type InfographicProps = {
@@ -34,8 +30,18 @@ type InfographicProps = {
 export function Infographic({ src, caption }: InfographicProps) {
   return (
     <figure className="my-8">
-      <Image src={src} alt={caption || ''} width={800} height={450} className="mx-auto rounded-lg shadow-md" />
-      {caption && <figcaption className="mt-2 text-center text-sm text-gray-500 dark:text-gray-400">{caption}</figcaption>}
+      <Image
+        src={src}
+        alt={caption || ''}
+        width={800}
+        height={450}
+        className="mx-auto rounded-lg shadow-md"
+      />
+      {caption && (
+        <figcaption className="mt-2 text-center text-sm text-gray-500 dark:text-gray-400">
+          {caption}
+        </figcaption>
+      )}
     </figure>
   );
 }
@@ -43,9 +49,19 @@ export function Infographic({ src, caption }: InfographicProps) {
 export const MDXComponents = {
   Image,
   img: (props: any) => (
-    <Image {...props} alt={props.alt || ''} width={props.width || 800} height={props.height || 400} />
+    <Image
+      {...props}
+      alt={props.alt || ''}
+      width={props.width || 800}
+      height={props.height || 400}
+    />
   ),
-  a: (props: any) => <Link {...props} className="text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300" />,
+  a: (props: any) => (
+    <Link
+      {...props}
+      className="text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300"
+    />
+  ),
   Callout,
   Infographic,
-}; 
+};

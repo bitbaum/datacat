@@ -11,15 +11,19 @@ const pinoHttp = require('pino-http');
 const webSocketService = require('./services/websocket');
 
 // Middleware
-app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    credentials: true,
+  }),
+);
 app.use(express.json());
 app.use(cookieParser());
-app.use(pinoHttp({
-  redact: ['req.headers.authorization', 'req.headers.cookie'],
-}));
+app.use(
+  pinoHttp({
+    redact: ['req.headers.authorization', 'req.headers.cookie'],
+  }),
+);
 
 // Health check
 app.get('/', (req, res) => {
@@ -41,7 +45,7 @@ app.get('/health', (req, res) => {
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
     version: '2.0.0',
-    environment: process.env.NODE_ENV || 'development'
+    environment: process.env.NODE_ENV || 'development',
   });
 });
 
@@ -98,4 +102,4 @@ server.listen(PORT, '0.0.0.0', () => {
   console.log(`📊 API endpoints available at http://localhost:${PORT}/api/trpc`);
   console.log(`🔌 WebSocket server ready for real-time connections`);
   console.log(`📚 Architecture documentation: /backend/ARCHITECTURE.md`);
-}); 
+});

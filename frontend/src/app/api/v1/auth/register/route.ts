@@ -10,7 +10,8 @@ export async function POST(req: Request) {
   if (exists) return Response.json({ success: false, message: 'User exists' }, { status: 409 });
   const passwordHash = await hash(password, 10);
   const user = await prisma.user.create({ data: { email, passwordHash, name } });
-  return Response.json({ success: true, user: { id: user.id, email: user.email, name: user.name } });
+  return Response.json({
+    success: true,
+    user: { id: user.id, email: user.email, name: user.name },
+  });
 }
-
-

@@ -23,14 +23,18 @@ export function DynamicForm({ initialFields, onSubmit, onFieldsChange }: Dynamic
   const [fields, setFields] = useState<FieldConfig[]>(initialFields);
   const [formData, setFormData] = useState<FormData>(() => {
     const data: FormData = {};
-    initialFields.forEach(field => {
+    initialFields.forEach((field) => {
       data[field.name] = '';
     });
     return data;
   });
-  
-  const { validateForm, validateSingleField, getFieldError, hasErrors, clearErrors } = useFormValidation(fields);
-  const { savedData, saveNow, clearSavedData, getLastSaveTime, hasSavedData } = useAutoSave(formData, fields);
+
+  const { validateForm, validateSingleField, getFieldError, hasErrors, clearErrors } =
+    useFormValidation(fields);
+  const { savedData, saveNow, clearSavedData, getLastSaveTime, hasSavedData } = useAutoSave(
+    formData,
+    fields,
+  );
   const { saveTemplate } = useTemplateManager();
   const [showSaveTemplateModal, setShowSaveTemplateModal] = useState(false);
   const [showGroupManager, setShowGroupManager] = useState(false);
@@ -38,7 +42,7 @@ export function DynamicForm({ initialFields, onSubmit, onFieldsChange }: Dynamic
 
   // Load saved data on component mount
   useEffect(() => {
-    if (savedData && Object.keys(formData).every(key => !formData[key])) {
+    if (savedData && Object.keys(formData).every((key) => !formData[key])) {
       // Only load if current form is empty
       setFormData(savedData.formData);
       if (savedData.fields.length !== fields.length) {
@@ -48,11 +52,13 @@ export function DynamicForm({ initialFields, onSubmit, onFieldsChange }: Dynamic
     }
   }, [savedData]); // Only run when savedData changes, not on every render
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -64,7 +70,7 @@ export function DynamicForm({ initialFields, onSubmit, onFieldsChange }: Dynamic
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const errors = validateForm(formData);
-    
+
     if (errors.length === 0) {
       clearSavedData(); // Clear auto-save data on successful submit
       onSubmit(formData);
@@ -85,10 +91,8 @@ export function DynamicForm({ initialFields, onSubmit, onFieldsChange }: Dynamic
 
   const handleDeleteGroup = (groupName: string) => {
     // Move all fields from this group to 'Allgemeine Felder'
-    const updatedFields = fields.map(field => 
-      field.group === groupName 
-        ? { ...field, group: undefined }
-        : field
+    const updatedFields = fields.map((field) =>
+      field.group === groupName ? { ...field, group: undefined } : field,
     );
     setFields(updatedFields);
     onFieldsChange?.(updatedFields);
@@ -96,7 +100,7 @@ export function DynamicForm({ initialFields, onSubmit, onFieldsChange }: Dynamic
 
   const getAvailableGroups = () => {
     const groups = new Set<string>();
-    fields.forEach(field => {
+    fields.forEach((field) => {
       if (field.group) {
         groups.add(field.group);
       }
@@ -107,9 +111,9 @@ export function DynamicForm({ initialFields, onSubmit, onFieldsChange }: Dynamic
   const addField = (fieldConfig: FieldConfig) => {
     const newFields = [...fields, fieldConfig];
     setFields(newFields);
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [fieldConfig.name]: ''
+      [fieldConfig.name]: '',
     }));
     onFieldsChange?.(newFields);
   };
@@ -128,7 +132,7 @@ export function DynamicForm({ initialFields, onSubmit, onFieldsChange }: Dynamic
       range: 'Bereich',
       file: 'Datei',
       url: 'URL',
-      password: 'Passwort'
+      password: 'Passwort',
     };
 
     const fieldConfig: FieldConfig = {
@@ -138,23 +142,26 @@ export function DynamicForm({ initialFields, onSubmit, onFieldsChange }: Dynamic
       label: fieldNames[type] || type,
       required: false,
       placeholder: type === 'select' ? undefined : `${fieldNames[type]} eingeben...`,
-      options: type === 'select' ? [
-        { value: '', label: 'Auswahl treffen' },
-        { value: 'option1', label: 'Option 1' },
-        { value: 'option2', label: 'Option 2' }
-      ] : undefined,
-      rows: type === 'textarea' ? 3 : undefined
+      options:
+        type === 'select'
+          ? [
+              { value: '', label: 'Auswahl treffen' },
+              { value: 'option1', label: 'Option 1' },
+              { value: 'option2', label: 'Option 2' },
+            ]
+          : undefined,
+      rows: type === 'textarea' ? 3 : undefined,
     };
 
     addField(fieldConfig);
   };
 
   const removeField = (fieldId: string) => {
-    const newFields = fields.filter(field => field.id !== fieldId);
+    const newFields = fields.filter((field) => field.id !== fieldId);
     setFields(newFields);
-    const fieldToRemove = fields.find(field => field.id === fieldId);
+    const fieldToRemove = fields.find((field) => field.id === fieldId);
     if (fieldToRemove) {
-      setFormData(prev => {
+      setFormData((prev) => {
         const newData = { ...prev };
         delete newData[fieldToRemove.name];
         return newData;
@@ -164,8 +171,8 @@ export function DynamicForm({ initialFields, onSubmit, onFieldsChange }: Dynamic
   };
 
   const updateField = (fieldId: string, updates: Partial<FieldConfig>) => {
-    const newFields = fields.map(field => 
-      field.id === fieldId ? { ...field, ...updates } : field
+    const newFields = fields.map((field) =>
+      field.id === fieldId ? { ...field, ...updates } : field,
     );
     setFields(newFields);
     onFieldsChange?.(newFields);
@@ -203,7 +210,11 @@ export function DynamicForm({ initialFields, onSubmit, onFieldsChange }: Dynamic
               <div className="flex items-center">
                 <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center mr-3">
                   <svg className="h-5 w-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                    <path
+                      fillRule="evenodd"
+                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                      clipRule="evenodd"
+                    />
                   </svg>
                 </div>
                 <span className="text-sm font-medium text-blue-800 dark:text-blue-200">
@@ -225,8 +236,18 @@ export function DynamicForm({ initialFields, onSubmit, onFieldsChange }: Dynamic
         {fields.length === 0 && (
           <div className="text-center py-16 bg-white dark:bg-gray-800 rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-600">
             <div className="mx-auto w-16 h-16 bg-gradient-to-r from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30 rounded-full flex items-center justify-center mb-4">
-              <svg className="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              <svg
+                className="w-8 h-8 text-blue-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                />
               </svg>
             </div>
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
@@ -242,19 +263,25 @@ export function DynamicForm({ initialFields, onSubmit, onFieldsChange }: Dynamic
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Group fields by their group property */}
           {(() => {
-            const groupedFields = fields.reduce((groups, field) => {
-              const groupName = field.group || 'Allgemeine Felder';
-              if (!groups[groupName]) {
-                groups[groupName] = [];
-              }
-              groups[groupName].push(field);
-              return groups;
-            }, {} as Record<string, FieldConfig[]>);
+            const groupedFields = fields.reduce(
+              (groups, field) => {
+                const groupName = field.group || 'Allgemeine Felder';
+                if (!groups[groupName]) {
+                  groups[groupName] = [];
+                }
+                groups[groupName].push(field);
+                return groups;
+              },
+              {} as Record<string, FieldConfig[]>,
+            );
 
             return (
               <div className="space-y-6">
                 {Object.entries(groupedFields).map(([groupName, groupFields]) => {
-                  if (groupName === 'Allgemeine Felder' && Object.keys(groupedFields).length === 1) {
+                  if (
+                    groupName === 'Allgemeine Felder' &&
+                    Object.keys(groupedFields).length === 1
+                  ) {
                     // If there's only one group and it's the default, render fields directly
                     return (
                       <div key={groupName} className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -277,7 +304,10 @@ export function DynamicForm({ initialFields, onSubmit, onFieldsChange }: Dynamic
 
                   // Render as field groups
                   return (
-                    <div key={groupName} className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
+                    <div
+                      key={groupName}
+                      className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6"
+                    >
                       <div className="flex items-center justify-between mb-4">
                         <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                           {groupName}
@@ -315,7 +345,11 @@ export function DynamicForm({ initialFields, onSubmit, onFieldsChange }: Dynamic
                 <div className="flex-shrink-0">
                   <div className="w-8 h-8 bg-gradient-to-r from-red-500 to-red-600 rounded-lg flex items-center justify-center">
                     <svg className="h-5 w-5 text-white" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                      <path
+                        fillRule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                        clipRule="evenodd"
+                      />
                     </svg>
                   </div>
                 </div>
@@ -338,7 +372,12 @@ export function DynamicForm({ initialFields, onSubmit, onFieldsChange }: Dynamic
                 className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 px-8"
               >
                 <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+                  />
                 </svg>
                 Formular absenden
               </Button>
@@ -347,24 +386,32 @@ export function DynamicForm({ initialFields, onSubmit, onFieldsChange }: Dynamic
         </form>
 
         {/* Modals */}
-        {editingField && (
-          <FieldEditor
-            field={editingField}
-            onUpdate={handleSaveFieldEdit}
-          />
-        )}
+        {editingField && <FieldEditor field={editingField} onUpdate={handleSaveFieldEdit} />}
 
         {showGroupManager && (
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4" onClick={() => setShowGroupManager(false)}>
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+            onClick={() => setShowGroupManager(false)}
+          >
+            <div
+              className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-md p-6"
+              onClick={(e) => e.stopPropagation()}
+            >
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Gruppen verwalten</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  Gruppen verwalten
+                </h3>
                 <button
                   onClick={() => setShowGroupManager(false)}
                   className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
                   </svg>
                 </button>
               </div>
@@ -387,4 +434,3 @@ export function DynamicForm({ initialFields, onSubmit, onFieldsChange }: Dynamic
     </FormBuilderLayout>
   );
 }
-

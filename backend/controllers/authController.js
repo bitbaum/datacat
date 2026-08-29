@@ -1,7 +1,14 @@
 const prisma = require('../lib/prisma');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { success, error, validationError, unauthorized, notFound, created } = require('../utils/responseHandlers');
+const {
+  success,
+  error,
+  validationError,
+  unauthorized,
+  notFound,
+  created,
+} = require('../utils/responseHandlers');
 const redis = require('../lib/redis');
 
 function setAuthCookies(res, token) {
@@ -26,7 +33,7 @@ exports.register = async (req, res) => {
 
     // Check if user already exists
     const existingUser = await prisma.user.findUnique({
-      where: { email }
+      where: { email },
     });
 
     if (existingUser) {
@@ -43,15 +50,15 @@ exports.register = async (req, res) => {
         email,
         passwordHash,
         name: name || null,
-        role: 'USER'
+        role: 'USER',
       },
       select: {
         id: true,
         email: true,
         name: true,
         role: true,
-        createdAt: true
-      }
+        createdAt: true,
+      },
     });
 
     // Create and sign a JWT
@@ -59,7 +66,7 @@ exports.register = async (req, res) => {
       user: {
         id: user.id,
         email: user.email,
-        role: user.role
+        role: user.role,
       },
     };
 
@@ -74,7 +81,7 @@ exports.register = async (req, res) => {
         }
         setAuthCookies(res, token);
         return created(res, { token, user }, 'User registered successfully');
-      }
+      },
     );
   } catch (err) {
     console.error('Registration error:', err);
@@ -101,8 +108,8 @@ exports.login = async (req, res) => {
         role: true,
         passwordHash: true,
         isActive: true,
-        createdAt: true
-      }
+        createdAt: true,
+      },
     });
 
     if (!user || !user.isActive) {
@@ -120,7 +127,7 @@ exports.login = async (req, res) => {
       user: {
         id: user.id,
         email: user.email,
-        role: user.role
+        role: user.role,
       },
     };
 
@@ -134,17 +141,21 @@ exports.login = async (req, res) => {
           return error(res, 'Token generation failed');
         }
         setAuthCookies(res, token);
-        return success(res, {
-          token,
-          user: {
-            id: user.id,
-            email: user.email,
-            name: user.name,
-            role: user.role,
-            createdAt: user.createdAt
-          }
-        }, 'Login successful');
-      }
+        return success(
+          res,
+          {
+            token,
+            user: {
+              id: user.id,
+              email: user.email,
+              name: user.name,
+              role: user.role,
+              createdAt: user.createdAt,
+            },
+          },
+          'Login successful',
+        );
+      },
     );
   } catch (err) {
     console.error('Login error:', err);
@@ -170,10 +181,10 @@ exports.getProfile = async (req, res) => {
           select: {
             id: true,
             name: true,
-            slug: true
-          }
-        }
-      }
+            slug: true,
+          },
+        },
+      },
     });
 
     if (!user) {
@@ -191,12 +202,12 @@ exports.getProfile = async (req, res) => {
 exports.updateProfile = async (req, res) => {
   try {
     const { name, avatar } = req.body;
-    
+
     const user = await prisma.user.update({
       where: { id: req.user.id },
       data: {
         ...(name && { name }),
-        ...(avatar && { avatar })
+        ...(avatar && { avatar }),
       },
       select: {
         id: true,
@@ -204,8 +215,8 @@ exports.updateProfile = async (req, res) => {
         name: true,
         role: true,
         avatar: true,
-        updatedAt: true
-      }
+        updatedAt: true,
+      },
     });
 
     return success(res, { user }, 'Profile updated successfully');
@@ -229,8 +240,8 @@ exports.changePassword = async (req, res) => {
       where: { id: req.user.id },
       select: {
         id: true,
-        passwordHash: true
-      }
+        passwordHash: true,
+      },
     });
 
     if (!user || !user.passwordHash) {
@@ -250,7 +261,7 @@ exports.changePassword = async (req, res) => {
     // Update password
     await prisma.user.update({
       where: { id: req.user.id },
-      data: { passwordHash: newPasswordHash }
+      data: { passwordHash: newPasswordHash },
     });
 
     return success(res, {}, 'Password changed successfully');
@@ -269,7 +280,7 @@ exports.verifyToken = async (req, res) => {
     console.error('Verify token error:', err);
     return error(res, 'Server error verifying token', 500, err);
   }
-}; 
+};
 
 // Logout: clear cookie
 exports.logout = async (req, res) => {

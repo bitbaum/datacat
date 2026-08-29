@@ -40,12 +40,14 @@ export default function DatabaseIngestion({
   onImportComplete,
   onError,
   apiUrl = 'http://localhost:5001',
-  token
+  token,
 }: DatabaseIngestionProps) {
   const [step, setStep] = useState<Step>('connect');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [connectionStatus, setConnectionStatus] = useState<'idle' | 'testing' | 'connected' | 'failed'>('idle');
+  const [connectionStatus, setConnectionStatus] = useState<
+    'idle' | 'testing' | 'connected' | 'failed'
+  >('idle');
 
   // Connection form state
   const [connection, setConnection] = useState<ConnectionConfig>({
@@ -55,7 +57,7 @@ export default function DatabaseIngestion({
     database: '',
     username: '',
     password: '',
-    ssl: false
+    ssl: false,
   });
 
   // Tables and schema
@@ -69,7 +71,7 @@ export default function DatabaseIngestion({
     limit: 1000,
     offset: 0,
     selectedColumns: [] as string[],
-    whereClause: ''
+    whereClause: '',
   });
 
   // Results
@@ -93,7 +95,7 @@ export default function DatabaseIngestion({
           'Content-Type': 'application/json',
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
-        body: JSON.stringify(connection)
+        body: JSON.stringify(connection),
       });
 
       const result = await response.json();
@@ -123,7 +125,7 @@ export default function DatabaseIngestion({
           'Content-Type': 'application/json',
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
-        body: JSON.stringify(connection)
+        body: JSON.stringify(connection),
       });
 
       const result = await response.json();
@@ -142,40 +144,43 @@ export default function DatabaseIngestion({
     }
   }, [connection, apiUrl, token]);
 
-  const fetchTableSchema = useCallback(async (tableName: string) => {
-    setLoading(true);
-    setSelectedTable(tableName);
+  const fetchTableSchema = useCallback(
+    async (tableName: string) => {
+      setLoading(true);
+      setSelectedTable(tableName);
 
-    try {
-      const response = await fetch(`${apiUrl}/api/v1/db-ingestion/schema`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        body: JSON.stringify({ connection, tableName })
-      });
+      try {
+        const response = await fetch(`${apiUrl}/api/v1/db-ingestion/schema`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          body: JSON.stringify({ connection, tableName }),
+        });
 
-      const result = await response.json();
+        const result = await response.json();
 
-      if (result.success) {
-        setTableSchema(result.columns);
-        setEstimatedRows(result.estimatedRows);
-        setImportOptions(prev => ({
-          ...prev,
-          selectedColumns: result.columns.map((c: ColumnInfo) => c.name)
-        }));
-        setStep('import');
-      } else {
-        setError(result.message || 'Failed to fetch schema');
+        if (result.success) {
+          setTableSchema(result.columns);
+          setEstimatedRows(result.estimatedRows);
+          setImportOptions((prev) => ({
+            ...prev,
+            selectedColumns: result.columns.map((c: ColumnInfo) => c.name),
+          }));
+          setStep('import');
+        } else {
+          setError(result.message || 'Failed to fetch schema');
+        }
+      } catch (err) {
+        const message = err instanceof Error ? err.message : 'Failed to fetch schema';
+        setError(message);
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to fetch schema';
-      setError(message);
-    } finally {
-      setLoading(false);
-    }
-  }, [connection, apiUrl, token]);
+    },
+    [connection, apiUrl, token],
+  );
 
   const handleImport = useCallback(async () => {
     if (!selectedTable) return;
@@ -197,9 +202,9 @@ export default function DatabaseIngestion({
             limit: importOptions.limit,
             offset: importOptions.offset,
             columns: importOptions.selectedColumns,
-            where: importOptions.whereClause
-          }
-        })
+            where: importOptions.whereClause,
+          },
+        }),
       });
 
       const result = await response.json();
@@ -211,7 +216,7 @@ export default function DatabaseIngestion({
           processingTime: result.processingTime,
           dataSourceId: result.dataSourceId,
           columns: result.columns,
-          sampleData: result.data.slice(0, 5)
+          sampleData: result.data.slice(0, 5),
         });
         setStep('results');
         onImportComplete?.(result);
@@ -229,11 +234,11 @@ export default function DatabaseIngestion({
   }, [connection, selectedTable, importOptions, apiUrl, token, onImportComplete, onError]);
 
   const toggleColumn = (columnName: string) => {
-    setImportOptions(prev => ({
+    setImportOptions((prev) => ({
       ...prev,
       selectedColumns: prev.selectedColumns.includes(columnName)
-        ? prev.selectedColumns.filter(c => c !== columnName)
-        : [...prev.selectedColumns, columnName]
+        ? prev.selectedColumns.filter((c) => c !== columnName)
+        : [...prev.selectedColumns, columnName],
     }));
   };
 
@@ -241,26 +246,26 @@ export default function DatabaseIngestion({
     <div className="space-y-6">
       {/* Database Type */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Database Type
-        </label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">Database Type</label>
         <select
           value={connection.type}
           onChange={(e) => setConnection({ ...connection, type: e.target.value })}
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
         >
           <option value="postgresql">PostgreSQL</option>
-          <option value="mysql" disabled>MySQL (Coming Soon)</option>
-          <option value="mssql" disabled>SQL Server (Coming Soon)</option>
+          <option value="mysql" disabled>
+            MySQL (Coming Soon)
+          </option>
+          <option value="mssql" disabled>
+            SQL Server (Coming Soon)
+          </option>
         </select>
       </div>
 
       {/* Host and Port */}
       <div className="grid grid-cols-3 gap-4">
         <div className="col-span-2">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Host
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Host</label>
           <input
             type="text"
             value={connection.host}
@@ -270,13 +275,13 @@ export default function DatabaseIngestion({
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Port
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Port</label>
           <input
             type="number"
             value={connection.port}
-            onChange={(e) => setConnection({ ...connection, port: parseInt(e.target.value) || 5432 })}
+            onChange={(e) =>
+              setConnection({ ...connection, port: parseInt(e.target.value) || 5432 })
+            }
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
           />
         </div>
@@ -284,9 +289,7 @@ export default function DatabaseIngestion({
 
       {/* Database Name */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Database Name
-        </label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">Database Name</label>
         <input
           type="text"
           value={connection.database}
@@ -299,9 +302,7 @@ export default function DatabaseIngestion({
       {/* Username and Password */}
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Username
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Username</label>
           <input
             type="text"
             value={connection.username}
@@ -311,9 +312,7 @@ export default function DatabaseIngestion({
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Password
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
           <input
             type="password"
             value={connection.password}
@@ -348,7 +347,12 @@ export default function DatabaseIngestion({
       {/* Connection Status */}
       {connectionStatus === 'connected' && (
         <div className="p-4 bg-green-50 border border-green-200 rounded-lg flex items-center gap-2">
-          <svg className="w-5 h-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg
+            className="w-5 h-5 text-green-600"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
           <p className="text-green-700 text-sm">Connected successfully!</p>
@@ -358,21 +362,42 @@ export default function DatabaseIngestion({
       {/* Connect Button */}
       <button
         onClick={testConnection}
-        disabled={!connection.host || !connection.database || !connection.username || connectionStatus === 'testing'}
+        disabled={
+          !connection.host ||
+          !connection.database ||
+          !connection.username ||
+          connectionStatus === 'testing'
+        }
         className="w-full py-3 px-4 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
       >
         {connectionStatus === 'testing' ? (
           <>
             <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              />
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+              />
             </svg>
             Testing Connection...
           </>
         ) : (
           <>
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M13 10V3L4 14h7v7l9-11h-7z"
+              />
             </svg>
             Connect to Database
           </>
@@ -398,8 +423,19 @@ export default function DatabaseIngestion({
       {loading ? (
         <div className="flex items-center justify-center py-12">
           <svg className="w-8 h-8 animate-spin text-indigo-600" fill="none" viewBox="0 0 24 24">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            />
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+            />
           </svg>
         </div>
       ) : (
@@ -415,9 +451,7 @@ export default function DatabaseIngestion({
                   <p className="font-medium text-gray-900">{table.name}</p>
                   <p className="text-sm text-gray-500">{table.schema}</p>
                 </div>
-                <span className="text-sm text-gray-500">
-                  {table.columnCount} columns
-                </span>
+                <span className="text-sm text-gray-500">{table.columnCount} columns</span>
               </div>
             </button>
           ))}
@@ -469,24 +503,24 @@ export default function DatabaseIngestion({
       {/* Import Options */}
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Row Limit
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Row Limit</label>
           <input
             type="number"
             value={importOptions.limit}
-            onChange={(e) => setImportOptions({ ...importOptions, limit: parseInt(e.target.value) || 1000 })}
+            onChange={(e) =>
+              setImportOptions({ ...importOptions, limit: parseInt(e.target.value) || 1000 })
+            }
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Offset
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Offset</label>
           <input
             type="number"
             value={importOptions.offset}
-            onChange={(e) => setImportOptions({ ...importOptions, offset: parseInt(e.target.value) || 0 })}
+            onChange={(e) =>
+              setImportOptions({ ...importOptions, offset: parseInt(e.target.value) || 0 })
+            }
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
           />
         </div>
@@ -521,15 +555,31 @@ export default function DatabaseIngestion({
         {loading ? (
           <>
             <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              />
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+              />
             </svg>
             Importing...
           </>
         ) : (
           <>
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
+              />
             </svg>
             Import {importOptions.selectedColumns.length} Columns
           </>
@@ -543,7 +593,12 @@ export default function DatabaseIngestion({
       {/* Success Header */}
       <div className="text-center py-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl">
         <div className="w-16 h-16 mx-auto bg-green-100 rounded-full flex items-center justify-center mb-4">
-          <svg className="w-8 h-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg
+            className="w-8 h-8 text-green-600"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
         </div>
@@ -562,15 +617,11 @@ export default function DatabaseIngestion({
           <p className="text-sm text-gray-500">Rows Imported</p>
         </div>
         <div className="bg-gray-50 p-4 rounded-lg text-center">
-          <p className="text-2xl font-bold text-indigo-600">
-            {importResult?.columns.length}
-          </p>
+          <p className="text-2xl font-bold text-indigo-600">{importResult?.columns.length}</p>
           <p className="text-sm text-gray-500">Columns</p>
         </div>
         <div className="bg-gray-50 p-4 rounded-lg text-center">
-          <p className="text-2xl font-bold text-indigo-600">
-            {importResult?.processingTime}ms
-          </p>
+          <p className="text-2xl font-bold text-indigo-600">{importResult?.processingTime}ms</p>
           <p className="text-sm text-gray-500">Processing Time</p>
         </div>
       </div>
@@ -638,8 +689,18 @@ export default function DatabaseIngestion({
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
         <div className="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center">
-          <svg className="w-6 h-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
+          <svg
+            className="w-6 h-6 text-indigo-600"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"
+            />
           </svg>
         </div>
         <div>
@@ -656,25 +717,32 @@ export default function DatabaseIngestion({
               className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
                 step === s
                   ? 'bg-indigo-600 text-white'
-                  : (['connect', 'tables', 'import', 'results'].indexOf(step) > idx)
-                  ? 'bg-green-500 text-white'
-                  : 'bg-gray-200 text-gray-600'
+                  : ['connect', 'tables', 'import', 'results'].indexOf(step) > idx
+                    ? 'bg-green-500 text-white'
+                    : 'bg-gray-200 text-gray-600'
               }`}
             >
-              {(['connect', 'tables', 'import', 'results'].indexOf(step) > idx) ? (
+              {['connect', 'tables', 'import', 'results'].indexOf(step) > idx ? (
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 13l4 4L19 7"
+                  />
                 </svg>
               ) : (
                 idx + 1
               )}
             </div>
             {idx < 3 && (
-              <div className={`flex-1 h-1 ${
-                (['connect', 'tables', 'import', 'results'].indexOf(step) > idx)
-                  ? 'bg-green-500'
-                  : 'bg-gray-200'
-              }`} />
+              <div
+                className={`flex-1 h-1 ${
+                  ['connect', 'tables', 'import', 'results'].indexOf(step) > idx
+                    ? 'bg-green-500'
+                    : 'bg-gray-200'
+                }`}
+              />
             )}
           </React.Fragment>
         ))}

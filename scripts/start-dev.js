@@ -5,18 +5,24 @@ const { spawn } = require('child_process');
 console.log('\n🚀 Starting all development servers...\n');
 
 // Start concurrently with both servers
-const dev = spawn('npx', [
-  'concurrently', 
-  '-k', 
-  '-n', 'FRONTEND,BACKEND', 
-  '-c', 'blue,green',
-  '"cd frontend && npm run dev"',
-  '"cd backend && npm start"'
-], {
-  stdio: 'inherit',
-  shell: true,
-  cwd: process.cwd()
-});
+const dev = spawn(
+  'npx',
+  [
+    'concurrently',
+    '-k',
+    '-n',
+    'FRONTEND,BACKEND',
+    '-c',
+    'blue,green',
+    '"cd frontend && npm run dev"',
+    '"cd backend && npm start"',
+  ],
+  {
+    stdio: 'inherit',
+    shell: true,
+    cwd: process.cwd(),
+  },
+);
 
 // Wait a bit for servers to start, then show links
 setTimeout(() => {

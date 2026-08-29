@@ -10,5 +10,3 @@ export async function createContext(_opts: FetchCreateContextFnOptions): Promise
   // Auth integration will be added; return anonymous context for now.
   return { db: prisma, user: null };
 }
-
-

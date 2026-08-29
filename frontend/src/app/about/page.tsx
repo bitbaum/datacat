@@ -1,17 +1,24 @@
-'use client'
+'use client';
 
 import React, { useState } from 'react';
-import { 
-  EyeIcon, SpeakerWaveIcon, CpuChipIcon, 
-  DocumentTextIcon, CameraIcon, SparklesIcon,
-  ChevronDownIcon, ChevronRightIcon,
-  RocketLaunchIcon, LightBulbIcon, CheckCircleIcon
+import {
+  EyeIcon,
+  SpeakerWaveIcon,
+  CpuChipIcon,
+  DocumentTextIcon,
+  CameraIcon,
+  SparklesIcon,
+  ChevronDownIcon,
+  ChevronRightIcon,
+  RocketLaunchIcon,
+  LightBulbIcon,
+  CheckCircleIcon,
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 
 const AboutPage = () => {
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
-  
+
   const toggleSection = (sectionId: string) => {
     const newExpanded = new Set(expandedSections);
     if (newExpanded.has(sectionId)) {
@@ -33,10 +40,11 @@ const AboutPage = () => {
             Bringen Sie <span className="text-blue-600">alles</span> ins System
           </h1>
           <p className="text-2xl text-gray-600 dark:text-gray-300 mb-12 max-w-4xl mx-auto leading-relaxed">
-            Jeden Tag verbringen Menschen bei der Arbeit unzählige Stunden damit, Informationen in Systeme einzugeben. 
-            Wir automatisieren diesen gesamten Prozess – <em>intelligent und mühelos</em>.
+            Jeden Tag verbringen Menschen bei der Arbeit unzählige Stunden damit, Informationen in
+            Systeme einzugeben. Wir automatisieren diesen gesamten Prozess –{' '}
+            <em>intelligent und mühelos</em>.
           </p>
-          
+
           <div className="flex justify-center space-x-8 mb-16">
             <div className="flex items-center space-x-3 text-gray-600 dark:text-gray-300">
               <DocumentTextIcon className="h-8 w-8 text-blue-600" />
@@ -62,39 +70,75 @@ const AboutPage = () => {
           <h2 className="text-5xl font-bold text-center text-gray-900 dark:text-white mb-16">
             Das Problem, das wir lösen
           </h2>
-          
+
           <div className="grid md:grid-cols-3 gap-12 mb-16">
             <div className="text-center">
               <div className="w-20 h-20 bg-red-100 dark:bg-red-900/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <svg className="h-10 w-10 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <svg
+                  className="h-10 w-10 text-red-600 dark:text-red-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
                 </svg>
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Zeitverschwendung</h3>
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+                Zeitverschwendung
+              </h3>
               <p className="text-gray-600 dark:text-gray-400 text-lg">
                 Millionen von Arbeitsstunden werden täglich mit manueller Dateneingabe verschwendet
               </p>
             </div>
-            
+
             <div className="text-center">
               <div className="w-20 h-20 bg-orange-100 dark:bg-orange-900/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <svg className="h-10 w-10 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.664-.833-2.464 0L5.35 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                <svg
+                  className="h-10 w-10 text-orange-600 dark:text-orange-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.664-.833-2.464 0L5.35 16.5c-.77.833.192 2.5 1.732 2.5z"
+                  />
                 </svg>
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Fehleranfällig</h3>
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+                Fehleranfällig
+              </h3>
               <p className="text-gray-600 dark:text-gray-400 text-lg">
                 Manuelle Eingaben führen zu Inkonsistenzen und kostspieligen Fehlern
               </p>
             </div>
-            
+
             <div className="text-center">
               <div className="w-20 h-20 bg-gray-100 dark:bg-gray-800 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <svg className="h-10 w-10 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                <svg
+                  className="h-10 w-10 text-gray-600 dark:text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M13 10V3L4 14h7v7l9-11h-7z"
+                  />
                 </svg>
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Verpasste Chancen</h3>
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+                Verpasste Chancen
+              </h3>
               <p className="text-gray-600 dark:text-gray-400 text-lg">
                 Wertvolle Insights bleiben in den Daten verborgen, ohne intelligente Analyse
               </p>
@@ -111,8 +155,9 @@ const AboutPage = () => {
               Unsere Vision: Das intelligente System
             </h2>
             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-4xl mx-auto leading-relaxed">
-              Stellen Sie sich ein System vor, das wie ein menschliches Gehirn funktioniert – mit Augen und Ohren, die alles erfassen, 
-              und einem Gehirn, das alles versteht und intelligent handelt.
+              Stellen Sie sich ein System vor, das wie ein menschliches Gehirn funktioniert – mit
+              Augen und Ohren, die alles erfassen, und einem Gehirn, das alles versteht und
+              intelligent handelt.
             </p>
             <div className="mt-8 max-w-3xl mx-auto text-left text-gray-700 dark:text-gray-300 space-y-2">
               <p className="font-semibold">AI‑getriebene FormSchemas</p>
@@ -153,13 +198,15 @@ const AboutPage = () => {
                   )}
                 </div>
               </button>
-              
+
               {isExpanded('forms') && (
                 <div className="px-8 pb-8">
                   <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
                     <div className="grid md:grid-cols-2 gap-8">
                       <div>
-                        <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Intelligente Formulare</h4>
+                        <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                          Intelligente Formulare
+                        </h4>
                         <ul className="space-y-3 text-gray-600 dark:text-gray-400">
                           <li className="flex items-start space-x-3">
                             <CheckCircleIcon className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
@@ -176,16 +223,24 @@ const AboutPage = () => {
                         </ul>
                       </div>
                       <div>
-                        <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Anwendungsbereiche</h4>
+                        <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                          Anwendungsbereiche
+                        </h4>
                         <div className="space-y-3">
                           <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
-                            <span className="text-blue-800 dark:text-blue-300 font-medium">HR & Onboarding</span>
+                            <span className="text-blue-800 dark:text-blue-300 font-medium">
+                              HR & Onboarding
+                            </span>
                           </div>
                           <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg">
-                            <span className="text-green-800 dark:text-green-300 font-medium">Kundenfeedback</span>
+                            <span className="text-green-800 dark:text-green-300 font-medium">
+                              Kundenfeedback
+                            </span>
                           </div>
                           <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg">
-                            <span className="text-purple-800 dark:text-purple-300 font-medium">Datenerfassung</span>
+                            <span className="text-purple-800 dark:text-purple-300 font-medium">
+                              Datenerfassung
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -222,13 +277,15 @@ const AboutPage = () => {
                   )}
                 </div>
               </button>
-              
+
               {isExpanded('sensors') && (
                 <div className="px-8 pb-8">
                   <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
                     <div className="grid md:grid-cols-2 gap-8">
                       <div>
-                        <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Sensor-Technologien</h4>
+                        <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                          Sensor-Technologien
+                        </h4>
                         <ul className="space-y-3 text-gray-600 dark:text-gray-400">
                           <li className="flex items-start space-x-3">
                             <CheckCircleIcon className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
@@ -245,16 +302,24 @@ const AboutPage = () => {
                         </ul>
                       </div>
                       <div>
-                        <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Erfassung von</h4>
+                        <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                          Erfassung von
+                        </h4>
                         <div className="space-y-3">
                           <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg">
-                            <span className="text-green-800 dark:text-green-300 font-medium">Produktdaten per Foto</span>
+                            <span className="text-green-800 dark:text-green-300 font-medium">
+                              Produktdaten per Foto
+                            </span>
                           </div>
                           <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
-                            <span className="text-blue-800 dark:text-blue-300 font-medium">Umgebungssensoren</span>
+                            <span className="text-blue-800 dark:text-blue-300 font-medium">
+                              Umgebungssensoren
+                            </span>
                           </div>
                           <div className="bg-orange-50 dark:bg-orange-900/20 p-4 rounded-lg">
-                            <span className="text-orange-800 dark:text-orange-300 font-medium">Bewegung & Verhalten</span>
+                            <span className="text-orange-800 dark:text-orange-300 font-medium">
+                              Bewegung & Verhalten
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -291,13 +356,15 @@ const AboutPage = () => {
                   )}
                 </div>
               </button>
-              
+
               {isExpanded('ai') && (
                 <div className="px-8 pb-8">
                   <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
                     <div className="grid md:grid-cols-2 gap-8">
                       <div>
-                        <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">KI-Fähigkeiten</h4>
+                        <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                          KI-Fähigkeiten
+                        </h4>
                         <ul className="space-y-3 text-gray-600 dark:text-gray-400">
                           <li className="flex items-start space-x-3">
                             <CheckCircleIcon className="h-5 w-5 text-purple-500 mt-0.5 flex-shrink-0" />
@@ -314,16 +381,24 @@ const AboutPage = () => {
                         </ul>
                       </div>
                       <div>
-                        <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Intelligente Ausgaben</h4>
+                        <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                          Intelligente Ausgaben
+                        </h4>
                         <div className="space-y-3">
                           <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg">
-                            <span className="text-purple-800 dark:text-purple-300 font-medium">Dashboards & Reports</span>
+                            <span className="text-purple-800 dark:text-purple-300 font-medium">
+                              Dashboards & Reports
+                            </span>
                           </div>
                           <div className="bg-indigo-50 dark:bg-indigo-900/20 p-4 rounded-lg">
-                            <span className="text-indigo-800 dark:text-indigo-300 font-medium">API-Integration</span>
+                            <span className="text-indigo-800 dark:text-indigo-300 font-medium">
+                              API-Integration
+                            </span>
                           </div>
                           <div className="bg-pink-50 dark:bg-pink-900/20 p-4 rounded-lg">
-                            <span className="text-pink-800 dark:text-pink-300 font-medium">Automatisierte Aktionen</span>
+                            <span className="text-pink-800 dark:text-pink-300 font-medium">
+                              Automatisierte Aktionen
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -344,13 +419,13 @@ const AboutPage = () => {
               So funktioniert es zusammen
             </h2>
           </div>
-          
+
           <div className="relative">
             {/* Connection Lines */}
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="w-full h-0.5 bg-gradient-to-r from-blue-300 via-green-300 to-purple-300"></div>
             </div>
-            
+
             <div className="relative grid md:grid-cols-3 gap-12">
               <div className="text-center bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700">
                 <div className="w-20 h-20 bg-blue-100 dark:bg-blue-900/20 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -358,27 +433,30 @@ const AboutPage = () => {
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Erfassen</h3>
                 <p className="text-gray-600 dark:text-gray-400 text-lg">
-                  Formulare und Sensoren sammeln Daten aus der realen Welt – automatisch und kontinuierlich
+                  Formulare und Sensoren sammeln Daten aus der realen Welt – automatisch und
+                  kontinuierlich
                 </p>
               </div>
-              
+
               <div className="text-center bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700">
                 <div className="w-20 h-20 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center mx-auto mb-6">
                   <span className="text-3xl font-bold text-green-600">2</span>
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Verstehen</h3>
                 <p className="text-gray-600 dark:text-gray-400 text-lg">
-                  KI analysiert, strukturiert und extrahiert wertvollen Kontext aus allen eingehenden Informationen
+                  KI analysiert, strukturiert und extrahiert wertvollen Kontext aus allen
+                  eingehenden Informationen
                 </p>
               </div>
-              
+
               <div className="text-center bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700">
                 <div className="w-20 h-20 bg-purple-100 dark:bg-purple-900/20 rounded-full flex items-center justify-center mx-auto mb-6">
                   <span className="text-3xl font-bold text-purple-600">3</span>
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Handeln</h3>
                 <p className="text-gray-600 dark:text-gray-400 text-lg">
-                  Intelligente Insights werden zu konkreten Aktionen und Entscheidungen für Ihr Business
+                  Intelligente Insights werden zu konkreten Aktionen und Entscheidungen für Ihr
+                  Business
                 </p>
               </div>
             </div>
@@ -389,14 +467,12 @@ const AboutPage = () => {
       {/* Call to Action */}
       <div className="py-24 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-700">
         <div className="max-w-4xl mx-auto text-center px-6">
-          <h2 className="text-5xl font-bold text-white mb-8">
-            Die Zukunft beginnt heute
-          </h2>
+          <h2 className="text-5xl font-bold text-white mb-8">Die Zukunft beginnt heute</h2>
           <p className="text-xl text-blue-100 mb-12 max-w-3xl mx-auto leading-relaxed">
-            Werden Sie Teil der Revolution, die manuelle Dateneingabe für immer verändert. 
-            Schaffen Sie ein System, das sieht, hört und intelligent handelt.
+            Werden Sie Teil der Revolution, die manuelle Dateneingabe für immer verändert. Schaffen
+            Sie ein System, das sieht, hört und intelligent handelt.
           </p>
-          
+
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
             <Link
               href="/builder"
@@ -419,4 +495,4 @@ const AboutPage = () => {
   );
 };
 
-export default AboutPage; 
+export default AboutPage;

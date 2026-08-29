@@ -3,31 +3,32 @@ import { MultiStepFormBuilder } from './MultiStepFormBuilder';
 import { useFormBuilderStore } from '../hooks/useFormBuilderStore';
 import { FormStep, FieldConfig } from '../types/form';
 
-interface MultiStepFormBuilderStoreProps extends Omit<React.ComponentProps<typeof MultiStepFormBuilder>,
-  'steps' | 'currentStep' | 'onStepChange' | 'onCreateStep' | 'onCreateStepAtPosition' | 'onAddField' | 'onUpdateStep'> {
+interface MultiStepFormBuilderStoreProps extends Omit<
+  React.ComponentProps<typeof MultiStepFormBuilder>,
+  | 'steps'
+  | 'currentStep'
+  | 'onStepChange'
+  | 'onCreateStep'
+  | 'onCreateStepAtPosition'
+  | 'onAddField'
+  | 'onUpdateStep'
+> {
   onCreateStep?: (step: Omit<FormStep, 'id'>) => void;
   onCreateStepAtPosition?: (step: Omit<FormStep, 'id'>, position: number) => void;
   onAddField?: (type: FieldConfig['type']) => void;
 }
 
 export function MultiStepFormBuilderStore(props: MultiStepFormBuilderStoreProps) {
-  const {
-    steps,
-    currentStep,
-    setCurrentStep,
-    addStep,
-    reorderStep,
-    updateStep,
-    addField,
-  } = useFormBuilderStore((state) => ({
-    steps: state.steps,
-    currentStep: state.currentStep,
-    setCurrentStep: state.setCurrentStep,
-    addStep: state.addStep,
-    reorderStep: state.reorderStep,
-    updateStep: state.updateStep,
-    addField: state.addField,
-  }));
+  const { steps, currentStep, setCurrentStep, addStep, reorderStep, updateStep, addField } =
+    useFormBuilderStore((state) => ({
+      steps: state.steps,
+      currentStep: state.currentStep,
+      setCurrentStep: state.setCurrentStep,
+      addStep: state.addStep,
+      reorderStep: state.reorderStep,
+      updateStep: state.updateStep,
+      addField: state.addField,
+    }));
 
   // helper to create step with id
   const createStep = (data: Omit<FormStep, 'id'>) => {
@@ -66,10 +67,5 @@ export function MultiStepFormBuilderStore(props: MultiStepFormBuilderStoreProps)
     props.onAddField?.(type);
   };
 
-  return (
-    <MultiStepFormBuilder
-      {...props}
-      steps={steps}
-    />
-  );
-} 
+  return <MultiStepFormBuilder {...props} steps={steps} />;
+}

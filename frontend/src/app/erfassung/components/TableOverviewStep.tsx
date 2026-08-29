@@ -29,33 +29,21 @@ export function TableOverviewStep({ product, onBackToWorkflow }: TableOverviewSt
             <div className="text-2xl font-bold text-green-600 dark:text-green-400">
               {product.photos.length}
             </div>
-            <div className="text-sm text-green-800 dark:text-green-200">
-              Fotos analysiert
-            </div>
+            <div className="text-sm text-green-800 dark:text-green-200">Fotos analysiert</div>
           </div>
           <div>
-            <div className="text-2xl font-bold text-green-600 dark:text-green-400">
-              21
-            </div>
-            <div className="text-sm text-green-800 dark:text-green-200">
-              Datenfelder erfasst
-            </div>
+            <div className="text-2xl font-bold text-green-600 dark:text-green-400">21</div>
+            <div className="text-sm text-green-800 dark:text-green-200">Datenfelder erfasst</div>
           </div>
           <div>
             <div className="text-2xl font-bold text-green-600 dark:text-green-400">
               {product.exportData?.format}
             </div>
-            <div className="text-sm text-green-800 dark:text-green-200">
-              Export erstellt
-            </div>
+            <div className="text-sm text-green-800 dark:text-green-200">Export erstellt</div>
           </div>
           <div>
-            <div className="text-2xl font-bold text-green-600 dark:text-green-400">
-              ✅
-            </div>
-            <div className="text-sm text-green-800 dark:text-green-200">
-              Bereit für E-Commerce
-            </div>
+            <div className="text-2xl font-bold text-green-600 dark:text-green-400">✅</div>
+            <div className="text-sm text-green-800 dark:text-green-200">Bereit für E-Commerce</div>
           </div>
         </div>
       </div>
@@ -143,7 +131,7 @@ export function TableOverviewStep({ product, onBackToWorkflow }: TableOverviewSt
           <DocumentChartBarIcon className="h-5 w-5 mr-2" />
           Zur Tabellen-Übersicht
         </Link>
-        
+
         <button
           onClick={onBackToWorkflow}
           className="inline-flex items-center justify-center px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 rounded-md font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
@@ -151,7 +139,7 @@ export function TableOverviewStep({ product, onBackToWorkflow }: TableOverviewSt
           <PlusIcon className="h-5 w-5 mr-2" />
           Weiteres Produkt erfassen
         </button>
-        
+
         <Link
           href="/erfassung"
           className="inline-flex items-center justify-center px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 rounded-md font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
