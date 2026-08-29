@@ -22,7 +22,7 @@ export default function TemplatesPage() {
     // Convert template fields to include fake ids for preview to satisfy FormTemplate type
     const withIds: FormTemplate = {
       ...template,
-      fields: template.fields.map((f, idx) => ({ ...f, id: `preview-${idx}` }))
+      fields: template.fields.map((f, idx) => ({ ...f, id: `preview-${idx}` })),
     };
     setPreviewTemplate(withIds);
   };

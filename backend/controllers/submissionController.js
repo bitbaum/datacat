@@ -7,9 +7,9 @@ exports.createSubmission = async (req, res) => {
   try {
     // Validate input
     if (!formId || !data) {
-      return res.status(400).json({ 
-        success: false, 
-        message: 'Form ID and data are required' 
+      return res.status(400).json({
+        success: false,
+        message: 'Form ID and data are required',
       });
     }
 
@@ -17,20 +17,20 @@ exports.createSubmission = async (req, res) => {
     const form = await prisma.form.findFirst({
       where: {
         id: formId,
-        isPublished: true
+        isPublished: true,
       },
       select: {
         id: true,
         title: true,
         userId: true,
-        settings: true
-      }
+        settings: true,
+      },
     });
 
     if (!form) {
-      return res.status(404).json({ 
-        success: false, 
-        message: 'Form not found or not published' 
+      return res.status(404).json({
+        success: false,
+        message: 'Form not found or not published',
       });
     }
 
@@ -44,27 +44,27 @@ exports.createSubmission = async (req, res) => {
         status: 'PENDING',
         source: 'DIRECT',
         ipAddress: req.ip,
-        userAgent: req.get('User-Agent')
+        userAgent: req.get('User-Agent'),
       },
       select: {
         id: true,
         formId: true,
         data: true,
         status: true,
-        submittedAt: true
-      }
+        submittedAt: true,
+      },
     });
 
-    res.status(201).json({ 
-      success: true, 
+    res.status(201).json({
+      success: true,
       message: 'Form submitted successfully',
-      submission 
+      submission,
     });
   } catch (err) {
     console.error('Submit form error:', err);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Server error submitting form' 
+    res.status(500).json({
+      success: false,
+      message: 'Server error submitting form',
     });
   }
 };
@@ -79,25 +79,25 @@ exports.getSubmissions = async (req, res) => {
     const form = await prisma.form.findFirst({
       where: {
         id: formId,
-        userId
+        userId,
       },
       select: {
         id: true,
-        title: true
-      }
+        title: true,
+      },
     });
 
     if (!form) {
-      return res.status(404).json({ 
-        success: false, 
-        message: 'Form not found or you do not have access' 
+      return res.status(404).json({
+        success: false,
+        message: 'Form not found or you do not have access',
       });
     }
 
     const skip = (parseInt(page) - 1) * parseInt(limit);
-    
+
     const where = {
-      formId
+      formId,
     };
 
     if (status) {
@@ -118,20 +118,20 @@ exports.getSubmissions = async (req, res) => {
             select: {
               id: true,
               name: true,
-              email: true
-            }
-          }
+              email: true,
+            },
+          },
         },
         orderBy: {
-          submittedAt: 'desc'
+          submittedAt: 'desc',
         },
         skip,
-        take: parseInt(limit)
+        take: parseInt(limit),
       }),
-      prisma.submission.count({ where })
+      prisma.submission.count({ where }),
     ]);
 
-    res.json({ 
+    res.json({
       success: true,
       form,
       submissions,
@@ -139,14 +139,14 @@ exports.getSubmissions = async (req, res) => {
         page: parseInt(page),
         limit: parseInt(limit),
         total,
-        pages: Math.ceil(total / parseInt(limit))
-      }
+        pages: Math.ceil(total / parseInt(limit)),
+      },
     });
   } catch (err) {
     console.error('Get submissions error:', err);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Server error getting submissions' 
+    res.status(500).json({
+      success: false,
+      message: 'Server error getting submissions',
     });
   }
 };
@@ -160,8 +160,8 @@ exports.getSubmission = async (req, res) => {
       where: {
         id,
         form: {
-          userId
-        }
+          userId,
+        },
       },
       select: {
         id: true,
@@ -176,35 +176,35 @@ exports.getSubmission = async (req, res) => {
           select: {
             id: true,
             name: true,
-            email: true
-          }
+            email: true,
+          },
         },
         form: {
           select: {
             id: true,
             title: true,
-            schema: true
-          }
-        }
-      }
+            schema: true,
+          },
+        },
+      },
     });
 
     if (!submission) {
-      return res.status(404).json({ 
-        success: false, 
-        message: 'Submission not found or you do not have access' 
+      return res.status(404).json({
+        success: false,
+        message: 'Submission not found or you do not have access',
       });
     }
 
-    res.json({ 
-      success: true, 
-      submission 
+    res.json({
+      success: true,
+      submission,
     });
   } catch (err) {
     console.error('Get submission error:', err);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Server error getting submission' 
+    res.status(500).json({
+      success: false,
+      message: 'Server error getting submission',
     });
   }
 };

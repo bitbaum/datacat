@@ -84,13 +84,28 @@ export default function DatabaseIngestionPage() {
                 className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
               >
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                  />
                 </svg>
               </Link>
               <div>
                 <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-                  <svg className="w-8 h-8 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
+                  <svg
+                    className="w-8 h-8 text-indigo-600"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"
+                    />
                   </svg>
                   Database Ingestion
                 </h1>
@@ -118,17 +133,42 @@ export default function DatabaseIngestionPage() {
           {/* Recent Imports */}
           <div className="bg-white rounded-xl shadow-lg p-6">
             <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-              <svg className="w-5 h-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <svg
+                className="w-5 h-5 text-indigo-600"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
               </svg>
               Recent Imports
             </h2>
 
             {loading ? (
               <div className="flex items-center justify-center py-12">
-                <svg className="w-8 h-8 animate-spin text-indigo-600" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                <svg
+                  className="w-8 h-8 animate-spin text-indigo-600"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  />
                 </svg>
               </div>
             ) : error ? (
@@ -145,13 +185,21 @@ export default function DatabaseIngestionPage() {
               </div>
             ) : recentImports.length === 0 ? (
               <div className="text-center py-12">
-                <svg className="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
+                <svg
+                  className="w-16 h-16 mx-auto text-gray-300 mb-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"
+                  />
                 </svg>
                 <p className="text-gray-500">No database imports yet</p>
-                <p className="text-sm text-gray-400 mt-1">
-                  Connect to a database to get started
-                </p>
+                <p className="text-sm text-gray-400 mt-1">Connect to a database to get started</p>
               </div>
             ) : (
               <div className="space-y-3 max-h-[600px] overflow-y-auto">
@@ -167,9 +215,7 @@ export default function DatabaseIngestionPage() {
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1 min-w-0">
-                        <p className="font-medium text-gray-900 truncate">
-                          {importItem.name}
-                        </p>
+                        <p className="font-medium text-gray-900 truncate">{importItem.name}</p>
                         <p className="text-sm text-indigo-600">
                           {importItem.extractedData?.source?.database}
                           {importItem.extractedData?.source?.table && (
@@ -182,15 +228,17 @@ export default function DatabaseIngestionPage() {
                           {importItem.extractedData?.rowCount?.toLocaleString()} rows imported
                         </p>
                       </div>
-                      <span className={`ml-2 px-2 py-1 text-xs font-medium rounded-full ${
-                        importItem.status === 'COMPLETED'
-                          ? 'bg-green-100 text-green-700'
-                          : importItem.status === 'PROCESSING'
-                          ? 'bg-yellow-100 text-yellow-700'
-                          : importItem.status === 'FAILED'
-                          ? 'bg-red-100 text-red-700'
-                          : 'bg-gray-100 text-gray-700'
-                      }`}>
+                      <span
+                        className={`ml-2 px-2 py-1 text-xs font-medium rounded-full ${
+                          importItem.status === 'COMPLETED'
+                            ? 'bg-green-100 text-green-700'
+                            : importItem.status === 'PROCESSING'
+                              ? 'bg-yellow-100 text-yellow-700'
+                              : importItem.status === 'FAILED'
+                                ? 'bg-red-100 text-red-700'
+                                : 'bg-gray-100 text-gray-700'
+                        }`}
+                      >
                         {importItem.status}
                       </span>
                     </div>
@@ -210,9 +258,7 @@ export default function DatabaseIngestionPage() {
           <div className="mt-8 bg-white rounded-xl shadow-lg p-6">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h2 className="text-xl font-bold text-gray-800">
-                  {selectedImport.name}
-                </h2>
+                <h2 className="text-xl font-bold text-gray-800">{selectedImport.name}</h2>
                 <p className="text-sm text-indigo-600">
                   {selectedImport.extractedData?.source?.type}://
                   {selectedImport.extractedData?.source?.host}/
@@ -224,7 +270,12 @@ export default function DatabaseIngestionPage() {
                 className="text-gray-400 hover:text-gray-600"
               >
                 <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
             </div>
@@ -268,35 +319,36 @@ export default function DatabaseIngestionPage() {
             )}
 
             {/* Sample Data */}
-            {selectedImport.extractedData?.sampleData && selectedImport.extractedData.sampleData.length > 0 && (
-              <div>
-                <h3 className="font-semibold text-gray-700 mb-2">Sample Data</h3>
-                <div className="overflow-x-auto bg-gray-50 rounded-lg">
-                  <table className="min-w-full text-sm">
-                    <thead>
-                      <tr className="bg-gray-100">
-                        {selectedImport.extractedData.columns?.slice(0, 6).map((col) => (
-                          <th key={col} className="px-3 py-2 text-left font-medium text-gray-700">
-                            {col}
-                          </th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {selectedImport.extractedData.sampleData.slice(0, 5).map((row, idx) => (
-                        <tr key={idx} className="border-b border-gray-200">
-                          {selectedImport.extractedData?.columns?.slice(0, 6).map((col) => (
-                            <td key={col} className="px-3 py-2 text-gray-600 truncate max-w-xs">
-                              {String(row[col] ?? '')}
-                            </td>
+            {selectedImport.extractedData?.sampleData &&
+              selectedImport.extractedData.sampleData.length > 0 && (
+                <div>
+                  <h3 className="font-semibold text-gray-700 mb-2">Sample Data</h3>
+                  <div className="overflow-x-auto bg-gray-50 rounded-lg">
+                    <table className="min-w-full text-sm">
+                      <thead>
+                        <tr className="bg-gray-100">
+                          {selectedImport.extractedData.columns?.slice(0, 6).map((col) => (
+                            <th key={col} className="px-3 py-2 text-left font-medium text-gray-700">
+                              {col}
+                            </th>
                           ))}
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody>
+                        {selectedImport.extractedData.sampleData.slice(0, 5).map((row, idx) => (
+                          <tr key={idx} className="border-b border-gray-200">
+                            {selectedImport.extractedData?.columns?.slice(0, 6).map((col) => (
+                              <td key={col} className="px-3 py-2 text-gray-600 truncate max-w-xs">
+                                {String(row[col] ?? '')}
+                              </td>
+                            ))}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
             {/* Query Info */}
             {selectedImport.extractedData?.query && (
@@ -318,7 +370,9 @@ export default function DatabaseIngestionPage() {
             <div className="mt-4 pt-4 border-t border-gray-100 flex items-center gap-6 text-sm text-gray-500">
               <span>Imported: {formatDate(selectedImport.processedAt)}</span>
               {selectedImport.extractedData?.totalRows && (
-                <span>Total in table: {selectedImport.extractedData.totalRows.toLocaleString()} rows</span>
+                <span>
+                  Total in table: {selectedImport.extractedData.totalRows.toLocaleString()} rows
+                </span>
               )}
             </div>
           </div>

@@ -1,4 +1,11 @@
-const { router, publicProcedure, authedProcedure, prisma, z, TRPCError } = require('../../lib/trpc');
+const {
+  router,
+  publicProcedure,
+  authedProcedure,
+  prisma,
+  z,
+  TRPCError,
+} = require('../../lib/trpc');
 const { nanoid } = require('nanoid');
 
 const FormCreateInput = z.object({
@@ -39,13 +46,15 @@ const SharedLinkInput = z.object({
 const formsRouter = router({
   // Get all forms for current user
   list: authedProcedure
-    .input(z.object({
-      page: z.number().default(1),
-      limit: z.number().min(1).max(50).default(20),
-      search: z.string().optional(),
-      isTemplate: z.boolean().optional(),
-      isPublished: z.boolean().optional(),
-    }))
+    .input(
+      z.object({
+        page: z.number().default(1),
+        limit: z.number().min(1).max(50).default(20),
+        search: z.string().optional(),
+        isTemplate: z.boolean().optional(),
+        isPublished: z.boolean().optional(),
+      }),
+    )
     .query(async ({ ctx, input }) => {
       const { page, limit, search, isTemplate, isPublished } = input;
       const skip = (page - 1) * limit;
@@ -94,80 +103,75 @@ const formsRouter = router({
     }),
 
   // Get single form by ID
-  get: authedProcedure
-    .input(z.object({ id: z.string() }))
-    .query(async ({ ctx, input }) => {
-      const form = await prisma.form.findFirst({
-        where: {
-          id: input.id,
-          OR: [
-            { userId: ctx.user.id },
-            { collaborators: { some: { userId: ctx.user.id } } },
-          ],
+  get: authedProcedure.input(z.object({ id: z.string() })).query(async ({ ctx, input }) => {
+    const form = await prisma.form.findFirst({
+      where: {
+        id: input.id,
+        OR: [{ userId: ctx.user.id }, { collaborators: { some: { userId: ctx.user.id } } }],
+      },
+      include: {
+        user: {
+          select: { id: true, name: true, email: true },
         },
-        include: {
-          user: {
-            select: { id: true, name: true, email: true },
-          },
-          shareSettings: true,
-          sharedLinks: true,
-          collaborators: {
-            include: {
-              user: {
-                select: { id: true, name: true, email: true, avatar: true },
-              },
-            },
-          },
-          _count: {
-            select: {
-              submissions: true,
-              analysisResults: true,
+        shareSettings: true,
+        sharedLinks: true,
+        collaborators: {
+          include: {
+            user: {
+              select: { id: true, name: true, email: true, avatar: true },
             },
           },
         },
+        _count: {
+          select: {
+            submissions: true,
+            analysisResults: true,
+          },
+        },
+      },
+    });
+
+    if (!form) {
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: 'Form not found',
       });
+    }
 
-      if (!form) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Form not found',
-        });
-      }
-
-      return form;
-    }),
+    return form;
+  }),
 
   // Create new form
-  create: authedProcedure
-    .input(FormCreateInput)
-    .mutation(async ({ ctx, input }) => {
-      const form = await prisma.form.create({
-        data: {
-          ...input,
-          userId: ctx.user.id,
-          organizationId: ctx.user.organizationId,
-          settings: input.settings || {},
-          templateTags: input.templateTags || [],
-        },
-        include: {
-          _count: {
-            select: {
-              submissions: true,
-              sharedLinks: true,
-            },
+  create: authedProcedure.input(FormCreateInput).mutation(async ({ ctx, input }) => {
+    const form = await prisma.form.create({
+      data: {
+        ...input,
+        userId: ctx.user.id,
+        organizationId: ctx.user.organizationId,
+        settings: input.settings || {},
+        templateTags: input.templateTags || [],
+      },
+      include: {
+        _count: {
+          select: {
+            submissions: true,
+            sharedLinks: true,
           },
         },
-      });
+      },
+    });
 
-      return form;
-    }),
+    return form;
+  }),
 
   // Update form
   update: authedProcedure
-    .input(z.object({
-      id: z.string(),
-      data: FormUpdateInput,
-    }))
+    .input(
+      z.object({
+        id: z.string(),
+        data: FormUpdateInput,
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
       // Check ownership or collaboration access
       const existingForm = await prisma.form.findFirst({
@@ -175,13 +179,13 @@ const formsRouter = router({
           id: input.id,
           OR: [
             { userId: ctx.user.id },
-            { 
-              collaborators: { 
-                some: { 
+            {
+              collaborators: {
+                some: {
                   userId: ctx.user.id,
-                  role: { in: ['EDITOR', 'ADMIN'] }
-                } 
-              } 
+                  role: { in: ['EDITOR', 'ADMIN'] },
+                },
+              },
             },
           ],
         },
@@ -195,7 +199,10 @@ const formsRouter = router({
       }
 
       // Create version if schema changed
-      if (input.data.schema && JSON.stringify(input.data.schema) !== JSON.stringify(existingForm.schema)) {
+      if (
+        input.data.schema &&
+        JSON.stringify(input.data.schema) !== JSON.stringify(existingForm.schema)
+      ) {
         await prisma.formVersion.create({
           data: {
             formId: input.id,
@@ -228,36 +235,36 @@ const formsRouter = router({
     }),
 
   // Delete form
-  delete: authedProcedure
-    .input(z.object({ id: z.string() }))
-    .mutation(async ({ ctx, input }) => {
-      const form = await prisma.form.findFirst({
-        where: {
-          id: input.id,
-          userId: ctx.user.id,
-        },
+  delete: authedProcedure.input(z.object({ id: z.string() })).mutation(async ({ ctx, input }) => {
+    const form = await prisma.form.findFirst({
+      where: {
+        id: input.id,
+        userId: ctx.user.id,
+      },
+    });
+
+    if (!form) {
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: 'Form not found',
       });
+    }
 
-      if (!form) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Form not found',
-        });
-      }
+    await prisma.form.delete({
+      where: { id: input.id },
+    });
 
-      await prisma.form.delete({
-        where: { id: input.id },
-      });
-
-      return { success: true };
-    }),
+    return { success: true };
+  }),
 
   // Update share settings
   updateShareSettings: authedProcedure
-    .input(z.object({
-      formId: z.string(),
-      settings: ShareSettingsInput,
-    }))
+    .input(
+      z.object({
+        formId: z.string(),
+        settings: ShareSettingsInput,
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
       // Check ownership
       const form = await prisma.form.findFirst({
@@ -292,10 +299,12 @@ const formsRouter = router({
 
   // Create shared link
   createSharedLink: authedProcedure
-    .input(z.object({
-      formId: z.string(),
-      settings: SharedLinkInput,
-    }))
+    .input(
+      z.object({
+        formId: z.string(),
+        settings: SharedLinkInput,
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
       // Check ownership
       const form = await prisma.form.findFirst({
@@ -353,10 +362,12 @@ const formsRouter = router({
 
   // Update shared link
   updateSharedLink: authedProcedure
-    .input(z.object({
-      id: z.string(),
-      settings: SharedLinkInput.partial(),
-    }))
+    .input(
+      z.object({
+        id: z.string(),
+        settings: SharedLinkInput.partial(),
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
       // Check ownership through form
       const sharedLink = await prisma.sharedLink.findFirst({
@@ -465,12 +476,14 @@ const formsRouter = router({
 
   // Get form templates
   getTemplates: publicProcedure
-    .input(z.object({
-      page: z.number().default(1),
-      limit: z.number().min(1).max(50).default(20),
-      tags: z.array(z.string()).optional(),
-      search: z.string().optional(),
-    }))
+    .input(
+      z.object({
+        page: z.number().default(1),
+        limit: z.number().min(1).max(50).default(20),
+        tags: z.array(z.string()).optional(),
+        search: z.string().optional(),
+      }),
+    )
     .query(async ({ input }) => {
       const { page, limit, tags, search } = input;
       const skip = (page - 1) * limit;
@@ -484,9 +497,10 @@ const formsRouter = router({
             { description: { contains: search, mode: 'insensitive' } },
           ],
         }),
-        ...(tags && tags.length > 0 && {
-          templateTags: { hasSome: tags },
-        }),
+        ...(tags &&
+          tags.length > 0 && {
+            templateTags: { hasSome: tags },
+          }),
       };
 
       const [templates, total] = await Promise.all([

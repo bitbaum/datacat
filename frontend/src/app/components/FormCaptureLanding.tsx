@@ -9,7 +9,7 @@ import {
   ArrowRightIcon,
   CheckCircleIcon,
   ClockIcon,
-  ServerIcon
+  ServerIcon,
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 
@@ -19,9 +19,7 @@ interface FormCaptureLandingProps {
   onFieldsChange?: () => void;
 }
 
-export function FormCaptureLanding({
-  onStartBuilding,
-}: FormCaptureLandingProps) {
+export function FormCaptureLanding({ onStartBuilding }: FormCaptureLandingProps) {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Hero Section */}
@@ -38,7 +36,11 @@ export function FormCaptureLanding({
             </h1>
             <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-4xl mx-auto leading-relaxed">
               Erstellen Sie intelligente Formulare, die mehr als nur Daten sammeln.
-              <span className="font-semibold text-indigo-600"> Jede Antwort wird automatisch strukturiert, kategorisiert und für KI-Analyse vorbereitet.</span>
+              <span className="font-semibold text-indigo-600">
+                {' '}
+                Jede Antwort wird automatisch strukturiert, kategorisiert und für KI-Analyse
+                vorbereitet.
+              </span>
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -68,7 +70,8 @@ export function FormCaptureLanding({
               Was ist Formular-Erfassung?
             </h2>
             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-              Mehr als nur ein Formular-Baukasten. Ein intelligentes System, das Ihre Daten für die moderne Welt strukturiert.
+              Mehr als nur ein Formular-Baukasten. Ein intelligentes System, das Ihre Daten für die
+              moderne Welt strukturiert.
             </p>
           </div>
 
@@ -80,7 +83,8 @@ export function FormCaptureLanding({
                   Menschen erfassen
                 </h3>
                 <p className="text-gray-600 dark:text-gray-400 mb-4">
-                  Sammeln Sie strukturierte Daten von Ihren Zielgruppen - Kunden, Patienten, Bewerber, oder Forschungsobjekte.
+                  Sammeln Sie strukturierte Daten von Ihren Zielgruppen - Kunden, Patienten,
+                  Bewerber, oder Forschungsobjekte.
                 </p>
                 <div className="space-y-2">
                   <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
@@ -104,7 +108,8 @@ export function FormCaptureLanding({
                   KI-gestützte Analyse
                 </h3>
                 <p className="text-gray-600 dark:text-gray-400 mb-4">
-                  Jede Antwort wird automatisch verarbeitet und für fortschrittliche Analysen vorbereitet.
+                  Jede Antwort wird automatisch verarbeitet und für fortschrittliche Analysen
+                  vorbereitet.
                 </p>
                 <div className="space-y-2">
                   <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
@@ -129,12 +134,15 @@ export function FormCaptureLanding({
                 Strukturierte Daten für die Zukunft
               </h3>
               <p className="text-gray-600 dark:text-gray-400 text-center mb-6">
-                Ihre Daten werden in einem standardisierten Format gespeichert, das für alle modernen Analysetools bereit ist.
+                Ihre Daten werden in einem standardisierten Format gespeichert, das für alle
+                modernen Analysetools bereit ist.
               </p>
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div className="text-center">
                   <div className="text-2xl mb-2">📊</div>
-                  <div className="font-medium text-gray-900 dark:text-white">Business Intelligence</div>
+                  <div className="font-medium text-gray-900 dark:text-white">
+                    Business Intelligence
+                  </div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl mb-2">🤖</div>
@@ -162,7 +170,8 @@ export function FormCaptureLanding({
               Der komplette Workflow
             </h2>
             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-              Von der Formular-Erstellung bis zur intelligenten Datenanalyse - alles in einem System.
+              Von der Formular-Erstellung bis zur intelligenten Datenanalyse - alles in einem
+              System.
             </p>
           </div>
 
@@ -173,59 +182,68 @@ export function FormCaptureLanding({
                 title: 'Formular erstellen',
                 description: 'Designen Sie Ihr Formular mit unserem Drag-and-Drop Builder',
                 icon: '✏️',
-                color: 'indigo'
+                color: 'indigo',
               },
               {
                 step: 2,
                 title: 'Teilen & Sammeln',
                 description: 'Verteilen Sie Ihr Formular über Link, E-Mail oder Einbettung',
                 icon: '📤',
-                color: 'blue'
+                color: 'blue',
               },
               {
                 step: 3,
                 title: 'Antworten erhalten',
-                description: 'Menschen füllen Ihr Formular aus - Daten werden automatisch strukturiert',
+                description:
+                  'Menschen füllen Ihr Formular aus - Daten werden automatisch strukturiert',
                 icon: '📝',
-                color: 'green'
+                color: 'green',
               },
               {
                 step: 4,
                 title: 'KI-Analyse & Export',
                 description: 'Automatische Analyse und Export für BI, LLM oder bestehende Systeme',
                 icon: '🤖',
-                color: 'purple'
-              }
+                color: 'purple',
+              },
             ].map((item, index) => (
               <div key={item.step} className="relative">
                 <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm border border-gray-200 dark:border-gray-700 h-full">
-                  <div className={`inline-flex items-center justify-center w-12 h-12 rounded-full mb-4 ${
-                    item.color === 'indigo' ? 'bg-indigo-100 dark:bg-indigo-900/20' :
-                    item.color === 'blue' ? 'bg-blue-100 dark:bg-blue-900/20' :
-                    item.color === 'green' ? 'bg-green-100 dark:bg-green-900/20' :
-                    'bg-purple-100 dark:bg-purple-900/20'
-                  }`}>
+                  <div
+                    className={`inline-flex items-center justify-center w-12 h-12 rounded-full mb-4 ${
+                      item.color === 'indigo'
+                        ? 'bg-indigo-100 dark:bg-indigo-900/20'
+                        : item.color === 'blue'
+                          ? 'bg-blue-100 dark:bg-blue-900/20'
+                          : item.color === 'green'
+                            ? 'bg-green-100 dark:bg-green-900/20'
+                            : 'bg-purple-100 dark:bg-purple-900/20'
+                    }`}
+                  >
                     <span className="text-2xl">{item.icon}</span>
                   </div>
                   <div className="flex items-center justify-between mb-3">
                     <span className="inline-flex items-center justify-center w-6 h-6 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded-full text-sm font-semibold">
                       {item.step}
                     </span>
-                    <span className={`text-xs font-medium ${
-                      item.color === 'indigo' ? 'text-indigo-600 dark:text-indigo-400' :
-                      item.color === 'blue' ? 'text-blue-600 dark:text-blue-400' :
-                      item.color === 'green' ? 'text-green-600 dark:text-green-400' :
-                      'text-purple-600 dark:text-purple-400'
-                    }`}>
+                    <span
+                      className={`text-xs font-medium ${
+                        item.color === 'indigo'
+                          ? 'text-indigo-600 dark:text-indigo-400'
+                          : item.color === 'blue'
+                            ? 'text-blue-600 dark:text-blue-400'
+                            : item.color === 'green'
+                              ? 'text-green-600 dark:text-green-400'
+                              : 'text-purple-600 dark:text-purple-400'
+                      }`}
+                    >
                       Schritt {item.step}
                     </span>
                   </div>
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                     {item.title}
                   </h3>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm">
-                    {item.description}
-                  </p>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm">{item.description}</p>
                 </div>
                 {index < 3 && (
                   <div className="hidden md:block absolute top-1/2 -right-4 transform -translate-y-1/2">
@@ -244,7 +262,8 @@ export function FormCaptureLanding({
                 Was passiert mit Ihren Daten?
               </h3>
               <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-                Jede Antwort wird automatisch in strukturierte Daten umgewandelt und für moderne Analysen vorbereitet.
+                Jede Antwort wird automatisch in strukturierte Daten umgewandelt und für moderne
+                Analysen vorbereitet.
               </p>
             </div>
 
@@ -257,7 +276,8 @@ export function FormCaptureLanding({
                   Strukturierte Speicherung
                 </h4>
                 <p className="text-gray-600 dark:text-gray-400 text-sm">
-                  Alle Antworten werden in einer standardisierten Datenbank gespeichert, bereit für Export und Integration.
+                  Alle Antworten werden in einer standardisierten Datenbank gespeichert, bereit für
+                  Export und Integration.
                 </p>
               </div>
 
@@ -269,7 +289,8 @@ export function FormCaptureLanding({
                   KI-Analyse
                 </h4>
                 <p className="text-gray-600 dark:text-gray-400 text-sm">
-                  Automatische Sentiment-Analyse, Kategorisierung und Pattern-Erkennung für tiefere Insights.
+                  Automatische Sentiment-Analyse, Kategorisierung und Pattern-Erkennung für tiefere
+                  Insights.
                 </p>
               </div>
 
@@ -297,7 +318,8 @@ export function FormCaptureLanding({
               Für wen ist Formular-Erfassung?
             </h2>
             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-              Von der Kundenbefragung bis zur medizinischen Datenerfassung - für jeden Anwendungsfall das richtige Tool.
+              Von der Kundenbefragung bis zur medizinischen Datenerfassung - für jeden
+              Anwendungsfall das richtige Tool.
             </p>
           </div>
 
@@ -305,49 +327,56 @@ export function FormCaptureLanding({
             {[
               {
                 title: 'Kundenfeedback',
-                description: 'Sammeln Sie strukturierte Kundenmeinungen für Produktentwicklung und Service-Verbesserung.',
+                description:
+                  'Sammeln Sie strukturierte Kundenmeinungen für Produktentwicklung und Service-Verbesserung.',
                 icon: '💬',
-                examples: ['NPS-Befragungen', 'Produkt-Feedback', 'Service-Bewertung']
+                examples: ['NPS-Befragungen', 'Produkt-Feedback', 'Service-Bewertung'],
               },
               {
                 title: 'Bewerbungsprozesse',
-                description: 'Digitalisieren Sie Bewerbungsformulare mit automatischer Qualifikations-Analyse.',
+                description:
+                  'Digitalisieren Sie Bewerbungsformulare mit automatischer Qualifikations-Analyse.',
                 icon: '👥',
-                examples: ['Stellenbewerbungen', 'Talent-Pools', 'Mitarbeiter-Feedback']
+                examples: ['Stellenbewerbungen', 'Talent-Pools', 'Mitarbeiter-Feedback'],
               },
               {
                 title: 'Marktforschung',
-                description: 'Führen Sie strukturierte Umfragen durch mit automatischer Trend-Erkennung.',
+                description:
+                  'Führen Sie strukturierte Umfragen durch mit automatischer Trend-Erkennung.',
                 icon: '📊',
-                examples: ['Marktanalysen', 'Konsumenten-Studien', 'Trend-Monitoring']
+                examples: ['Marktanalysen', 'Konsumenten-Studien', 'Trend-Monitoring'],
               },
               {
                 title: 'Medizin & Gesundheit',
-                description: 'Patientenaufnahme und Symptom-Erfassung mit KI-gestützter Vor-Diagnose.',
+                description:
+                  'Patientenaufnahme und Symptom-Erfassung mit KI-gestützter Vor-Diagnose.',
                 icon: '🏥',
-                examples: ['Patienten-Intake', 'Symptom-Tracking', 'Behandlungs-Evaluation']
+                examples: ['Patienten-Intake', 'Symptom-Tracking', 'Behandlungs-Evaluation'],
               },
               {
                 title: 'Bildung & Training',
-                description: 'Kurs-Evaluationen und Lernfortschritt-Tracking mit automatischer Analyse.',
+                description:
+                  'Kurs-Evaluationen und Lernfortschritt-Tracking mit automatischer Analyse.',
                 icon: '🎓',
-                examples: ['Kurs-Bewertung', 'Lernfortschritt', 'Zertifizierungs-Tests']
+                examples: ['Kurs-Bewertung', 'Lernfortschritt', 'Zertifizierungs-Tests'],
               },
               {
                 title: 'Event-Management',
-                description: 'Teilnehmer-Registrierung und Event-Feedback mit automatischer Auswertung.',
+                description:
+                  'Teilnehmer-Registrierung und Event-Feedback mit automatischer Auswertung.',
                 icon: '🎉',
-                examples: ['Event-Anmeldung', 'Teilnehmer-Feedback', 'Follow-up-Umfragen']
-              }
+                examples: ['Event-Anmeldung', 'Teilnehmer-Feedback', 'Follow-up-Umfragen'],
+              },
             ].map((useCase, index) => (
-              <div key={index} className="bg-gray-50 dark:bg-gray-800 rounded-lg p-6 hover:shadow-lg transition-shadow">
+              <div
+                key={index}
+                className="bg-gray-50 dark:bg-gray-800 rounded-lg p-6 hover:shadow-lg transition-shadow"
+              >
                 <div className="text-3xl mb-4">{useCase.icon}</div>
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
                   {useCase.title}
                 </h3>
-                <p className="text-gray-600 dark:text-gray-400 mb-4">
-                  {useCase.description}
-                </p>
+                <p className="text-gray-600 dark:text-gray-400 mb-4">{useCase.description}</p>
                 <div className="space-y-1">
                   {useCase.examples.map((example, exampleIndex) => (
                     <div key={exampleIndex} className="text-sm text-gray-500 dark:text-gray-400">
@@ -368,8 +397,8 @@ export function FormCaptureLanding({
             Bereit für intelligente Datenerfassung?
           </h2>
           <p className="text-xl text-indigo-100 mb-8">
-            Beginnen Sie mit der Erstellung Ihres ersten intelligenten Formulars.
-            Die KI-Analyse ist bereits integriert.
+            Beginnen Sie mit der Erstellung Ihres ersten intelligenten Formulars. Die KI-Analyse ist
+            bereits integriert.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">

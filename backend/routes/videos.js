@@ -12,27 +12,33 @@ const storage = multer.diskStorage({
     cb(null, uploadDir);
   },
   filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
     cb(null, `video-${uniqueSuffix}${path.extname(file.originalname)}`);
-  }
+  },
 });
 
 const upload = multer({
   storage,
   limits: {
-    fileSize: 500 * 1024 * 1024 // 500MB limit
+    fileSize: 500 * 1024 * 1024, // 500MB limit
   },
   fileFilter: (req, file, cb) => {
     const allowedTypes = [
-      'video/mp4', 'video/quicktime', 'video/x-msvideo', 'video/x-matroska',
-      'video/webm', 'video/x-flv', 'video/x-m4v', 'video/x-ms-wmv'
+      'video/mp4',
+      'video/quicktime',
+      'video/x-msvideo',
+      'video/x-matroska',
+      'video/webm',
+      'video/x-flv',
+      'video/x-m4v',
+      'video/x-ms-wmv',
     ];
     if (allowedTypes.includes(file.mimetype) || file.mimetype.startsWith('video/')) {
       cb(null, true);
     } else {
       cb(new Error(`Invalid file type: ${file.mimetype}. Only video files are allowed.`), false);
     }
-  }
+  },
 });
 
 /**
@@ -47,7 +53,7 @@ router.post('/upload', auth, upload.single('video'), async (req, res) => {
     if (!req.file) {
       return res.status(400).json({
         success: false,
-        error: 'No video file provided'
+        error: 'No video file provided',
       });
     }
 
@@ -59,25 +65,20 @@ router.post('/upload', auth, upload.single('video'), async (req, res) => {
       transcribeAudio: req.body.transcribeAudio !== 'false',
       analyzeFrames: req.body.analyzeFrames !== 'false',
       formId: req.body.formId,
-      organizationId: req.body.organizationId
+      organizationId: req.body.organizationId,
     };
 
-    const result = await videoIngestionService.processVideoFile(
-      req.file,
-      userId,
-      options
-    );
+    const result = await videoIngestionService.processVideoFile(req.file, userId, options);
 
     res.json({
       success: true,
-      data: result
+      data: result,
     });
-
   } catch (error) {
     console.error('Video upload error:', error);
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -95,19 +96,18 @@ router.get('/', auth, async (req, res) => {
     const result = await videoIngestionService.getUserVideoSources(userId, {
       limit: parseInt(limit) || 50,
       offset: parseInt(offset) || 0,
-      status
+      status,
     });
 
     res.json({
       success: true,
-      data: result
+      data: result,
     });
-
   } catch (error) {
     console.error('Get video sources error:', error);
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -126,14 +126,13 @@ router.get('/:id', auth, async (req, res) => {
 
     res.json({
       success: true,
-      data: result
+      data: result,
     });
-
   } catch (error) {
     console.error('Get video source error:', error);
     res.status(error.message.includes('not found') ? 404 : 500).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -152,14 +151,13 @@ router.delete('/:id', auth, async (req, res) => {
 
     res.json({
       success: true,
-      data: result
+      data: result,
     });
-
   } catch (error) {
     console.error('Delete video source error:', error);
     res.status(error.message.includes('not found') ? 404 : 500).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -181,15 +179,15 @@ router.get('/meta/info', async (req, res) => {
       features: {
         frameExtraction: hasFFmpeg,
         audioTranscription: true,
-        visualAnalysis: true
+        visualAnalysis: true,
       },
       defaultSettings: {
         frameInterval: 5,
         maxFrames: 10,
         transcribeAudio: true,
-        analyzeFrames: true
-      }
-    }
+        analyzeFrames: true,
+      },
+    },
   });
 });
 

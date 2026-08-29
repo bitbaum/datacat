@@ -1,7 +1,14 @@
 'use client';
 
 import React from 'react';
-import { RocketLaunchIcon, CheckCircleIcon, DocumentTextIcon, CameraIcon, CircleStackIcon, CloudArrowUpIcon } from '@heroicons/react/24/outline';
+import {
+  RocketLaunchIcon,
+  CheckCircleIcon,
+  DocumentTextIcon,
+  CameraIcon,
+  CircleStackIcon,
+  CloudArrowUpIcon,
+} from '@heroicons/react/24/outline';
 import Link from 'next/link';
 
 export default function Home() {
@@ -15,8 +22,12 @@ export default function Home() {
               <span className="text-indigo-600">Erfassung</span> leicht gemacht
             </h1>
             <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-4xl mx-auto leading-relaxed">
-              Erfassen Sie Daten auf zwei verschiedene Wege - strukturierte Formulare für Menschen, KI-Analyse für Produkte.
-              <span className="font-semibold text-indigo-600"> Ein intelligentes System für alle Ihre Datenerfassungs-Bedürfnisse.</span>
+              Erfassen Sie Daten auf zwei verschiedene Wege - strukturierte Formulare für Menschen,
+              KI-Analyse für Produkte.
+              <span className="font-semibold text-indigo-600">
+                {' '}
+                Ein intelligentes System für alle Ihre Datenerfassungs-Bedürfnisse.
+              </span>
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
@@ -51,7 +62,8 @@ export default function Home() {
                   Formular-Erfassung
                 </h3>
                 <p className="text-gray-600 dark:text-gray-400">
-                  Erstellen Sie intelligente Formulare für Umfragen, Bewerbungen, Feedback. KI analysiert die Antworten automatisch.
+                  Erstellen Sie intelligente Formulare für Umfragen, Bewerbungen, Feedback. KI
+                  analysiert die Antworten automatisch.
                 </p>
               </div>
               <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700">
@@ -60,7 +72,8 @@ export default function Home() {
                   Produkt-Scan
                 </h3>
                 <p className="text-gray-600 dark:text-gray-400">
-                  Fotografieren Sie Produkte - KI extrahiert alle relevanten Daten und erstellt strukturierte Produktkataloge.
+                  Fotografieren Sie Produkte - KI extrahiert alle relevanten Daten und erstellt
+                  strukturierte Produktkataloge.
                 </p>
               </div>
               <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700">
@@ -69,7 +82,8 @@ export default function Home() {
                   Data Ingestion
                 </h3>
                 <p className="text-gray-600 dark:text-gray-400">
-                  Erfassen Sie Daten aus jeder Quelle - Audio, Video, Bilder, Websites. KI analysiert und strukturiert automatisch.
+                  Erfassen Sie Daten aus jeder Quelle - Audio, Video, Bilder, Websites. KI
+                  analysiert und strukturiert automatisch.
                 </p>
               </div>
             </div>
@@ -85,10 +99,11 @@ export default function Home() {
               Zwei Wege der Datenerfassung, ein System
             </h2>
             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-              Wählen Sie den passenden Weg für Ihre Bedürfnisse - strukturierte Formulare oder KI-gestützter Produktscan.
+              Wählen Sie den passenden Weg für Ihre Bedürfnisse - strukturierte Formulare oder
+              KI-gestützter Produktscan.
             </p>
           </div>
-          
+
           <div className="grid lg:grid-cols-2 gap-12 mb-16">
             {/* Form-based Erfassung */}
             <div className="bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700">
@@ -171,8 +186,8 @@ export default function Home() {
                 Ein System, unendliche Möglichkeiten
               </h3>
               <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-                Alle erfassten Daten fließen in eine zentrale Datenbank. Exportieren Sie für LLM-Abfragen, 
-                Business Intelligence oder Integration in bestehende Systeme.
+                Alle erfassten Daten fließen in eine zentrale Datenbank. Exportieren Sie für
+                LLM-Abfragen, Business Intelligence oder Integration in bestehende Systeme.
               </p>
             </div>
           </div>
@@ -182,14 +197,12 @@ export default function Home() {
       {/* CTA Section */}
       <div className="py-24 bg-gradient-to-r from-indigo-600 to-purple-600">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
-          <h2 className="text-4xl font-bold text-white mb-6">
-            Bereit für intelligente Erfassung?
-          </h2>
+          <h2 className="text-4xl font-bold text-white mb-6">Bereit für intelligente Erfassung?</h2>
           <p className="text-xl text-indigo-100 mb-8">
-            Beginnen Sie heute mit der automatisierten Erfassung von Menschen und Produkten. 
-            Ein System, das mit Ihrem Unternehmen wächst.
+            Beginnen Sie heute mit der automatisierten Erfassung von Menschen und Produkten. Ein
+            System, das mit Ihrem Unternehmen wächst.
           </p>
-          
+
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/builder"

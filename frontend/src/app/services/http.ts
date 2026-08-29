@@ -15,7 +15,14 @@ interface RequestOptions {
   token?: string | null;
 }
 
-async function request<T>({ method = 'GET', path, body, headers = {}, authenticated = false, token }: RequestOptions): Promise<T> {
+async function request<T>({
+  method = 'GET',
+  path,
+  body,
+  headers = {},
+  authenticated = false,
+  token,
+}: RequestOptions): Promise<T> {
   const authToken = token ?? (typeof window !== 'undefined' ? localStorage.getItem('token') : null);
   const finalHeaders: HeadersInit = {
     'Content-Type': 'application/json',
@@ -43,18 +50,40 @@ async function request<T>({ method = 'GET', path, body, headers = {}, authentica
 }
 
 export const http = {
-  get: <T>(path: string, authenticated = false, token?: string | null, headers?: Record<string, string>) =>
-    request<T>({ method: 'GET', path, authenticated, token, headers }),
-  post: <T>(path: string, body?: unknown, authenticated = false, token?: string | null, headers?: Record<string, string>) =>
-    request<T>({ method: 'POST', path, body, authenticated, token, headers }),
-  put: <T>(path: string, body?: unknown, authenticated = false, token?: string | null, headers?: Record<string, string>) =>
-    request<T>({ method: 'PUT', path, body, authenticated, token, headers }),
-  patch: <T>(path: string, body?: unknown, authenticated = false, token?: string | null, headers?: Record<string, string>) =>
-    request<T>({ method: 'PATCH', path, body, authenticated, token, headers }),
-  delete: <T>(path: string, authenticated = false, token?: string | null, headers?: Record<string, string>) =>
-    request<T>({ method: 'DELETE', path, authenticated, token, headers }),
+  get: <T>(
+    path: string,
+    authenticated = false,
+    token?: string | null,
+    headers?: Record<string, string>,
+  ) => request<T>({ method: 'GET', path, authenticated, token, headers }),
+  post: <T>(
+    path: string,
+    body?: unknown,
+    authenticated = false,
+    token?: string | null,
+    headers?: Record<string, string>,
+  ) => request<T>({ method: 'POST', path, body, authenticated, token, headers }),
+  put: <T>(
+    path: string,
+    body?: unknown,
+    authenticated = false,
+    token?: string | null,
+    headers?: Record<string, string>,
+  ) => request<T>({ method: 'PUT', path, body, authenticated, token, headers }),
+  patch: <T>(
+    path: string,
+    body?: unknown,
+    authenticated = false,
+    token?: string | null,
+    headers?: Record<string, string>,
+  ) => request<T>({ method: 'PATCH', path, body, authenticated, token, headers }),
+  delete: <T>(
+    path: string,
+    authenticated = false,
+    token?: string | null,
+    headers?: Record<string, string>,
+  ) => request<T>({ method: 'DELETE', path, authenticated, token, headers }),
 };
 
 export type ApiSuccess<T> = { success: true; message?: string } & T;
 export type ApiError = { success: false; message: string };
-

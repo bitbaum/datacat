@@ -5,7 +5,6 @@ const prisma = require('../lib/prisma');
  * Treats each form as a database table, submissions as records
  */
 class DatabaseService {
-  
   /**
    * Get all "databases" (forms) with their record counts and schema info
    */
@@ -13,7 +12,7 @@ class DatabaseService {
     const whereClause = {
       userId,
       isPublished: true,
-      ...(organizationId && { organizationId })
+      ...(organizationId && { organizationId }),
     };
 
     const databases = await prisma.form.findMany({
@@ -27,24 +26,24 @@ class DatabaseService {
         updatedAt: true,
         _count: {
           select: {
-            submissions: true
-          }
-        }
+            submissions: true,
+          },
+        },
       },
       orderBy: {
-        updatedAt: 'desc'
-      }
+        updatedAt: 'desc',
+      },
     });
 
     // Transform schema to provide database-like metadata
-    return databases.map(db => ({
+    return databases.map((db) => ({
       id: db.id,
       name: db.title,
       description: db.description,
       tableSchema: this.extractTableSchema(db.schema),
       recordCount: db._count.submissions,
       createdAt: db.createdAt,
-      updatedAt: db.updatedAt
+      updatedAt: db.updatedAt,
     }));
   }
 
@@ -52,19 +51,25 @@ class DatabaseService {
    * Get all records (submissions) from a specific database (form)
    */
   async getDatabaseRecords(formId, userId, options = {}) {
-    const { page = 1, limit = 50, filters = {}, sort = 'submittedAt', sortOrder = 'desc' } = options;
-    
+    const {
+      page = 1,
+      limit = 50,
+      filters = {},
+      sort = 'submittedAt',
+      sortOrder = 'desc',
+    } = options;
+
     // Verify user has access to this form
     const form = await prisma.form.findFirst({
       where: {
         id: formId,
-        userId
+        userId,
       },
       select: {
         id: true,
         title: true,
-        schema: true
-      }
+        schema: true,
+      },
     });
 
     if (!form) {
@@ -72,11 +77,11 @@ class DatabaseService {
     }
 
     const skip = (page - 1) * limit;
-    
+
     // Build filter conditions based on form data
     const whereClause = {
       formId,
-      ...this.buildFilterConditions(filters)
+      ...this.buildFilterConditions(filters),
     };
 
     const [records, total] = await Promise.all([
@@ -91,40 +96,40 @@ class DatabaseService {
           submitter: {
             select: {
               name: true,
-              email: true
-            }
-          }
+              email: true,
+            },
+          },
         },
         orderBy: {
-          [sort]: sortOrder
+          [sort]: sortOrder,
         },
         skip,
-        take: limit
+        take: limit,
       }),
       prisma.submission.count({
-        where: whereClause
-      })
+        where: whereClause,
+      }),
     ]);
 
     return {
       databaseName: form.title,
       schema: this.extractTableSchema(form.schema),
-      records: records.map(record => ({
+      records: records.map((record) => ({
         id: record.id,
         ...record.data,
         _metadata: {
           submittedAt: record.submittedAt,
           updatedAt: record.updatedAt,
           status: record.status,
-          submittedBy: record.submitter
-        }
+          submittedBy: record.submitter,
+        },
       })),
       pagination: {
         page,
         limit,
         total,
-        pages: Math.ceil(total / limit)
-      }
+        pages: Math.ceil(total / limit),
+      },
     };
   }
 
@@ -134,19 +139,19 @@ class DatabaseService {
    */
   async searchDatabases(userId, query, options = {}) {
     const { databases = [], fields = [], limit = 20 } = options;
-    
+
     // Get user's forms to search within
     const userForms = await prisma.form.findMany({
       where: {
         userId,
         isPublished: true,
-        ...(databases.length > 0 && { id: { in: databases } })
+        ...(databases.length > 0 && { id: { in: databases } }),
       },
       select: {
         id: true,
         title: true,
-        schema: true
-      }
+        schema: true,
+      },
     });
 
     const searchResults = [];
@@ -154,31 +159,31 @@ class DatabaseService {
     for (const form of userForms) {
       // Build search conditions based on query
       const searchConditions = this.buildSearchConditions(query, form.schema, fields);
-      
+
       if (searchConditions.length > 0) {
         const matches = await prisma.submission.findMany({
           where: {
             formId: form.id,
-            OR: searchConditions
+            OR: searchConditions,
           },
           select: {
             id: true,
             data: true,
-            submittedAt: true
+            submittedAt: true,
           },
-          take: limit
+          take: limit,
         });
 
         if (matches.length > 0) {
           searchResults.push({
             databaseId: form.id,
             databaseName: form.title,
-            matches: matches.map(match => ({
+            matches: matches.map((match) => ({
               id: match.id,
               data: match.data,
               submittedAt: match.submittedAt,
-              relevanceScore: this.calculateRelevanceScore(query, match.data)
-            }))
+              relevanceScore: this.calculateRelevanceScore(query, match.data),
+            })),
           });
         }
       }
@@ -188,7 +193,7 @@ class DatabaseService {
       query,
       totalDatabases: searchResults.length,
       totalMatches: searchResults.reduce((sum, db) => sum + db.matches.length, 0),
-      results: searchResults
+      results: searchResults,
     };
   }
 
@@ -199,14 +204,14 @@ class DatabaseService {
     const form = await prisma.form.findFirst({
       where: {
         id: formId,
-        userId
+        userId,
       },
       select: {
         id: true,
         title: true,
         schema: true,
-        createdAt: true
-      }
+        createdAt: true,
+      },
     });
 
     if (!form) {
@@ -218,20 +223,20 @@ class DatabaseService {
       prisma.submission.findMany({
         where: { formId },
         select: {
-          submittedAt: true
+          submittedAt: true,
         },
         orderBy: {
-          submittedAt: 'desc'
+          submittedAt: 'desc',
         },
-        take: 30
+        take: 30,
       }),
       prisma.submission.groupBy({
         by: ['status'],
         where: { formId },
         _count: {
-          status: true
-        }
-      })
+          status: true,
+        },
+      }),
     ]);
 
     // Analyze field completion rates
@@ -245,7 +250,7 @@ class DatabaseService {
       recentActivity: this.calculateSubmissionTrends(recentSubmissions),
       statusDistribution,
       fieldAnalytics,
-      dataQuality: this.calculateDataQuality(fieldAnalytics)
+      dataQuality: this.calculateDataQuality(fieldAnalytics),
     };
   }
 
@@ -253,8 +258,8 @@ class DatabaseService {
    * Export database to various formats
    */
   async exportDatabase(formId, userId, format = 'json', options = {}) {
-    const records = await this.getDatabaseRecords(formId, userId, { 
-      limit: options.limit || 10000 
+    const records = await this.getDatabaseRecords(formId, userId, {
+      limit: options.limit || 10000,
     });
 
     switch (format.toLowerCase()) {
@@ -273,13 +278,13 @@ class DatabaseService {
 
   extractTableSchema(formSchema) {
     if (!formSchema.fields) return {};
-    
+
     return formSchema.fields.reduce((schema, field) => {
       schema[field.name] = {
         type: field.type,
         label: field.label,
         required: field.required || false,
-        options: field.options || null
+        options: field.options || null,
       };
       return schema;
     }, {});
@@ -287,12 +292,12 @@ class DatabaseService {
 
   buildFilterConditions(filters) {
     const conditions = {};
-    
+
     Object.entries(filters).forEach(([field, value]) => {
       if (value !== undefined && value !== null && value !== '') {
         conditions[`data.${field}`] = {
           contains: value,
-          mode: 'insensitive'
+          mode: 'insensitive',
         };
       }
     });
@@ -302,15 +307,15 @@ class DatabaseService {
 
   buildSearchConditions(query, formSchema, fields) {
     const conditions = [];
-    const searchableFields = fields.length > 0 ? fields : 
-      formSchema.fields?.map(f => f.name) || [];
+    const searchableFields =
+      fields.length > 0 ? fields : formSchema.fields?.map((f) => f.name) || [];
 
-    searchableFields.forEach(fieldName => {
+    searchableFields.forEach((fieldName) => {
       conditions.push({
         [`data.${fieldName}`]: {
           contains: query,
-          mode: 'insensitive'
-        }
+          mode: 'insensitive',
+        },
       });
     });
 
@@ -321,8 +326,8 @@ class DatabaseService {
     // Simple relevance scoring - can be enhanced with fuzzy matching
     let score = 0;
     const queryLower = query.toLowerCase();
-    
-    Object.values(data).forEach(value => {
+
+    Object.values(data).forEach((value) => {
       if (typeof value === 'string' && value.toLowerCase().includes(queryLower)) {
         score += 1;
       }
@@ -334,8 +339,8 @@ class DatabaseService {
   calculateSubmissionTrends(submissions) {
     const trends = {};
     const now = new Date();
-    
-    submissions.forEach(sub => {
+
+    submissions.forEach((sub) => {
       const dayDiff = Math.floor((now - new Date(sub.submittedAt)) / (1000 * 60 * 60 * 24));
       const period = dayDiff <= 7 ? 'week' : dayDiff <= 30 ? 'month' : 'older';
       trends[period] = (trends[period] || 0) + 1;
@@ -349,21 +354,21 @@ class DatabaseService {
 
     const submissions = await prisma.submission.findMany({
       where: { formId },
-      select: { data: true }
+      select: { data: true },
     });
 
     const fieldStats = {};
-    
-    schema.fields.forEach(field => {
-      const completionCount = submissions.filter(sub => 
-        sub.data[field.name] && sub.data[field.name] !== ''
+
+    schema.fields.forEach((field) => {
+      const completionCount = submissions.filter(
+        (sub) => sub.data[field.name] && sub.data[field.name] !== '',
       ).length;
-      
+
       fieldStats[field.name] = {
         label: field.label,
         completionRate: submissions.length > 0 ? completionCount / submissions.length : 0,
         totalResponses: completionCount,
-        missedResponses: submissions.length - completionCount
+        missedResponses: submissions.length - completionCount,
       };
     });
 
@@ -373,22 +378,21 @@ class DatabaseService {
   calculateDataQuality(fieldAnalytics) {
     const fields = Object.values(fieldAnalytics);
     if (fields.length === 0) return 0;
-    
-    const avgCompletion = fields.reduce((sum, field) => sum + field.completionRate, 0) / fields.length;
+
+    const avgCompletion =
+      fields.reduce((sum, field) => sum + field.completionRate, 0) / fields.length;
     return Math.round(avgCompletion * 100);
   }
 
   exportToCSV(records) {
     // Implementation for CSV export
     const headers = Object.keys(records.schema);
-    const rows = records.records.map(record => 
-      headers.map(header => record[header] || '')
-    );
-    
+    const rows = records.records.map((record) => headers.map((header) => record[header] || ''));
+
     return {
       headers,
       rows,
-      mimeType: 'text/csv'
+      mimeType: 'text/csv',
     };
   }
 
@@ -397,7 +401,7 @@ class DatabaseService {
       database: records.databaseName,
       schema: records.schema,
       records: records.records,
-      mimeType: 'application/json'
+      mimeType: 'application/json',
     };
   }
 
@@ -405,7 +409,7 @@ class DatabaseService {
     // Implementation for Excel export would go here
     return {
       data: records,
-      mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     };
   }
 }

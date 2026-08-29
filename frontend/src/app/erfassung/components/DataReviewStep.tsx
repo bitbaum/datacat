@@ -28,15 +28,15 @@ export function DataReviewStep({ analysisResult, onReviewComplete, product }: Da
     subCategoryB: analysisResult.subCategoryB,
     stockQuantity: analysisResult.stockQuantity,
     articleType: analysisResult.articleType,
-    unit: analysisResult.unit
+    unit: analysisResult.unit,
   });
 
   const [editingField, setEditingField] = useState<string | null>(null);
 
   const handleFieldChange = (field: string, value: string | number) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
 
@@ -58,12 +58,12 @@ export function DataReviewStep({ analysisResult, onReviewComplete, product }: Da
     return '❌';
   };
 
-  const FormField = ({ 
-    label, 
-    field, 
-    type = 'text', 
+  const FormField = ({
+    label,
+    field,
+    type = 'text',
     placeholder = '',
-    rows = undefined 
+    rows = undefined,
   }: {
     label: string;
     field: string;
@@ -74,24 +74,36 @@ export function DataReviewStep({ analysisResult, onReviewComplete, product }: Da
     const confidence = analysisResult.confidence[field] || analysisResult.confidence.title || 0;
     const source = 'KI-Analyse';
     const isEditing = editingField === field;
-    const isModified = formData[field as keyof typeof formData] !== analysisResult[field as keyof typeof analysisResult];
-    
-    const confidenceColor = confidence >= 0.9 ? 'text-green-600 dark:text-green-400' :
-                           confidence >= 0.7 ? 'text-yellow-600 dark:text-yellow-400' :
-                           'text-red-600 dark:text-red-400';
-    
-    const borderColor = confidence >= 0.9 ? 'border-green-200 dark:border-green-600' :
-                       confidence >= 0.7 ? 'border-yellow-200 dark:border-yellow-600' :
-                       'border-red-200 dark:border-red-600';
-    
+    const isModified =
+      formData[field as keyof typeof formData] !==
+      analysisResult[field as keyof typeof analysisResult];
+
+    const confidenceColor =
+      confidence >= 0.9
+        ? 'text-green-600 dark:text-green-400'
+        : confidence >= 0.7
+          ? 'text-yellow-600 dark:text-yellow-400'
+          : 'text-red-600 dark:text-red-400';
+
+    const borderColor =
+      confidence >= 0.9
+        ? 'border-green-200 dark:border-green-600'
+        : confidence >= 0.7
+          ? 'border-yellow-200 dark:border-yellow-600'
+          : 'border-red-200 dark:border-red-600';
+
     return (
-      <div className={`space-y-2 p-3 rounded-lg border ${borderColor} ${
-        confidence < 0.8 ? 'bg-yellow-50 dark:bg-yellow-900/10' : 'bg-gray-50 dark:bg-gray-800/50'
-      }`}>
+      <div
+        className={`space-y-2 p-3 rounded-lg border ${borderColor} ${
+          confidence < 0.8 ? 'bg-yellow-50 dark:bg-yellow-900/10' : 'bg-gray-50 dark:bg-gray-800/50'
+        }`}
+      >
         <div className="flex items-center justify-between">
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
             {label}
-            {isModified && <span className="ml-1 text-xs text-blue-600 dark:text-blue-400">✏️ Bearbeitet</span>}
+            {isModified && (
+              <span className="ml-1 text-xs text-blue-600 dark:text-blue-400">✏️ Bearbeitet</span>
+            )}
           </label>
           <div className="flex items-center space-x-2">
             <span className={`text-xs font-bold ${confidenceColor}`}>
@@ -106,12 +118,12 @@ export function DataReviewStep({ analysisResult, onReviewComplete, product }: Da
             </button>
           </div>
         </div>
-        
+
         {/* Source Information */}
         <div className="text-xs text-gray-500 dark:text-gray-400 mb-2">
           <span className="font-medium">Quelle:</span> {source}
         </div>
-        
+
         {isEditing ? (
           <div className="space-y-2">
             {rows ? (
@@ -126,7 +138,12 @@ export function DataReviewStep({ analysisResult, onReviewComplete, product }: Da
               <input
                 type={type}
                 value={formData[field as keyof typeof formData]}
-                onChange={(e) => handleFieldChange(field, type === 'number' ? parseFloat(e.target.value) || 0 : e.target.value)}
+                onChange={(e) =>
+                  handleFieldChange(
+                    field,
+                    type === 'number' ? parseFloat(e.target.value) || 0 : e.target.value,
+                  )
+                }
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
                 placeholder={placeholder}
               />
@@ -143,9 +160,9 @@ export function DataReviewStep({ analysisResult, onReviewComplete, product }: Da
                 onClick={() => {
                   setEditingField(null);
                   // Reset to original value
-                  setFormData(prev => ({
+                  setFormData((prev) => ({
                     ...prev,
-                    [field]: analysisResult[field as keyof typeof analysisResult]
+                    [field]: analysisResult[field as keyof typeof analysisResult],
                   }));
                 }}
                 className="px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -157,11 +174,13 @@ export function DataReviewStep({ analysisResult, onReviewComplete, product }: Da
         ) : (
           <div className="px-3 py-2 bg-white dark:bg-gray-700 rounded-md border border-gray-200 dark:border-gray-600">
             <span className="text-gray-900 dark:text-white font-medium">
-              {formData[field as keyof typeof formData] || <span className="text-gray-400 italic">Kein Wert</span>}
+              {formData[field as keyof typeof formData] || (
+                <span className="text-gray-400 italic">Kein Wert</span>
+              )}
             </span>
           </div>
         )}
-        
+
         {confidence < 0.8 && !isEditing && (
           <div className="text-xs text-amber-700 dark:text-amber-300 bg-amber-100 dark:bg-amber-900/30 rounded px-2 py-1">
             ⚠️ Niedrige Vertrauenswert - Bitte überprüfen und ggf. korrigieren
@@ -191,19 +210,19 @@ export function DataReviewStep({ analysisResult, onReviewComplete, product }: Da
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
           <div className="text-center">
             <div className="text-2xl font-bold text-green-600 dark:text-green-400">
-              {Object.values(analysisResult.confidence).filter(c => c >= 0.8).length}
+              {Object.values(analysisResult.confidence).filter((c) => c >= 0.8).length}
             </div>
             <div className="text-blue-800 dark:text-blue-200">Hohe Konfidenz (≥80%)</div>
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
-              {Object.values(analysisResult.confidence).filter(c => c >= 0.6 && c < 0.8).length}
+              {Object.values(analysisResult.confidence).filter((c) => c >= 0.6 && c < 0.8).length}
             </div>
             <div className="text-blue-800 dark:text-blue-200">Mittlere Konfidenz (60-79%)</div>
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-red-600 dark:text-red-400">
-              {Object.values(analysisResult.confidence).filter(c => c < 0.6).length}
+              {Object.values(analysisResult.confidence).filter((c) => c < 0.6).length}
             </div>
             <div className="text-blue-800 dark:text-blue-200">Niedrige Konfidenz (&lt;60%)</div>
           </div>
@@ -222,18 +241,10 @@ export function DataReviewStep({ analysisResult, onReviewComplete, product }: Da
             <FormField label="Hersteller" field="manufacturer" />
             <FormField label="Artikelnummer" field="articleNumber" />
             <div className="md:col-span-2">
-              <FormField 
-                label="Kurzbeschreibung" 
-                field="shortDescription" 
-                rows={3}
-              />
+              <FormField label="Kurzbeschreibung" field="shortDescription" rows={3} />
             </div>
             <div className="md:col-span-2">
-              <FormField 
-                label="Detailbeschreibung" 
-                field="longDescription" 
-                rows={5}
-              />
+              <FormField label="Detailbeschreibung" field="longDescription" rows={5} />
             </div>
           </div>
         </div>
@@ -282,13 +293,16 @@ export function DataReviewStep({ analysisResult, onReviewComplete, product }: Da
       <div className="mt-8 border-t pt-6">
         <div className="flex flex-col sm:flex-row gap-4 justify-between items-center">
           <div className="text-sm text-gray-600 dark:text-gray-400">
-            {Object.values(analysisResult.confidence).filter(c => c < 0.8).length > 0 ? (
-              <>⚠️ {Object.values(analysisResult.confidence).filter(c => c < 0.8).length} Felder mit niedriger Konfidenz - Überprüfung empfohlen</>
+            {Object.values(analysisResult.confidence).filter((c) => c < 0.8).length > 0 ? (
+              <>
+                ⚠️ {Object.values(analysisResult.confidence).filter((c) => c < 0.8).length} Felder
+                mit niedriger Konfidenz - Überprüfung empfohlen
+              </>
             ) : (
               <>✅ Alle Felder haben hohe Konfidenz - Kann direkt übernommen werden</>
             )}
           </div>
-          
+
           <div className="flex space-x-3">
             <button
               onClick={() => {
@@ -296,16 +310,16 @@ export function DataReviewStep({ analysisResult, onReviewComplete, product }: Da
                 onReviewComplete({
                   ...analysisResult,
                   approved: true,
-                  reviewedAt: new Date()
+                  reviewedAt: new Date(),
                 });
               }}
               className="px-4 py-2 bg-green-600 text-white rounded-md font-medium hover:bg-green-700 transition-colors flex items-center"
-              disabled={Object.values(analysisResult.confidence).some(c => c < 0.6)}
+              disabled={Object.values(analysisResult.confidence).some((c) => c < 0.6)}
             >
               <CheckCircleIcon className="h-5 w-5 mr-2" />
               Schnell übernehmen
             </button>
-            
+
             <button
               onClick={handleContinue}
               className="px-6 py-3 bg-indigo-600 text-white rounded-md font-medium hover:bg-indigo-700 transition-colors"
@@ -314,9 +328,12 @@ export function DataReviewStep({ analysisResult, onReviewComplete, product }: Da
             </button>
           </div>
         </div>
-        
+
         <div className="mt-4 text-xs text-gray-500 dark:text-gray-400 text-center">
-          <p>Nach der Bestätigung werden die Daten zur Produkttabelle hinzugefügt, wo sie weiter bearbeitet und exportiert werden können.</p>
+          <p>
+            Nach der Bestätigung werden die Daten zur Produkttabelle hinzugefügt, wo sie weiter
+            bearbeitet und exportiert werden können.
+          </p>
         </div>
       </div>
     </div>

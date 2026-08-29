@@ -16,7 +16,9 @@ interface MultiStepFormBuilderProps {
   stepsWithErrors: Set<string>;
   errors: Record<string, string | null>;
   formData: Record<string, string>;
-  onFieldChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
+  onFieldChange: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
+  ) => void;
   onUpdateField: (id: string, updates: Partial<FieldConfig>) => void;
   onRemoveField: (id: string) => void;
   onDuplicateField: (id: string) => void;
@@ -36,14 +38,8 @@ export function MultiStepFormBuilder({
   onSelectField,
   selectedFieldId,
 }: MultiStepFormBuilderProps) {
-  const {
-    currentStep,
-    setCurrentStep,
-    addStep,
-    addField,
-    addTemplateFields,
-    removeStep,
-  } = useFormBuilderStore();
+  const { currentStep, setCurrentStep, addStep, addField, addTemplateFields, removeStep } =
+    useFormBuilderStore();
 
   const [pendingDeleteId, setPendingDeleteId] = React.useState<string | null>(null);
 
@@ -70,20 +66,26 @@ export function MultiStepFormBuilder({
 
   const isCurrentStepComplete = React.useCallback(() => {
     if (!currentStepData) return false;
-    const requiredFields = currentStepData.fields.filter(field => field.required);
-    return requiredFields.every(field => formData[field.name]?.trim());
+    const requiredFields = currentStepData.fields.filter((field) => field.required);
+    return requiredFields.every((field) => formData[field.name]?.trim());
   }, [currentStepData, formData]);
-  
+
   if (!steps || steps.length === 0 || !currentStepData) {
     return (
       <div className="flex items-center justify-center py-24">
         <button
-          onClick={() => addStep({ title: 'Schritt 1', description: '', fields: [], isOptional: false })}
+          onClick={() =>
+            addStep({ title: 'Schritt 1', description: '', fields: [], isOptional: false })
+          }
           className="flex flex-col items-center justify-center w-full max-w-md px-6 py-10 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors focus:outline-none"
         >
           <div className="text-4xl text-blue-600 mb-3">＋</div>
-          <div className="text-lg font-semibold text-gray-900 dark:text-white">Ersten Schritt hinzufügen</div>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Beginnen Sie Ihr Formular, indem Sie den ersten Schritt erstellen.</p>
+          <div className="text-lg font-semibold text-gray-900 dark:text-white">
+            Ersten Schritt hinzufügen
+          </div>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            Beginnen Sie Ihr Formular, indem Sie den ersten Schritt erstellen.
+          </p>
         </button>
       </div>
     );
@@ -102,8 +104,8 @@ export function MultiStepFormBuilder({
                     getStepStatus(index) === 'completed'
                       ? 'bg-green-500 border-green-500 text-white'
                       : getStepStatus(index) === 'current'
-                      ? 'bg-blue-500 border-blue-500 text-white'
-                      : 'bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-400'
+                        ? 'bg-blue-500 border-blue-500 text-white'
+                        : 'bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-400'
                   } ${stepsWithErrors.has(step.id) ? '!border-red-500' : ''}`}
                   onClick={() => setCurrentStep(index)}
                   title={stepsWithErrors.has(step.id) ? 'Dieser Schritt hat Fehler' : ''}
@@ -116,23 +118,36 @@ export function MultiStepFormBuilder({
                   {getStepStatus(index) === 'completed' ? '✓' : index + 1}
                 </div>
                 <div className="ml-2 mr-3">
-                  <p className={`text-sm font-medium ${
-                    getStepStatus(index) === 'current' ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400'
-                  }`}>
+                  <p
+                    className={`text-sm font-medium ${
+                      getStepStatus(index) === 'current'
+                        ? 'text-blue-600 dark:text-blue-400'
+                        : 'text-gray-500 dark:text-gray-400'
+                    }`}
+                  >
                     {step.title}
                   </p>
                 </div>
               </div>
               {index < steps.length - 1 && (
-                <div className={`w-8 h-0.5 ${
-                  index < currentStep ? 'bg-green-500' : 'bg-gray-200 dark:bg-gray-600'
-                }`} />
+                <div
+                  className={`w-8 h-0.5 ${
+                    index < currentStep ? 'bg-green-500' : 'bg-gray-200 dark:bg-gray-600'
+                  }`}
+                />
               )}
             </React.Fragment>
           ))}
           {/* Hover-add button */}
           <button
-            onClick={() => addStep({ title: `Schritt ${steps.length + 1}`, description: '', fields: [], isOptional: false })}
+            onClick={() =>
+              addStep({
+                title: `Schritt ${steps.length + 1}`,
+                description: '',
+                fields: [],
+                isOptional: false,
+              })
+            }
             className="ml-2 opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-blue-600"
             title="Neuen Schritt hinzufügen"
           >
@@ -149,9 +164,7 @@ export function MultiStepFormBuilder({
               {currentStepData.title}
             </h2>
             {currentStepData.description && (
-              <p className="text-gray-600 dark:text-gray-400 mt-1">
-                {currentStepData.description}
-              </p>
+              <p className="text-gray-600 dark:text-gray-400 mt-1">{currentStepData.description}</p>
             )}
           </div>
           <button
@@ -165,26 +178,31 @@ export function MultiStepFormBuilder({
 
         <div className="space-y-6">
           {currentStepData.fields.length === 0 ? (
-            <EmptyStep 
+            <EmptyStep
               onAddField={(type: FieldConfig['type']) => addField(type, currentStepData.id)}
-              onAddTemplate={(template: FieldTemplate) => addTemplateFields(template, currentStepData.id)}
+              onAddTemplate={(template: FieldTemplate) =>
+                addTemplateFields(template, currentStepData.id)
+              }
             />
           ) : (
-            <SortableContext items={currentStepData.fields.map(f => f.id)} strategy={verticalListSortingStrategy}>
+            <SortableContext
+              items={currentStepData.fields.map((f) => f.id)}
+              strategy={verticalListSortingStrategy}
+            >
               <div className="space-y-6">
-                {currentStepData.fields.map(field => (
-                    <ModernFieldBuilder
-                      key={field.id}
-                      field={field}
-                      value={formData[field.name] || ''}
-                      onChange={onFieldChange}
-                      onUpdateField={(updates) => onUpdateField(field.id, updates)}
-                      onRemoveField={() => onRemoveField(field.id)}
-                      onDuplicateField={() => onDuplicateField(field.id)}
-                      onSelect={() => onSelectField(field.id)}
-                      isSelected={selectedFieldId === field.id}
-                      error={errors[field.name]}
-                    />
+                {currentStepData.fields.map((field) => (
+                  <ModernFieldBuilder
+                    key={field.id}
+                    field={field}
+                    value={formData[field.name] || ''}
+                    onChange={onFieldChange}
+                    onUpdateField={(updates) => onUpdateField(field.id, updates)}
+                    onRemoveField={() => onRemoveField(field.id)}
+                    onDuplicateField={() => onDuplicateField(field.id)}
+                    onSelect={() => onSelectField(field.id)}
+                    isSelected={selectedFieldId === field.id}
+                    error={errors[field.name]}
+                  />
                 ))}
                 {/* inline add placeholder */}
                 <div className="flex items-center justify-center py-6">
@@ -220,11 +238,18 @@ export function MultiStepFormBuilder({
           >
             Zurück
           </Button>
-          
+
           {isLastStep ? (
             <Button
               type="button"
-              onClick={() => addStep({ title: `Schritt ${steps.length + 1}`, description: '', fields: [], isOptional: false })}
+              onClick={() =>
+                addStep({
+                  title: `Schritt ${steps.length + 1}`,
+                  description: '',
+                  fields: [],
+                  isOptional: false,
+                })
+              }
             >
               Neuen Schritt hinzufügen
             </Button>
@@ -254,4 +279,4 @@ Alle Felder in diesem Schritt gehen verloren.`}
       />
     </div>
   );
-} 
+}

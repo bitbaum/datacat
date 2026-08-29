@@ -25,4 +25,4 @@ export function Modal({ isOpen, onClose, children, maxWidth = 'max-w-lg' }: Moda
       </div>
     </div>
   );
-} 
+}

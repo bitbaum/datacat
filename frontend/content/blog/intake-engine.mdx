@@ -1,16 +1,16 @@
 ---
 created_date: 2025-07-10
 last_modified_date: 2025-07-10
-last_modified_summary: "Initial migration of intake-engine article to MDX with richer content and infographic."
+last_modified_summary: 'Initial migration of intake-engine article to MDX with richer content and infographic.'
 
-title: "Vom Rohdatenfluss zur smarten Entscheidung – unsere Data-Intake-Journey"
-date: "2025-07-10"
-summary: "Warum Datenaufnahme der Grundstein jeder Analyse ist – und wie wir sie mit Formularen, Streams und AI meistern."
-coverImage: "/images/blog/intake-engine/cover.jpg"
-tags: ["data-ingestion", "form-builder", "llm"]
+title: 'Vom Rohdatenfluss zur smarten Entscheidung – unsere Data-Intake-Journey'
+date: '2025-07-10'
+summary: 'Warum Datenaufnahme der Grundstein jeder Analyse ist – und wie wir sie mit Formularen, Streams und AI meistern.'
+coverImage: '/images/blog/intake-engine/cover.jpg'
+tags: ['data-ingestion', 'form-builder', 'llm']
 ---
 
-import { Callout, Infographic } from '@/components/MDXComponents'
+import { Callout, Infographic } from '@/components/MDXComponents';
 
 ## Einleitung
 
@@ -18,29 +18,36 @@ Daten sind das Öl des 21.&nbsp;Jahrhunderts – ein abgedroschener Satz, doch o
 Rohdaten _alleine_ bringen jedoch keinen Motor zum Laufen. Erst wenn Informationen **bequem erfasst**, **intelligent analysiert** und schliesslich in **wirkungsvollen Aktionen** münden, entsteht echter Mehrwert.
 
 <Callout type="tip">
-Wussten Sie, dass bereits **37 %** aller Datenprojekte am fehlenden Input scheitern? _Garbage in, garbage out_ gilt heute mehr denn je.
+  Wussten Sie, dass bereits **37 %** aller Datenprojekte am fehlenden Input scheitern? _Garbage in,
+  garbage out_ gilt heute mehr denn je.
 </Callout>
 
 ## Unser Intake-Stack auf einen Blick
 
-<Infographic src="/images/blog/intake-engine/pipeline.svg" caption="Vom Formular über Streams bis zur KI – der Weg unserer Daten" />
+<Infographic
+  src="/images/blog/intake-engine/pipeline.svg"
+  caption="Vom Formular über Streams bis zur KI – der Weg unserer Daten"
+/>
 
-1. **Formulare** – schnell per Drag-and-Drop gebaut, perfekt für menschlichen Input.  
-2. **Sensor- & API-Streams** – alles, was sich sekündlich ändert, landet in unserem Event-Bus.  
-3. **Contextual Prompts** – jede Datenspur erhält Zusatzwissen, bevor sie zum LLM geht.  
-4. **AI-Insights** – konkrete Empfehlungen, automatisch generiert.  
+1. **Formulare** – schnell per Drag-and-Drop gebaut, perfekt für menschlichen Input.
+2. **Sensor- & API-Streams** – alles, was sich sekündlich ändert, landet in unserem Event-Bus.
+3. **Contextual Prompts** – jede Datenspur erhält Zusatzwissen, bevor sie zum LLM geht.
+4. **AI-Insights** – konkrete Empfehlungen, automatisch generiert.
 
 ---
 
 ## Warum ist Datenerfassung so wichtig?
 
 ### 1. Qualität schlägt Quantität
+
 Ein kleiner, sauberer Datensatz bringt mehr als eine Big-Data-Müllhalde. Durch Validierung _am_ Intake-Punkt verhindern wir Fehler, bevor sie teuer werden.
 
 ### 2. Geschwindigkeit entscheidet
+
 Echtzeit-Ingestion ermöglicht es, Trends sofort zu erkennen und zu reagieren. Unser Stream-Layer verarbeitet > 200 k Events ⁄ Sekunde.
 
 ### 3. Kontext macht Daten wertvoll
+
 Ohne Metadaten weiss auch das beste Modell nichts anzufangen. Deshalb reichern wir jeden Datensatz bereits beim Intake an – wer, wo, in welchem Schritt.
 
 ---
@@ -48,32 +55,35 @@ Ohne Metadaten weiss auch das beste Modell nichts anzufangen. Deshalb reichern w
 ## Technischer Deep-Dive
 
 ### Formular-Ingestion
-* **Schema-First**: Jedes Feld besitzt Typ, Constraints und Hilfetext.  
-* **Edge-Validation**: Client- & Server-Checks verhindern Inkonsistenzen.  
-* **Zustand Store**: Ein zentrales `useFormBuilderStore` hält Felder & Steps synchron (Drag-and-Drop inklusive!).
+
+- **Schema-First**: Jedes Feld besitzt Typ, Constraints und Hilfetext.
+- **Edge-Validation**: Client- & Server-Checks verhindern Inkonsistenzen.
+- **Zustand Store**: Ein zentrales `useFormBuilderStore` hält Felder & Steps synchron (Drag-and-Drop inklusive!).
 
 ### Stream-Ingestion
-* **Kafka-Bus** für hohe Durchsätze, Back-Pressure Handling via Quotas.  
-* **Protobuf Schemas** für versionierte Payloads.  
-* **Exactly-Once writes** ins Lakehouse (Iceberg).
+
+- **Kafka-Bus** für hohe Durchsätze, Back-Pressure Handling via Quotas.
+- **Protobuf Schemas** für versionierte Payloads.
+- **Exactly-Once writes** ins Lakehouse (Iceberg).
 
 ### Prompt Engineering Layer
-* Dynamische System-Prompts, basierend auf Datenquelle & Benutzerrolle.  
-* **Few-Shot Examples** aus historischen Entscheidungen.  
-* Feedback-Loop speichert Modell-Antworten zur weiteren Optimierung.
+
+- Dynamische System-Prompts, basierend auf Datenquelle & Benutzerrolle.
+- **Few-Shot Examples** aus historischen Entscheidungen.
+- Feedback-Loop speichert Modell-Antworten zur weiteren Optimierung.
 
 ---
 
 ## Roadmap
 
-| Phase | Ziel | Status |
-|-------|------|--------|
-| **MVP** | Formular-Builder mit statischem Intake | ✅ live |
-| **v1.1** | Sensor-Streams + Auto-Mapping | 🔄 in Arbeit |
-| **v1.2** | AI-Insights Dashboard | ⏳ geplant |
+| Phase    | Ziel                                   | Status       |
+| -------- | -------------------------------------- | ------------ |
+| **MVP**  | Formular-Builder mit statischem Intake | ✅ live      |
+| **v1.1** | Sensor-Streams + Auto-Mapping          | 🔄 in Arbeit |
+| **v1.2** | AI-Insights Dashboard                  | ⏳ geplant   |
 
 ---
 
 ## Neugierig geworden?
 
-Am Ende dieser Seite erwartet dich ein Call-to-Action – teste den **Universal Form Builder** noch heute und bring deine eigene Data-Intake-Journey ins Rollen! 🚀 
+Am Ende dieser Seite erwartet dich ein Call-to-Action – teste den **Universal Form Builder** noch heute und bring deine eigene Data-Intake-Journey ins Rollen! 🚀

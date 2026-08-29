@@ -13,7 +13,10 @@ export async function GET(req: Request) {
     const { payload } = await jwtVerify(token, secret);
     const user = await prisma.user.findUnique({ where: { id: payload.sub as string } });
     if (!user) return Response.json({ success: false, message: 'Not found' }, { status: 404 });
-    return Response.json({ success: true, user: { id: user.id, email: user.email, name: user.name } });
+    return Response.json({
+      success: true,
+      user: { id: user.id, email: user.email, name: user.name },
+    });
   } catch {
     return Response.json({ success: false, message: 'Invalid token' }, { status: 401 });
   }
@@ -32,10 +35,11 @@ export async function PUT(req: Request) {
       where: { id: payload.sub as string },
       data: { ...(name !== undefined && { name }) },
     });
-    return Response.json({ success: true, user: { id: user.id, email: user.email, name: user.name } });
+    return Response.json({
+      success: true,
+      user: { id: user.id, email: user.email, name: user.name },
+    });
   } catch {
     return Response.json({ success: false, message: 'Invalid token' }, { status: 401 });
   }
 }
-
-

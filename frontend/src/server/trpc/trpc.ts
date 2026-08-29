@@ -12,5 +12,3 @@ export const authedProcedure = t.procedure.use(async ({ ctx, next }) => {
   }
   return next({ ctx: { ...ctx, user: ctx.user } });
 });
-
-

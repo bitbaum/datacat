@@ -14,7 +14,7 @@ const SUPPORTED_DATABASES = {
   POSTGRESQL: 'postgresql',
   MYSQL: 'mysql',
   SQLITE: 'sqlite',
-  MSSQL: 'mssql'
+  MSSQL: 'mssql',
 };
 
 /**
@@ -32,7 +32,7 @@ async function testConnection(connectionConfig) {
         user: username,
         password,
         ssl: ssl ? { rejectUnauthorized: false } : false,
-        connectionTimeoutMillis: 10000
+        connectionTimeoutMillis: 10000,
       });
 
       const client = await pool.connect();
@@ -44,19 +44,18 @@ async function testConnection(connectionConfig) {
         success: true,
         message: 'Connection successful',
         version: result.rows[0].version,
-        type: 'postgresql'
+        type: 'postgresql',
       };
     }
 
     // Add support for other database types as needed
     throw new Error(`Database type '${type}' is not yet supported`);
-
   } catch (error) {
     console.error('Database connection test failed:', error);
     return {
       success: false,
       message: error.message || 'Connection failed',
-      error: error.code
+      error: error.code,
     };
   }
 }
@@ -75,7 +74,7 @@ async function getTables(connectionConfig) {
         database,
         user: username,
         password,
-        ssl: ssl ? { rejectUnauthorized: false } : false
+        ssl: ssl ? { rejectUnauthorized: false } : false,
       });
 
       const client = await pool.connect();
@@ -95,23 +94,22 @@ async function getTables(connectionConfig) {
 
       return {
         success: true,
-        tables: result.rows.map(row => ({
+        tables: result.rows.map((row) => ({
           schema: row.table_schema,
           name: row.table_name,
           fullName: `${row.table_schema}.${row.table_name}`,
-          columnCount: parseInt(row.column_count)
-        }))
+          columnCount: parseInt(row.column_count),
+        })),
       };
     }
 
     throw new Error(`Database type '${type}' is not yet supported`);
-
   } catch (error) {
     console.error('Get tables failed:', error);
     return {
       success: false,
       message: error.message,
-      tables: []
+      tables: [],
     };
   }
 }
@@ -130,7 +128,7 @@ async function getTableSchema(connectionConfig, tableName) {
         database,
         user: username,
         password,
-        ssl: ssl ? { rejectUnauthorized: false } : false
+        ssl: ssl ? { rejectUnauthorized: false } : false,
       });
 
       // Parse schema and table name
@@ -141,7 +139,8 @@ async function getTableSchema(connectionConfig, tableName) {
       const client = await pool.connect();
 
       // Get columns
-      const columnsResult = await client.query(`
+      const columnsResult = await client.query(
+        `
         SELECT
           column_name,
           data_type,
@@ -151,14 +150,19 @@ async function getTableSchema(connectionConfig, tableName) {
         FROM information_schema.columns
         WHERE table_schema = $1 AND table_name = $2
         ORDER BY ordinal_position
-      `, [schema, table]);
+      `,
+        [schema, table],
+      );
 
       // Get row count estimate
-      const countResult = await client.query(`
+      const countResult = await client.query(
+        `
         SELECT reltuples::bigint as estimate
         FROM pg_class
         WHERE oid = $1::regclass
-      `, [`${schema}.${table}`]);
+      `,
+        [`${schema}.${table}`],
+      );
 
       client.release();
       await pool.end();
@@ -168,25 +172,24 @@ async function getTableSchema(connectionConfig, tableName) {
         tableName,
         schema,
         table,
-        columns: columnsResult.rows.map(col => ({
+        columns: columnsResult.rows.map((col) => ({
           name: col.column_name,
           type: col.data_type,
           nullable: col.is_nullable === 'YES',
           default: col.column_default,
-          maxLength: col.character_maximum_length
+          maxLength: col.character_maximum_length,
         })),
-        estimatedRows: countResult.rows[0]?.estimate || 0
+        estimatedRows: countResult.rows[0]?.estimate || 0,
       };
     }
 
     throw new Error(`Database type '${type}' is not yet supported`);
-
   } catch (error) {
     console.error('Get table schema failed:', error);
     return {
       success: false,
       message: error.message,
-      columns: []
+      columns: [],
     };
   }
 }
@@ -208,7 +211,7 @@ async function importData(connectionConfig, tableName, options, userId) {
         database,
         user: username,
         password,
-        ssl: ssl ? { rejectUnauthorized: false } : false
+        ssl: ssl ? { rejectUnauthorized: false } : false,
       });
 
       // Parse schema and table name
@@ -254,7 +257,7 @@ async function importData(connectionConfig, tableName, options, userId) {
               type: 'postgresql',
               host,
               database,
-              table: tableName
+              table: tableName,
             },
             columns: columns.length > 0 ? columns : Object.keys(result.rows[0] || {}),
             rowCount: result.rows.length,
@@ -262,18 +265,18 @@ async function importData(connectionConfig, tableName, options, userId) {
             query: {
               limit,
               offset,
-              where: where || null
+              where: where || null,
             },
-            sampleData: result.rows.slice(0, 10)
+            sampleData: result.rows.slice(0, 10),
           },
           metadata: {
             importedAt: new Date().toISOString(),
-            processingTime
+            processingTime,
           },
           processingTime,
           processedAt: new Date(),
-          userId
-        }
+          userId,
+        },
       });
 
       return {
@@ -283,12 +286,11 @@ async function importData(connectionConfig, tableName, options, userId) {
         rowCount: result.rows.length,
         totalRows: parseInt(countResult.rows[0].total),
         processingTime,
-        columns: Object.keys(result.rows[0] || {})
+        columns: Object.keys(result.rows[0] || {}),
       };
     }
 
     throw new Error(`Database type '${type}' is not yet supported`);
-
   } catch (error) {
     console.error('Import data failed:', error);
 
@@ -301,16 +303,16 @@ async function importData(connectionConfig, tableName, options, userId) {
         error: error.message,
         metadata: {
           connectionConfig: { type, host, port, database },
-          tableName
+          tableName,
         },
-        userId
-      }
+        userId,
+      },
     });
 
     return {
       success: false,
       message: error.message,
-      data: []
+      data: [],
     };
   }
 }
@@ -337,7 +339,7 @@ async function executeQuery(connectionConfig, query, userId) {
         database,
         user: username,
         password,
-        ssl: ssl ? { rejectUnauthorized: false } : false
+        ssl: ssl ? { rejectUnauthorized: false } : false,
       });
 
       const client = await pool.connect();
@@ -360,21 +362,21 @@ async function executeQuery(connectionConfig, query, userId) {
             source: {
               type: 'postgresql',
               host,
-              database
+              database,
             },
             query,
-            columns: result.fields.map(f => f.name),
+            columns: result.fields.map((f) => f.name),
             rowCount: result.rows.length,
-            sampleData: result.rows.slice(0, 10)
+            sampleData: result.rows.slice(0, 10),
           },
           metadata: {
             executedAt: new Date().toISOString(),
-            processingTime
+            processingTime,
           },
           processingTime,
           processedAt: new Date(),
-          userId
-        }
+          userId,
+        },
       });
 
       return {
@@ -382,19 +384,18 @@ async function executeQuery(connectionConfig, query, userId) {
         dataSourceId: dataSource.id,
         data: result.rows,
         rowCount: result.rows.length,
-        columns: result.fields.map(f => f.name),
-        processingTime
+        columns: result.fields.map((f) => f.name),
+        processingTime,
       };
     }
 
     throw new Error(`Database type '${type}' is not yet supported`);
-
   } catch (error) {
     console.error('Execute query failed:', error);
     return {
       success: false,
       message: error.message,
-      data: []
+      data: [],
     };
   }
 }
@@ -409,20 +410,20 @@ async function getRecentImports(userId, options = {}) {
     const dataSources = await prisma.dataSource.findMany({
       where: {
         userId,
-        type: 'DATABASE'
+        type: 'DATABASE',
       },
       orderBy: {
-        createdAt: 'desc'
+        createdAt: 'desc',
       },
       take: limit,
-      skip: offset
+      skip: offset,
     });
 
     const total = await prisma.dataSource.count({
       where: {
         userId,
-        type: 'DATABASE'
-      }
+        type: 'DATABASE',
+      },
     });
 
     return {
@@ -432,16 +433,15 @@ async function getRecentImports(userId, options = {}) {
       pagination: {
         limit,
         offset,
-        hasMore: offset + limit < total
-      }
+        hasMore: offset + limit < total,
+      },
     };
-
   } catch (error) {
     console.error('Get recent imports failed:', error);
     return {
       success: false,
       dataSources: [],
-      total: 0
+      total: 0,
     };
   }
 }
@@ -453,5 +453,5 @@ module.exports = {
   getTableSchema,
   importData,
   executeQuery,
-  getRecentImports
+  getRecentImports,
 };

@@ -40,29 +40,32 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ content });
   } catch (error: any) {
     console.error('OpenAI Vision API Error:', error);
-    
+
     // Handle specific OpenAI errors
     if (error.status === 429) {
-      return NextResponse.json({ 
-        error: 'OpenAI quota exceeded. Please check your billing at platform.openai.com/account/billing and add payment method or wait for quota reset.' 
-      }, { status: 429 });
+      return NextResponse.json(
+        {
+          error:
+            'OpenAI quota exceeded. Please check your billing at platform.openai.com/account/billing and add payment method or wait for quota reset.',
+        },
+        { status: 429 },
+      );
     }
-    
+
     if (error.status === 401) {
-      return NextResponse.json({ 
-        error: 'Invalid OpenAI API key. Please check your configuration.' 
-      }, { status: 401 });
+      return NextResponse.json(
+        {
+          error: 'Invalid OpenAI API key. Please check your configuration.',
+        },
+        { status: 401 },
+      );
     }
-    
-    return NextResponse.json({ 
-      error: error?.message || 'OpenAI Vision API error' 
-    }, { status: 500 });
+
+    return NextResponse.json(
+      {
+        error: error?.message || 'OpenAI Vision API error',
+      },
+      { status: 500 },
+    );
   }
 }
-
-
-
-
-
-
-

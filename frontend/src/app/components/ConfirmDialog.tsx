@@ -21,7 +21,7 @@ export function ConfirmDialog({
 }: ConfirmDialogProps) {
   React.useEffect(() => {
     if (!isOpen) return;
-    
+
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onCancel();
     };
@@ -40,7 +40,9 @@ export function ConfirmDialog({
     >
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-sm w-full p-6">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">{title}</h3>
-        <p className="text-sm text-gray-600 dark:text-gray-300 mb-6 whitespace-pre-line">{message}</p>
+        <p className="text-sm text-gray-600 dark:text-gray-300 mb-6 whitespace-pre-line">
+          {message}
+        </p>
         <div className="flex justify-end space-x-3">
           <button
             onClick={onCancel}
@@ -58,4 +60,4 @@ export function ConfirmDialog({
       </div>
     </div>
   );
-} 
+}

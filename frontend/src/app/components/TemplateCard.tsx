@@ -11,40 +11,45 @@ interface TemplateCardProps {
   className?: string;
 }
 
-export function TemplateCard({ 
-  template, 
-  onSelect, 
-  onEdit, 
-  onDuplicate, 
-  onDelete, 
-  className = "" 
+export function TemplateCard({
+  template,
+  onSelect,
+  onEdit,
+  onDuplicate,
+  onDelete,
+  className = '',
 }: TemplateCardProps) {
   const fieldTypeIcons: Record<string, string> = {
-    text: "📝",
-    email: "📧",
-    tel: "📞",
-    date: "📅",
-    select: "📋",
-    textarea: "📄"
+    text: '📝',
+    email: '📧',
+    tel: '📞',
+    date: '📅',
+    select: '📋',
+    textarea: '📄',
   };
 
   const getFieldTypeCounts = () => {
-    const counts = template.fields.reduce((acc, field) => {
-      acc[field.type] = (acc[field.type] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
-    
+    const counts = template.fields.reduce(
+      (acc, field) => {
+        acc[field.type] = (acc[field.type] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
+
     return Object.entries(counts)
-      .sort(([,a], [,b]) => b - a)
+      .sort(([, a], [, b]) => b - a)
       .slice(0, 3);
   };
 
   const fieldTypeCounts = getFieldTypeCounts();
   const totalFields = template.fields.length;
-  const requiredFields = template.fields.filter(f => f.required).length;
+  const requiredFields = template.fields.filter((f) => f.required).length;
 
   return (
-    <div className={`group bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:shadow-xl transition-all duration-200 hover:scale-[1.02] ${className}`}>
+    <div
+      className={`group bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:shadow-xl transition-all duration-200 hover:scale-[1.02] ${className}`}
+    >
       <div className="flex items-start justify-between mb-4">
         <div className="flex-1">
           <div className="flex items-center space-x-2 mb-2">
@@ -73,7 +78,12 @@ export function TemplateCard({
                 title="Vorlage bearbeiten"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                  />
                 </svg>
               </button>
             )}
@@ -87,7 +97,12 @@ export function TemplateCard({
                 title="Vorlage duplizieren"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                  />
                 </svg>
               </button>
             )}
@@ -101,7 +116,12 @@ export function TemplateCard({
                 title="Vorlage löschen"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                  />
                 </svg>
               </button>
             )}
@@ -114,7 +134,7 @@ export function TemplateCard({
           <span className="text-gray-500 dark:text-gray-400">Felder:</span>
           <span className="font-medium text-gray-900 dark:text-white">{totalFields}</span>
         </div>
-        
+
         <div className="flex items-center justify-between text-sm">
           <span className="text-gray-500 dark:text-gray-400">Pflichtfelder:</span>
           <span className="font-medium text-gray-900 dark:text-white">{requiredFields}</span>
@@ -123,7 +143,9 @@ export function TemplateCard({
         {template.isMultiStep && template.steps && (
           <div className="flex items-center justify-between text-sm">
             <span className="text-gray-500 dark:text-gray-400">Schritte:</span>
-            <span className="font-medium text-gray-900 dark:text-white">{template.steps.length}</span>
+            <span className="font-medium text-gray-900 dark:text-white">
+              {template.steps.length}
+            </span>
           </div>
         )}
 
@@ -132,7 +154,7 @@ export function TemplateCard({
             <span className="text-sm text-gray-500 dark:text-gray-400">Feldtypen:</span>
             <div className="flex space-x-1">
               {fieldTypeCounts.map(([type, count]) => (
-                <span 
+                <span
                   key={type}
                   className="inline-flex items-center px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded-md text-xs"
                   title={`${count} ${type} Feld${count !== 1 ? 'er' : ''}`}
@@ -146,11 +168,7 @@ export function TemplateCard({
         )}
       </div>
 
-      <Button
-        onClick={() => onSelect(template)}
-        className="w-full"
-        size="sm"
-      >
+      <Button onClick={() => onSelect(template)} className="w-full" size="sm">
         Vorlage verwenden
       </Button>
     </div>

@@ -37,7 +37,7 @@ export default function AudioIngestion({
   onError,
   formId,
   apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001',
-  token
+  token,
 }: AudioIngestionProps) {
   // Recording state
   const [recordingState, setRecordingState] = useState<RecordingState>('idle');
@@ -75,7 +75,7 @@ export default function AudioIngestion({
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
       const mediaRecorder = new MediaRecorder(stream, {
-        mimeType: MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/mp4'
+        mimeType: MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/mp4',
       });
 
       mediaRecorderRef.current = mediaRecorder;
@@ -91,7 +91,7 @@ export default function AudioIngestion({
         const blob = new Blob(audioChunksRef.current, { type: mediaRecorder.mimeType });
         setAudioBlob(blob);
         setAudioUrl(URL.createObjectURL(blob));
-        stream.getTracks().forEach(track => track.stop());
+        stream.getTracks().forEach((track) => track.stop());
       };
 
       mediaRecorder.start(1000); // Collect data every second
@@ -101,9 +101,8 @@ export default function AudioIngestion({
 
       // Start timer
       timerRef.current = setInterval(() => {
-        setRecordingTime(prev => prev + 1);
+        setRecordingTime((prev) => prev + 1);
       }, 1000);
-
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Failed to access microphone';
       setError(errorMsg);
@@ -144,7 +143,7 @@ export default function AudioIngestion({
       setRecordingState('recording');
 
       timerRef.current = setInterval(() => {
-        setRecordingTime(prev => prev + 1);
+        setRecordingTime((prev) => prev + 1);
       }, 1000);
     }
   }, [recordingState]);
@@ -194,8 +193,8 @@ export default function AudioIngestion({
         body: JSON.stringify({
           audioData: base64Data,
           name: `Recording ${new Date().toLocaleString()}`,
-          formId
-        })
+          formId,
+        }),
       });
 
       if (!response.ok) {
@@ -209,7 +208,6 @@ export default function AudioIngestion({
       setUploadState('complete');
       setResult(data.data);
       onUploadComplete?.(data.data);
-
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Upload failed';
       setError(errorMsg);
@@ -219,66 +217,74 @@ export default function AudioIngestion({
   }, [audioBlob, apiUrl, formId, token, onUploadComplete, onError]);
 
   // Handle file upload
-  const handleFileUpload = useCallback(async (file: File) => {
-    setUploadState('uploading');
-    setUploadProgress(0);
-    setError(null);
+  const handleFileUpload = useCallback(
+    async (file: File) => {
+      setUploadState('uploading');
+      setUploadProgress(0);
+      setError(null);
 
-    try {
-      const formData = new FormData();
-      formData.append('audio', file);
-      formData.append('name', file.name);
-      if (formId) {
-        formData.append('formId', formId);
+      try {
+        const formData = new FormData();
+        formData.append('audio', file);
+        formData.append('name', file.name);
+        if (formId) {
+          formData.append('formId', formId);
+        }
+
+        const response = await fetch(`${apiUrl}/api/v1/audio/upload`, {
+          method: 'POST',
+          headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+          body: formData,
+        });
+
+        setUploadState('processing');
+        setUploadProgress(50);
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Upload failed');
+        }
+
+        const data = await response.json();
+
+        setUploadProgress(100);
+        setUploadState('complete');
+        setResult(data.data);
+        onUploadComplete?.(data.data);
+      } catch (err) {
+        const errorMsg = err instanceof Error ? err.message : 'Upload failed';
+        setError(errorMsg);
+        setUploadState('error');
+        onError?.(errorMsg);
       }
-
-      const response = await fetch(`${apiUrl}/api/v1/audio/upload`, {
-        method: 'POST',
-        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-        body: formData
-      });
-
-      setUploadState('processing');
-      setUploadProgress(50);
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Upload failed');
-      }
-
-      const data = await response.json();
-
-      setUploadProgress(100);
-      setUploadState('complete');
-      setResult(data.data);
-      onUploadComplete?.(data.data);
-
-    } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : 'Upload failed';
-      setError(errorMsg);
-      setUploadState('error');
-      onError?.(errorMsg);
-    }
-  }, [apiUrl, formId, token, onUploadComplete, onError]);
+    },
+    [apiUrl, formId, token, onUploadComplete, onError],
+  );
 
   // Handle file input change
-  const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      handleFileUpload(file);
-    }
-  }, [handleFileUpload]);
+  const handleFileChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (file) {
+        handleFileUpload(file);
+      }
+    },
+    [handleFileUpload],
+  );
 
   // Handle drag and drop
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    const file = e.dataTransfer.files[0];
-    if (file && file.type.startsWith('audio/')) {
-      handleFileUpload(file);
-    } else {
-      setError('Please drop an audio file');
-    }
-  }, [handleFileUpload]);
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      const file = e.dataTransfer.files[0];
+      if (file && file.type.startsWith('audio/')) {
+        handleFileUpload(file);
+      } else {
+        setError('Please drop an audio file');
+      }
+    },
+    [handleFileUpload],
+  );
 
   // Format time display
   const formatTime = (seconds: number) => {
@@ -290,8 +296,18 @@ export default function AudioIngestion({
   return (
     <div className="w-full max-w-2xl mx-auto p-6 bg-white rounded-xl shadow-lg">
       <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-        <svg className="w-6 h-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+        <svg
+          className="w-6 h-6 text-indigo-600"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"
+          />
         </svg>
         Voice / Audio Ingestion
       </h2>
@@ -301,7 +317,12 @@ export default function AudioIngestion({
         <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
           <p className="flex items-center gap-2">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
             </svg>
             {error}
           </p>
@@ -380,7 +401,12 @@ export default function AudioIngestion({
                 className="flex items-center gap-2 px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition-colors"
               >
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
                 Clear
               </button>
@@ -389,12 +415,18 @@ export default function AudioIngestion({
 
           {/* Recording Timer */}
           {(recordingState === 'recording' || recordingState === 'paused') && (
-            <div className={`flex items-center gap-2 px-3 py-1 rounded-full ${
-              recordingState === 'recording' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'
-            }`}>
-              <span className={`w-2 h-2 rounded-full ${
-                recordingState === 'recording' ? 'bg-red-500 animate-pulse' : 'bg-yellow-500'
-              }`} />
+            <div
+              className={`flex items-center gap-2 px-3 py-1 rounded-full ${
+                recordingState === 'recording'
+                  ? 'bg-red-100 text-red-700'
+                  : 'bg-yellow-100 text-yellow-700'
+              }`}
+            >
+              <span
+                className={`w-2 h-2 rounded-full ${
+                  recordingState === 'recording' ? 'bg-red-500 animate-pulse' : 'bg-yellow-500'
+                }`}
+              />
               <span className="font-mono text-lg">{formatTime(recordingTime)}</span>
             </div>
           )}
@@ -403,7 +435,9 @@ export default function AudioIngestion({
         {/* Audio Preview */}
         {audioUrl && recordingState === 'stopped' && (
           <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-            <p className="text-sm text-gray-600 mb-2">Recording Preview ({formatTime(recordingTime)})</p>
+            <p className="text-sm text-gray-600 mb-2">
+              Recording Preview ({formatTime(recordingTime)})
+            </p>
             <audio src={audioUrl} controls className="w-full" />
 
             <button
@@ -414,15 +448,31 @@ export default function AudioIngestion({
               {uploadState === 'uploading' || uploadState === 'processing' ? (
                 <>
                   <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    />
                   </svg>
                   {uploadState === 'uploading' ? 'Uploading...' : 'Transcribing...'}
                 </>
               ) : (
                 <>
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                    />
                   </svg>
                   Transcribe Recording
                 </>
@@ -457,16 +507,24 @@ export default function AudioIngestion({
             className="hidden"
           />
 
-          <svg className="w-12 h-12 mx-auto text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+          <svg
+            className="w-12 h-12 mx-auto text-gray-400 mb-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+            />
           </svg>
 
           <p className="text-gray-600 mb-2">
             <span className="font-semibold text-indigo-600">Click to upload</span> or drag and drop
           </p>
-          <p className="text-sm text-gray-500">
-            MP3, WAV, M4A, WEBM, OGG, FLAC up to 25MB
-          </p>
+          <p className="text-sm text-gray-500">MP3, WAV, M4A, WEBM, OGG, FLAC up to 25MB</p>
         </div>
       </div>
 
@@ -474,7 +532,9 @@ export default function AudioIngestion({
       {(uploadState === 'uploading' || uploadState === 'processing') && (
         <div className="mb-6">
           <div className="flex justify-between text-sm text-gray-600 mb-2">
-            <span>{uploadState === 'uploading' ? 'Uploading...' : 'Transcribing with Whisper AI...'}</span>
+            <span>
+              {uploadState === 'uploading' ? 'Uploading...' : 'Transcribing with Whisper AI...'}
+            </span>
             <span>{uploadProgress}%</span>
           </div>
           <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
@@ -491,7 +551,12 @@ export default function AudioIngestion({
         <div className="border border-green-200 bg-green-50 rounded-lg p-6">
           <h3 className="text-lg font-semibold text-green-800 mb-4 flex items-center gap-2">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
             </svg>
             Transcription Complete
           </h3>
@@ -513,7 +578,9 @@ export default function AudioIngestion({
             {result.confidence && (
               <div className="bg-white p-3 rounded-lg">
                 <p className="text-gray-500">Confidence</p>
-                <p className="font-semibold text-gray-800">{Math.round(result.confidence * 100)}%</p>
+                <p className="font-semibold text-gray-800">
+                  {Math.round(result.confidence * 100)}%
+                </p>
               </div>
             )}
           </div>
@@ -539,7 +606,10 @@ export default function AudioIngestion({
                   <p className="text-sm text-gray-500 mb-2">Topics</p>
                   <div className="flex flex-wrap gap-2">
                     {result.extractedData.topics.map((topic, i) => (
-                      <span key={i} className="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-sm">
+                      <span
+                        key={i}
+                        className="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-sm"
+                      >
                         {topic}
                       </span>
                     ))}
@@ -575,11 +645,15 @@ export default function AudioIngestion({
               {result.extractedData.sentiment && (
                 <div className="bg-white p-4 rounded-lg">
                   <p className="text-sm text-gray-500 mb-2">Sentiment</p>
-                  <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                    result.extractedData.sentiment === 'positive' ? 'bg-green-100 text-green-700' :
-                    result.extractedData.sentiment === 'negative' ? 'bg-red-100 text-red-700' :
-                    'bg-gray-100 text-gray-700'
-                  }`}>
+                  <span
+                    className={`px-3 py-1 rounded-full text-sm font-medium ${
+                      result.extractedData.sentiment === 'positive'
+                        ? 'bg-green-100 text-green-700'
+                        : result.extractedData.sentiment === 'negative'
+                          ? 'bg-red-100 text-red-700'
+                          : 'bg-gray-100 text-gray-700'
+                    }`}
+                  >
                     {result.extractedData.sentiment}
                   </span>
                 </div>

@@ -1,6 +1,19 @@
 export interface FieldConfig {
   id: string;
-  type: 'text' | 'email' | 'tel' | 'date' | 'select' | 'textarea' | 'checkbox' | 'radio' | 'number' | 'range' | 'file' | 'url' | 'password';
+  type:
+    | 'text'
+    | 'email'
+    | 'tel'
+    | 'date'
+    | 'select'
+    | 'textarea'
+    | 'checkbox'
+    | 'radio'
+    | 'number'
+    | 'range'
+    | 'file'
+    | 'url'
+    | 'password';
   label: string;
   name: string;
   required?: boolean;

@@ -15,7 +15,7 @@ const readFile = promisify(fs.readFile);
 class ImageIngestionService {
   constructor() {
     this.openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY
+      apiKey: process.env.OPENAI_API_KEY,
     });
     this.uploadDir = process.env.UPLOAD_DIR || path.join(__dirname, '../uploads/images');
     this.supportedFormats = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'tiff', 'pdf'];
@@ -46,7 +46,7 @@ class ImageIngestionService {
       extractionPrompt = null, // Custom prompt for what to extract
       formId = null,
       organizationId = null,
-      documentType = 'auto' // auto, receipt, invoice, form, id_card, business_card, document, photo
+      documentType = 'auto', // auto, receipt, invoice, form, id_card, business_card, document, photo
     } = options;
 
     // Validate file
@@ -66,19 +66,19 @@ class ImageIngestionService {
         metadata: {
           documentType,
           extractionPrompt,
-          uploadedAt: new Date().toISOString()
+          uploadedAt: new Date().toISOString(),
         },
         userId,
         organizationId,
-        formId
-      }
+        formId,
+      },
     });
 
     try {
       // Update status to processing
       await prisma.dataSource.update({
         where: { id: dataSource.id },
-        data: { status: 'PROCESSING' }
+        data: { status: 'PROCESSING' },
       });
 
       const startTime = Date.now();
@@ -86,7 +86,7 @@ class ImageIngestionService {
       // Analyze image with Vision API
       const visionResult = await this.analyzeImageWithVision(file.path, {
         documentType,
-        extractionPrompt
+        extractionPrompt,
       });
 
       const processingTime = Date.now() - startTime;
@@ -103,13 +103,13 @@ class ImageIngestionService {
           extractedData: {
             ...extractedData,
             rawAnalysis: visionResult.analysis,
-            documentType: visionResult.detectedType || documentType
+            documentType: visionResult.detectedType || documentType,
           },
           processingTime,
           aiModel: 'gpt-4-vision-preview',
           confidence: this.calculateConfidence(visionResult, extractedData),
-          processedAt: new Date()
-        }
+          processedAt: new Date(),
+        },
       });
 
       return {
@@ -119,17 +119,16 @@ class ImageIngestionService {
         documentType: visionResult.detectedType || documentType,
         extractedData,
         processingTime,
-        confidence: updatedDataSource.confidence
+        confidence: updatedDataSource.confidence,
       };
-
     } catch (error) {
       // Update status to failed
       await prisma.dataSource.update({
         where: { id: dataSource.id },
         data: {
           status: 'FAILED',
-          error: error.message
-        }
+          error: error.message,
+        },
       });
 
       throw error;
@@ -158,20 +157,20 @@ class ImageIngestionService {
           content: [
             {
               type: 'text',
-              text: systemPrompt
+              text: systemPrompt,
             },
             {
               type: 'image_url',
               image_url: {
                 url: `data:${mimeType};base64,${base64Image}`,
-                detail: 'high'
-              }
-            }
-          ]
-        }
+                detail: 'high',
+              },
+            },
+          ],
+        },
       ],
       max_tokens: 4096,
-      temperature: 0.2
+      temperature: 0.2,
     });
 
     const analysisText = response.choices[0].message.content;
@@ -180,8 +179,8 @@ class ImageIngestionService {
     let parsedResult;
     try {
       // Try to parse as JSON if the response contains JSON
-      const jsonMatch = analysisText.match(/```json\n?([\s\S]*?)\n?```/) ||
-                        analysisText.match(/\{[\s\S]*\}/);
+      const jsonMatch =
+        analysisText.match(/```json\n?([\s\S]*?)\n?```/) || analysisText.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
         parsedResult = JSON.parse(jsonMatch[1] || jsonMatch[0]);
       } else {
@@ -196,7 +195,7 @@ class ImageIngestionService {
       analysis: analysisText,
       structured: parsedResult,
       detectedType: parsedResult.documentType || null,
-      usage: response.usage
+      usage: response.usage,
     };
   }
 
@@ -219,7 +218,7 @@ Please provide your response in the following JSON format:
     }
 
     const prompts = {
-      'auto': `Analyze this image thoroughly. Identify the document type and extract all relevant information.
+      auto: `Analyze this image thoroughly. Identify the document type and extract all relevant information.
 
 Your response should be in JSON format:
 \`\`\`json
@@ -242,7 +241,7 @@ Your response should be in JSON format:
 }
 \`\`\``,
 
-      'receipt': `This is a receipt or bill. Extract all information including:
+      receipt: `This is a receipt or bill. Extract all information including:
 - Store/vendor name
 - Date and time
 - All line items with prices
@@ -268,7 +267,7 @@ Response format:
 }
 \`\`\``,
 
-      'invoice': `This is an invoice. Extract all business and transaction information:
+      invoice: `This is an invoice. Extract all business and transaction information:
 - Company details (name, address, contact)
 - Invoice number and date
 - Bill to / Ship to information
@@ -296,7 +295,7 @@ Response format:
 }
 \`\`\``,
 
-      'form': `This is a form or document. Extract all field labels and their values:
+      form: `This is a form or document. Extract all field labels and their values:
 
 Response format:
 \`\`\`json
@@ -312,7 +311,7 @@ Response format:
 }
 \`\`\``,
 
-      'id_card': `This appears to be an ID card or official document. Extract identifying information:
+      id_card: `This appears to be an ID card or official document. Extract identifying information:
 
 Response format:
 \`\`\`json
@@ -331,7 +330,7 @@ Response format:
 }
 \`\`\``,
 
-      'business_card': `This is a business card. Extract contact and professional information:
+      business_card: `This is a business card. Extract contact and professional information:
 
 Response format:
 \`\`\`json
@@ -350,7 +349,7 @@ Response format:
 }
 \`\`\``,
 
-      'document': `Analyze this document and extract all text and key information:
+      document: `Analyze this document and extract all text and key information:
 
 Response format:
 \`\`\`json
@@ -367,7 +366,7 @@ Response format:
 }
 \`\`\``,
 
-      'photo': `Describe this photo in detail:
+      photo: `Describe this photo in detail:
 
 Response format:
 \`\`\`json
@@ -382,7 +381,7 @@ Response format:
   "mood": "overall mood/atmosphere",
   "confidence": 0.0-1.0
 }
-\`\`\``
+\`\`\``,
     };
 
     return prompts[documentType] || prompts['auto'];
@@ -404,15 +403,15 @@ Response format:
         messages: [
           {
             role: 'system',
-            content: `You are a data extraction assistant. Convert the following image analysis into structured JSON data. Focus on extracting key information relevant to a ${documentType} document type.`
+            content: `You are a data extraction assistant. Convert the following image analysis into structured JSON data. Focus on extracting key information relevant to a ${documentType} document type.`,
           },
           {
             role: 'user',
-            content: visionResult.analysis
-          }
+            content: visionResult.analysis,
+          },
         ],
         temperature: 0.2,
-        response_format: { type: 'json_object' }
+        response_format: { type: 'json_object' },
       });
 
       return JSON.parse(response.choices[0].message.content);
@@ -420,7 +419,7 @@ Response format:
       console.error('Failed to extract structured data:', error);
       return {
         text: visionResult.text,
-        rawAnalysis: visionResult.analysis
+        rawAnalysis: visionResult.analysis,
       };
     }
   }
@@ -477,14 +476,14 @@ Response format:
   getMimeType(filePath) {
     const ext = path.extname(filePath).toLowerCase().slice(1);
     const mimeTypes = {
-      'jpg': 'image/jpeg',
-      'jpeg': 'image/jpeg',
-      'png': 'image/png',
-      'gif': 'image/gif',
-      'webp': 'image/webp',
-      'bmp': 'image/bmp',
-      'tiff': 'image/tiff',
-      'pdf': 'application/pdf'
+      jpg: 'image/jpeg',
+      jpeg: 'image/jpeg',
+      png: 'image/png',
+      gif: 'image/gif',
+      webp: 'image/webp',
+      bmp: 'image/bmp',
+      tiff: 'image/tiff',
+      pdf: 'application/pdf',
     };
     return mimeTypes[ext] || 'image/jpeg';
   }
@@ -503,7 +502,9 @@ Response format:
 
     const ext = path.extname(file.originalname).toLowerCase().slice(1);
     if (!this.supportedFormats.includes(ext)) {
-      throw new Error(`Unsupported format: ${ext}. Supported formats: ${this.supportedFormats.join(', ')}`);
+      throw new Error(
+        `Unsupported format: ${ext}. Supported formats: ${this.supportedFormats.join(', ')}`,
+      );
     }
   }
 
@@ -528,7 +529,7 @@ Response format:
       'image/png': 'png',
       'image/gif': 'gif',
       'image/webp': 'webp',
-      'image/bmp': 'bmp'
+      'image/bmp': 'bmp',
     };
 
     const ext = mimeToExt[mimeType] || 'jpg';
@@ -543,7 +544,7 @@ Response format:
       originalname: options.name || filename,
       mimetype: mimeType,
       size: buffer.length,
-      path: filePath
+      path: filePath,
     };
 
     try {
@@ -566,7 +567,7 @@ Response format:
 
     const where = {
       userId,
-      type: 'IMAGE'
+      type: 'IMAGE',
     };
 
     if (status) {
@@ -598,18 +599,19 @@ Response format:
           confidence: true,
           createdAt: true,
           processedAt: true,
-          metadata: true
-        }
+          metadata: true,
+        },
       }),
-      prisma.dataSource.count({ where })
+      prisma.dataSource.count({ where }),
     ]);
 
     // Filter by document type if specified
     let filteredSources = dataSources;
     if (documentType) {
-      filteredSources = dataSources.filter(ds =>
-        ds.extractedData?.documentType === documentType ||
-        ds.metadata?.documentType === documentType
+      filteredSources = dataSources.filter(
+        (ds) =>
+          ds.extractedData?.documentType === documentType ||
+          ds.metadata?.documentType === documentType,
       );
     }
 
@@ -617,7 +619,7 @@ Response format:
       dataSources: filteredSources,
       total: documentType ? filteredSources.length : total,
       limit,
-      offset
+      offset,
     };
   }
 
@@ -629,11 +631,11 @@ Response format:
       where: {
         id,
         userId,
-        type: 'IMAGE'
+        type: 'IMAGE',
       },
       include: {
-        analyses: true
-      }
+        analyses: true,
+      },
     });
 
     if (!dataSource) {
@@ -651,8 +653,8 @@ Response format:
       where: {
         id,
         userId,
-        type: 'IMAGE'
-      }
+        type: 'IMAGE',
+      },
     });
 
     if (!dataSource) {
@@ -669,7 +671,7 @@ Response format:
     }
 
     await prisma.dataSource.delete({
-      where: { id }
+      where: { id },
     });
 
     return { success: true };
@@ -689,7 +691,7 @@ Response format:
 
     const visionResult = await this.analyzeImageWithVision(dataSource.filePath, {
       documentType: dataSource.metadata?.documentType || 'auto',
-      extractionPrompt: customPrompt
+      extractionPrompt: customPrompt,
     });
 
     const processingTime = Date.now() - startTime;
@@ -703,19 +705,19 @@ Response format:
         result: {
           text: visionResult.text,
           structured: visionResult.structured,
-          analysis: visionResult.analysis
+          analysis: visionResult.analysis,
         },
         model: 'gpt-4-vision-preview',
         processingTime,
-        status: 'COMPLETED'
-      }
+        status: 'COMPLETED',
+      },
     });
 
     return {
       analysisId: analysis.id,
       text: visionResult.text,
       result: visionResult.structured,
-      processingTime
+      processingTime,
     };
   }
 }

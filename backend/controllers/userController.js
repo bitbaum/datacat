@@ -21,16 +21,16 @@ exports.getMe = async (req, res) => {
           select: {
             id: true,
             name: true,
-            slug: true
-          }
+            slug: true,
+          },
         },
         _count: {
           select: {
             forms: true,
-            submissions: true
-          }
-        }
-      }
+            submissions: true,
+          },
+        },
+      },
     });
 
     if (!user) {
@@ -54,15 +54,15 @@ exports.updateUser = async (req, res) => {
       data: {
         ...(name && { name }),
         ...(avatar && { avatar }),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       },
       select: {
         id: true,
         email: true,
         name: true,
         avatar: true,
-        updatedAt: true
-      }
+        updatedAt: true,
+      },
     });
 
     return success(res, { user }, 'User updated successfully');
@@ -80,13 +80,13 @@ exports.deleteUser = async (req, res) => {
     // 1. Send confirmation email
     // 2. Soft delete instead of hard delete
     // 3. Archive user data instead of deleting
-    
+
     await prisma.user.update({
       where: { id: userId },
-      data: { 
+      data: {
         isActive: false,
-        updatedAt: new Date()
-      }
+        updatedAt: new Date(),
+      },
     });
 
     return success(res, {}, 'User account deactivated successfully');
@@ -102,19 +102,19 @@ exports.getUserStats = async (req, res) => {
   try {
     const [formsCount, submissionsCount, publishedFormsCount] = await Promise.all([
       prisma.form.count({
-        where: { userId }
+        where: { userId },
       }),
       prisma.submission.count({
         where: {
-          form: { userId }
-        }
+          form: { userId },
+        },
       }),
       prisma.form.count({
-        where: { 
+        where: {
           userId,
-          isPublished: true 
-        }
-      })
+          isPublished: true,
+        },
+      }),
     ]);
 
     // Get recent activity
@@ -124,31 +124,31 @@ exports.getUserStats = async (req, res) => {
         id: true,
         title: true,
         isPublished: true,
-        updatedAt: true
+        updatedAt: true,
       },
       orderBy: {
-        updatedAt: 'desc'
+        updatedAt: 'desc',
       },
-      take: 5
+      take: 5,
     });
 
     const recentSubmissions = await prisma.submission.findMany({
       where: {
-        form: { userId }
+        form: { userId },
       },
       select: {
         id: true,
         submittedAt: true,
         form: {
           select: {
-            title: true
-          }
-        }
+            title: true,
+          },
+        },
       },
       orderBy: {
-        submittedAt: 'desc'
+        submittedAt: 'desc',
       },
-      take: 5
+      take: 5,
     });
 
     return success(res, {
@@ -157,8 +157,8 @@ exports.getUserStats = async (req, res) => {
         submissionsCount,
         publishedFormsCount,
         recentForms,
-        recentSubmissions
-      }
+        recentSubmissions,
+      },
     });
   } catch (err) {
     console.error('Get user stats error:', err);

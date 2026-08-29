@@ -48,7 +48,7 @@ const trpcMiddleware = createExpressMiddleware({
   createContext,
   onError: ({ error, type, path, input }) => {
     console.error(`tRPC Error [${type}] at ${path}:`, error);
-    
+
     // Log input for debugging (be careful with sensitive data)
     if (process.env.NODE_ENV === 'development') {
       console.error('Input:', input);

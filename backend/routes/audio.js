@@ -12,28 +12,35 @@ const storage = multer.diskStorage({
     cb(null, uploadDir);
   },
   filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
     cb(null, `audio-${uniqueSuffix}${path.extname(file.originalname)}`);
-  }
+  },
 });
 
 const upload = multer({
   storage,
   limits: {
-    fileSize: 25 * 1024 * 1024 // 25MB limit (Whisper API max)
+    fileSize: 25 * 1024 * 1024, // 25MB limit (Whisper API max)
   },
   fileFilter: (req, file, cb) => {
     const allowedTypes = [
-      'audio/mpeg', 'audio/mp3', 'audio/mp4', 'audio/m4a',
-      'audio/wav', 'audio/webm', 'audio/ogg', 'audio/flac',
-      'audio/x-m4a', 'audio/x-wav'
+      'audio/mpeg',
+      'audio/mp3',
+      'audio/mp4',
+      'audio/m4a',
+      'audio/wav',
+      'audio/webm',
+      'audio/ogg',
+      'audio/flac',
+      'audio/x-m4a',
+      'audio/x-wav',
     ];
     if (allowedTypes.includes(file.mimetype)) {
       cb(null, true);
     } else {
       cb(new Error(`Invalid file type: ${file.mimetype}. Only audio files are allowed.`), false);
     }
-  }
+  },
 });
 
 /**
@@ -48,7 +55,7 @@ router.post('/upload', auth, upload.single('audio'), async (req, res) => {
     if (!req.file) {
       return res.status(400).json({
         success: false,
-        error: 'No audio file provided'
+        error: 'No audio file provided',
       });
     }
 
@@ -58,25 +65,20 @@ router.post('/upload', auth, upload.single('audio'), async (req, res) => {
       language: req.body.language,
       prompt: req.body.prompt,
       formId: req.body.formId,
-      organizationId: req.body.organizationId
+      organizationId: req.body.organizationId,
     };
 
-    const result = await audioIngestionService.processAudioFile(
-      req.file,
-      userId,
-      options
-    );
+    const result = await audioIngestionService.processAudioFile(req.file, userId, options);
 
     res.json({
       success: true,
-      data: result
+      data: result,
     });
-
   } catch (error) {
     console.error('Audio upload error:', error);
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -94,26 +96,27 @@ router.post('/record', auth, async (req, res) => {
     if (!audioData) {
       return res.status(400).json({
         success: false,
-        error: 'No audio data provided'
+        error: 'No audio data provided',
       });
     }
 
-    const result = await audioIngestionService.processBase64Audio(
-      audioData,
-      userId,
-      { name, description, language, prompt, formId }
-    );
+    const result = await audioIngestionService.processBase64Audio(audioData, userId, {
+      name,
+      description,
+      language,
+      prompt,
+      formId,
+    });
 
     res.json({
       success: true,
-      data: result
+      data: result,
     });
-
   } catch (error) {
     console.error('Audio record error:', error);
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -132,19 +135,18 @@ router.get('/', auth, async (req, res) => {
       limit: parseInt(limit) || 50,
       offset: parseInt(offset) || 0,
       status,
-      formId
+      formId,
     });
 
     res.json({
       success: true,
-      data: result
+      data: result,
     });
-
   } catch (error) {
     console.error('Get audio sources error:', error);
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -163,14 +165,13 @@ router.get('/:id', auth, async (req, res) => {
 
     res.json({
       success: true,
-      data: result
+      data: result,
     });
-
   } catch (error) {
     console.error('Get audio source error:', error);
     res.status(error.message.includes('not found') ? 404 : 500).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -189,14 +190,13 @@ router.delete('/:id', auth, async (req, res) => {
 
     res.json({
       success: true,
-      data: result
+      data: result,
     });
-
   } catch (error) {
     console.error('Delete audio source error:', error);
     res.status(error.message.includes('not found') ? 404 : 500).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -215,7 +215,7 @@ router.post('/:id/analyze', auth, async (req, res) => {
     if (!prompt) {
       return res.status(400).json({
         success: false,
-        error: 'Analysis prompt is required'
+        error: 'Analysis prompt is required',
       });
     }
 
@@ -223,14 +223,13 @@ router.post('/:id/analyze', auth, async (req, res) => {
 
     res.json({
       success: true,
-      data: result
+      data: result,
     });
-
   } catch (error) {
     console.error('Analyze transcription error:', error);
     res.status(error.message.includes('not found') ? 404 : 500).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 });

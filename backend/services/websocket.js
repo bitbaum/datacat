@@ -31,7 +31,7 @@ class WebSocketService {
       socket.on('authenticate', async (data) => {
         try {
           const { token } = data;
-          
+
           if (!token) {
             socket.emit('auth-error', { message: 'No token provided' });
             return;
@@ -58,7 +58,7 @@ class WebSocketService {
 
           // Store authenticated user
           this.authenticatedSockets.set(socket.id, user);
-          
+
           if (!this.userSockets.has(user.id)) {
             this.userSockets.set(user.id, new Set());
           }
@@ -66,18 +66,18 @@ class WebSocketService {
 
           // Join user-specific room
           socket.join(`user:${user.id}`);
-          
+
           // Join organization room if applicable
           if (user.organizationId) {
             socket.join(`org:${user.organizationId}`);
           }
 
-          socket.emit('authenticated', { 
-            user: { 
-              id: user.id, 
-              name: user.name, 
-              email: user.email 
-            } 
+          socket.emit('authenticated', {
+            user: {
+              id: user.id,
+              name: user.name,
+              email: user.email,
+            },
           });
 
           console.log(`User ${user.email} authenticated on socket ${socket.id}`);
@@ -97,15 +97,12 @@ class WebSocketService {
 
         try {
           const { formId } = data;
-          
+
           // Check if user has access to the form
           const form = await prisma.form.findFirst({
             where: {
               id: formId,
-              OR: [
-                { userId: user.id },
-                { collaborators: { some: { userId: user.id } } },
-              ],
+              OR: [{ userId: user.id }, { collaborators: { some: { userId: user.id } } }],
             },
           });
 
@@ -117,7 +114,7 @@ class WebSocketService {
           // Join form-specific room
           socket.join(`form:${formId}`);
           socket.emit('subscribed', { formId });
-          
+
           console.log(`User ${user.email} subscribed to form ${formId}`);
         } catch (error) {
           console.error('Form subscription error:', error);
@@ -144,7 +141,7 @@ class WebSocketService {
               this.userSockets.delete(user.id);
             }
           }
-          
+
           this.authenticatedSockets.delete(socket.id);
           console.log(`User ${user.email} disconnected from socket ${socket.id}`);
         } else {
@@ -177,7 +174,7 @@ class WebSocketService {
         type: 'analysis-complete',
         formId,
         submissionId,
-        analysisResults: analysisResults.map(result => ({
+        analysisResults: analysisResults.map((result) => ({
           id: result.id,
           analysisType: result.analysisType,
           confidence: result.confidence,
@@ -253,7 +250,7 @@ class WebSocketService {
     if (!room) return [];
 
     const onlineUsers = [];
-    room.forEach(socketId => {
+    room.forEach((socketId) => {
       const user = this.authenticatedSockets.get(socketId);
       if (user) {
         onlineUsers.push({

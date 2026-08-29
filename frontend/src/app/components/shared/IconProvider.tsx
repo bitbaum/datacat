@@ -1,7 +1,7 @@
 'use client';
 
 // Centralized icon exports to reduce duplication across components
-import { 
+import {
   // Form Building Icons
   SquaresPlusIcon,
   DocumentArrowUpIcon,
@@ -12,14 +12,14 @@ import {
   PencilSquareIcon,
   TrashIcon,
   Squares2X2Icon,
-  
+
   // Navigation Icons
   XMarkIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
   ChevronUpIcon,
   ChevronDownIcon,
-  
+
   // Action Icons
   RocketLaunchIcon,
   SparklesIcon,
@@ -27,18 +27,18 @@ import {
   EyeSlashIcon,
   ShareIcon,
   ArrowDownTrayIcon,
-  
+
   // Status Icons
   CheckIcon,
   ExclamationTriangleIcon,
   InformationCircleIcon,
   XCircleIcon,
-  
+
   // Menu Icons
   Bars3Icon,
   EllipsisVerticalIcon,
   EllipsisHorizontalIcon,
-  
+
   // Common Icons
   MagnifyingGlassIcon,
   AdjustmentsHorizontalIcon,
@@ -48,7 +48,6 @@ import {
   UsersIcon,
   HomeIcon,
   Cog6ToothIcon,
-  
 } from '@heroicons/react/24/outline';
 
 import {
@@ -68,7 +67,7 @@ export const FormBuilderIcons = {
   Plus: PlusIcon,
   Edit: PencilSquareIcon,
   Delete: TrashIcon,
-  Grid: Squares2X2Icon
+  Grid: Squares2X2Icon,
 };
 
 export const NavigationIcons = {
@@ -76,7 +75,7 @@ export const NavigationIcons = {
   Left: ChevronLeftIcon,
   Right: ChevronRightIcon,
   Up: ChevronUpIcon,
-  Down: ChevronDownIcon
+  Down: ChevronDownIcon,
 };
 
 export const ActionIcons = {
@@ -85,7 +84,7 @@ export const ActionIcons = {
   View: EyeIcon,
   Hide: EyeSlashIcon,
   Share: ShareIcon,
-  Download: ArrowDownTrayIcon
+  Download: ArrowDownTrayIcon,
 };
 
 export const StatusIcons = {
@@ -97,13 +96,13 @@ export const StatusIcons = {
   SuccessFilled: CheckCircleIconSolid,
   WarningFilled: ExclamationCircleIconSolid,
   InfoFilled: InformationCircleIconSolid,
-  ErrorFilled: XCircleIconSolid
+  ErrorFilled: XCircleIconSolid,
 };
 
 export const MenuIcons = {
   Menu: Bars3Icon,
   MoreVertical: EllipsisVerticalIcon,
-  MoreHorizontal: EllipsisHorizontalIcon
+  MoreHorizontal: EllipsisHorizontalIcon,
 };
 
 export const CommonIcons = {
@@ -114,7 +113,7 @@ export const CommonIcons = {
   User: UserIcon,
   Users: UsersIcon,
   Home: HomeIcon,
-  Settings: Cog6ToothIcon
+  Settings: Cog6ToothIcon,
 };
 
 // Combined export for backwards compatibility
@@ -124,7 +123,7 @@ export const Icons = {
   ...ActionIcons,
   ...StatusIcons,
   ...MenuIcons,
-  ...CommonIcons
+  ...CommonIcons,
 };
 
 // Icon component with common props
@@ -136,10 +135,10 @@ export interface IconProps {
 
 const sizeClasses = {
   xs: 'h-3 w-3',
-  sm: 'h-4 w-4', 
+  sm: 'h-4 w-4',
   md: 'h-5 w-5',
   lg: 'h-6 w-6',
-  xl: 'h-8 w-8'
+  xl: 'h-8 w-8',
 };
 
 export function createIconComponent(IconComponent: React.ComponentType<{ className?: string }>) {
@@ -147,7 +146,7 @@ export function createIconComponent(IconComponent: React.ComponentType<{ classNa
     const sizeClass = sizeClasses[size as keyof typeof sizeClasses];
     const combinedClassName = `${sizeClass} ${className}`;
     const style = color ? { color } : undefined;
-    
+
     return <IconComponent className={combinedClassName} style={style} {...props} />;
   };
 }
@@ -165,7 +164,7 @@ export const IconComponents = {
   Warning: createIconComponent(StatusIcons.Warning),
   Info: createIconComponent(StatusIcons.Info),
   Search: createIconComponent(CommonIcons.Search),
-  Settings: createIconComponent(CommonIcons.Settings)
+  Settings: createIconComponent(CommonIcons.Settings),
 };
 
 export default Icons;

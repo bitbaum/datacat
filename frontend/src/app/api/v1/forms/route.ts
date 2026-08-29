@@ -39,7 +39,10 @@ export async function POST(req: Request) {
   const body = await req.json();
   const { title, description, structure, status, isTemplate } = body || {};
   if (!title || !structure) {
-    return Response.json({ success: false, message: 'Missing title or structure' }, { status: 400 });
+    return Response.json(
+      { success: false, message: 'Missing title or structure' },
+      { status: 400 },
+    );
   }
   const isPublished = status === 'published';
   const created = await prisma.form.create({
@@ -64,5 +67,3 @@ export async function POST(req: Request) {
     updated_at: created.updatedAt,
   });
 }
-
-

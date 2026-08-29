@@ -40,4 +40,4 @@ export default makeSource({
     remarkPlugins: [remarkGfm],
     rehypePlugins: [[rehypePrettyCode, { theme: 'github-dark' }]],
   },
-}); 
+});

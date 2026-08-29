@@ -11,11 +11,11 @@ interface GroupManagerProps {
   className?: string;
 }
 
-export function GroupManager({ 
-  availableGroups, 
-  onCreateGroup, 
-  onDeleteGroup, 
-  className = "" 
+export function GroupManager({
+  availableGroups,
+  onCreateGroup,
+  onDeleteGroup,
+  className = '',
 }: GroupManagerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [newGroupName, setNewGroupName] = useState('');
@@ -35,18 +35,18 @@ export function GroupManager({
   };
 
   const defaultGroups = ['Allgemeine Felder'];
-  const customGroups = availableGroups.filter(group => !defaultGroups.includes(group));
+  const customGroups = availableGroups.filter((group) => !defaultGroups.includes(group));
 
   return (
     <div className={`relative ${className}`}>
-      <Button
-        type="button"
-        variant="outline"
-        size="sm"
-        onClick={() => setIsOpen(!isOpen)}
-      >
+      <Button type="button" variant="outline" size="sm" onClick={() => setIsOpen(!isOpen)}>
         <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+          />
         </svg>
         Gruppen verwalten
       </Button>
@@ -102,8 +102,16 @@ export function GroupManager({
                         title="Gruppe löschen"
                       >
                         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" clipRule="evenodd" />
-                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                          <path
+                            fillRule="evenodd"
+                            d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"
+                            clipRule="evenodd"
+                          />
+                          <path
+                            fillRule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                            clipRule="evenodd"
+                          />
                         </svg>
                       </button>
                     </div>
@@ -113,12 +121,7 @@ export function GroupManager({
             )}
 
             <div className="flex justify-end">
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => setIsOpen(false)}
-              >
+              <Button type="button" variant="outline" size="sm" onClick={() => setIsOpen(false)}>
                 Schließen
               </Button>
             </div>
@@ -128,22 +131,36 @@ export function GroupManager({
 
       {/* Delete confirmation modal */}
       {showDeleteConfirm && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4" onClick={() => setShowDeleteConfirm(null)}>
-          <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-2xl shadow-2xl w-full max-w-md border border-gray-200 dark:border-gray-700 animate-scale-in" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+          onClick={() => setShowDeleteConfirm(null)}
+        >
+          <div
+            className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-2xl shadow-2xl w-full max-w-md border border-gray-200 dark:border-gray-700 animate-scale-in"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="p-6">
               <div className="flex items-center space-x-3 mb-4">
                 <div className="w-10 h-10 bg-gradient-to-r from-red-500 to-red-600 rounded-lg flex items-center justify-center">
-                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  <svg
+                    className="w-6 h-6 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                    />
                   </svg>
                 </div>
-                <h3 className="text-lg font-bold text-gray-900 dark:text-white">
-                  Gruppe löschen
-                </h3>
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white">Gruppe löschen</h3>
               </div>
               <p className="text-gray-600 dark:text-gray-300 mb-6">
-                Sind Sie sicher, dass Sie die Gruppe &quot;{showDeleteConfirm}&quot; löschen möchten? 
-                Die Felder werden zur Gruppe &quot;Allgemeine Felder&quot; verschoben.
+                Sind Sie sicher, dass Sie die Gruppe &quot;{showDeleteConfirm}&quot; löschen
+                möchten? Die Felder werden zur Gruppe &quot;Allgemeine Felder&quot; verschoben.
               </p>
               <div className="flex space-x-3">
                 <Button

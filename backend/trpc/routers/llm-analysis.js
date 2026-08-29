@@ -40,11 +40,15 @@ const llmAnalysisRouter = router({
 
   // Trigger analysis for a submission
   analyzeSubmission: authedProcedure
-    .input(z.object({
-      submissionId: z.string(),
-      analysisTypes: z.array(z.enum(['SENTIMENT', 'CLASSIFICATION', 'EXTRACTION', 'SUMMARY', 'CUSTOM'])).default(['SENTIMENT', 'CLASSIFICATION']),
-      priority: z.number().min(1).max(10).default(1),
-    }))
+    .input(
+      z.object({
+        submissionId: z.string(),
+        analysisTypes: z
+          .array(z.enum(['SENTIMENT', 'CLASSIFICATION', 'EXTRACTION', 'SUMMARY', 'CUSTOM']))
+          .default(['SENTIMENT', 'CLASSIFICATION']),
+        priority: z.number().min(1).max(10).default(1),
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
       // Check if submission belongs to user
       const submission = await prisma.submission.findFirst({
@@ -84,13 +88,17 @@ const llmAnalysisRouter = router({
 
   // Bulk analyze multiple submissions
   bulkAnalyze: authedProcedure
-    .input(z.object({
-      formId: z.string(),
-      analysisTypes: z.array(z.enum(['SENTIMENT', 'CLASSIFICATION', 'EXTRACTION', 'SUMMARY', 'CUSTOM'])).default(['SENTIMENT', 'CLASSIFICATION']),
-      batchSize: z.number().min(1).max(100).default(10),
-      dateFrom: z.date().optional(),
-      dateTo: z.date().optional(),
-    }))
+    .input(
+      z.object({
+        formId: z.string(),
+        analysisTypes: z
+          .array(z.enum(['SENTIMENT', 'CLASSIFICATION', 'EXTRACTION', 'SUMMARY', 'CUSTOM']))
+          .default(['SENTIMENT', 'CLASSIFICATION']),
+        batchSize: z.number().min(1).max(100).default(10),
+        dateFrom: z.date().optional(),
+        dateTo: z.date().optional(),
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
       // Check form ownership
       const form = await prisma.form.findFirst({
@@ -112,12 +120,12 @@ const llmAnalysisRouter = router({
         where: {
           formId: input.formId,
           status: 'PENDING',
-          ...(input.dateFrom || input.dateTo) && {
+          ...((input.dateFrom || input.dateTo) && {
             submittedAt: {
               ...(input.dateFrom && { gte: input.dateFrom }),
               ...(input.dateTo && { lte: input.dateTo }),
             },
-          },
+          }),
         },
         take: input.batchSize,
         orderBy: { submittedAt: 'desc' },
@@ -146,16 +154,18 @@ const llmAnalysisRouter = router({
         message: `Bulk analysis queued for ${submissions.length} submissions`,
         queuedJobs: jobs.length,
         jobIds: jobs,
-        estimatedCompletion: new Date(Date.now() + (submissions.length * 2000) + 60000),
+        estimatedCompletion: new Date(Date.now() + submissions.length * 2000 + 60000),
       };
     }),
 
   // Get analysis insights for a form
   getFormInsights: authedProcedure
-    .input(z.object({
-      formId: z.string(),
-      dateRange: z.number().min(1).max(365).default(30),
-    }))
+    .input(
+      z.object({
+        formId: z.string(),
+        dateRange: z.number().min(1).max(365).default(30),
+      }),
+    )
     .query(async ({ ctx, input }) => {
       // Check form ownership
       const form = await prisma.form.findFirst({
@@ -178,13 +188,17 @@ const llmAnalysisRouter = router({
 
   // Get analysis history
   getAnalysisHistory: authedProcedure
-    .input(z.object({
-      formId: z.string(),
-      limit: z.number().min(1).max(100).default(50),
-      analysisType: z.enum(['SENTIMENT', 'CLASSIFICATION', 'EXTRACTION', 'SUMMARY', 'CUSTOM']).optional(),
-      dateFrom: z.date().optional(),
-      dateTo: z.date().optional(),
-    }))
+    .input(
+      z.object({
+        formId: z.string(),
+        limit: z.number().min(1).max(100).default(50),
+        analysisType: z
+          .enum(['SENTIMENT', 'CLASSIFICATION', 'EXTRACTION', 'SUMMARY', 'CUSTOM'])
+          .optional(),
+        dateFrom: z.date().optional(),
+        dateTo: z.date().optional(),
+      }),
+    )
     .query(async ({ ctx, input }) => {
       // Check form ownership
       const form = await prisma.form.findFirst({
@@ -213,16 +227,20 @@ const llmAnalysisRouter = router({
 
   // Update form LLM settings
   updateFormLLMSettings: authedProcedure
-    .input(z.object({
-      formId: z.string(),
-      settings: z.object({
-        enableLLMAnalysis: z.boolean(),
-        llmAnalysisTypes: z.array(z.enum(['SENTIMENT', 'CLASSIFICATION', 'EXTRACTION', 'SUMMARY', 'CUSTOM'])).optional(),
-        customAnalysisPrompt: z.string().optional(),
-        analysisCategories: z.array(z.string()).optional(),
-        autoAnalyzeSubmissions: z.boolean().default(false),
+    .input(
+      z.object({
+        formId: z.string(),
+        settings: z.object({
+          enableLLMAnalysis: z.boolean(),
+          llmAnalysisTypes: z
+            .array(z.enum(['SENTIMENT', 'CLASSIFICATION', 'EXTRACTION', 'SUMMARY', 'CUSTOM']))
+            .optional(),
+          customAnalysisPrompt: z.string().optional(),
+          analysisCategories: z.array(z.string()).optional(),
+          autoAnalyzeSubmissions: z.boolean().default(false),
+        }),
       }),
-    }))
+    )
     .mutation(async ({ ctx, input }) => {
       // Check form ownership
       const form = await prisma.form.findFirst({
@@ -257,18 +275,19 @@ const llmAnalysisRouter = router({
     }),
 
   // Get queue statistics (admin only)
-  getQueueStats: adminProcedure
-    .query(async () => {
-      const stats = await QueueManager.getQueueStats();
-      return stats;
-    }),
+  getQueueStats: adminProcedure.query(async () => {
+    const stats = await QueueManager.getQueueStats();
+    return stats;
+  }),
 
   // Manage queues (admin only)
   manageQueue: adminProcedure
-    .input(z.object({
-      action: z.enum(['pause', 'resume', 'cleanup']),
-      queueName: z.enum(['analysis', 'email', 'export']).optional(),
-    }))
+    .input(
+      z.object({
+        action: z.enum(['pause', 'resume', 'cleanup']),
+        queueName: z.enum(['analysis', 'email', 'export']).optional(),
+      }),
+    )
     .mutation(async ({ input }) => {
       const { action, queueName } = input;
 
@@ -307,10 +326,14 @@ const llmAnalysisRouter = router({
 
   // Get analysis cost estimates
   getCostEstimate: authedProcedure
-    .input(z.object({
-      submissionCount: z.number().min(1).max(10000),
-      analysisTypes: z.array(z.enum(['SENTIMENT', 'CLASSIFICATION', 'EXTRACTION', 'SUMMARY', 'CUSTOM'])),
-    }))
+    .input(
+      z.object({
+        submissionCount: z.number().min(1).max(10000),
+        analysisTypes: z.array(
+          z.enum(['SENTIMENT', 'CLASSIFICATION', 'EXTRACTION', 'SUMMARY', 'CUSTOM']),
+        ),
+      }),
+    )
     .query(async ({ input }) => {
       // Simple cost estimation (adjust based on your actual costs)
       const costPerAnalysis = {
@@ -322,7 +345,7 @@ const llmAnalysisRouter = router({
       };
 
       const totalCost = input.analysisTypes.reduce((sum, type) => {
-        return sum + (costPerAnalysis[type] * input.submissionCount);
+        return sum + costPerAnalysis[type] * input.submissionCount;
       }, 0);
 
       const estimatedTime = input.submissionCount * 3; // 3 seconds per analysis average
@@ -332,7 +355,7 @@ const llmAnalysisRouter = router({
         analysisTypes: input.analysisTypes,
         estimatedCost: totalCost,
         estimatedTimeSeconds: estimatedTime,
-        costBreakdown: input.analysisTypes.map(type => ({
+        costBreakdown: input.analysisTypes.map((type) => ({
           type,
           costPerUnit: costPerAnalysis[type],
           totalCost: costPerAnalysis[type] * input.submissionCount,

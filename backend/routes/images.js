@@ -12,28 +12,36 @@ const storage = multer.diskStorage({
     cb(null, uploadDir);
   },
   filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
     cb(null, `image-${uniqueSuffix}${path.extname(file.originalname)}`);
-  }
+  },
 });
 
 const upload = multer({
   storage,
   limits: {
-    fileSize: 20 * 1024 * 1024 // 20MB limit
+    fileSize: 20 * 1024 * 1024, // 20MB limit
   },
   fileFilter: (req, file, cb) => {
     const allowedTypes = [
-      'image/jpeg', 'image/jpg', 'image/png', 'image/gif',
-      'image/webp', 'image/bmp', 'image/tiff',
-      'application/pdf'
+      'image/jpeg',
+      'image/jpg',
+      'image/png',
+      'image/gif',
+      'image/webp',
+      'image/bmp',
+      'image/tiff',
+      'application/pdf',
     ];
     if (allowedTypes.includes(file.mimetype)) {
       cb(null, true);
     } else {
-      cb(new Error(`Invalid file type: ${file.mimetype}. Only images and PDFs are allowed.`), false);
+      cb(
+        new Error(`Invalid file type: ${file.mimetype}. Only images and PDFs are allowed.`),
+        false,
+      );
     }
-  }
+  },
 });
 
 /**
@@ -48,7 +56,7 @@ router.post('/upload', auth, upload.single('image'), async (req, res) => {
     if (!req.file) {
       return res.status(400).json({
         success: false,
-        error: 'No image file provided'
+        error: 'No image file provided',
       });
     }
 
@@ -58,25 +66,20 @@ router.post('/upload', auth, upload.single('image'), async (req, res) => {
       documentType: req.body.documentType || 'auto',
       extractionPrompt: req.body.extractionPrompt,
       formId: req.body.formId,
-      organizationId: req.body.organizationId
+      organizationId: req.body.organizationId,
     };
 
-    const result = await imageIngestionService.processImageFile(
-      req.file,
-      userId,
-      options
-    );
+    const result = await imageIngestionService.processImageFile(req.file, userId, options);
 
     res.json({
       success: true,
-      data: result
+      data: result,
     });
-
   } catch (error) {
     console.error('Image upload error:', error);
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -94,26 +97,27 @@ router.post('/capture', auth, async (req, res) => {
     if (!imageData) {
       return res.status(400).json({
         success: false,
-        error: 'No image data provided'
+        error: 'No image data provided',
       });
     }
 
-    const result = await imageIngestionService.processBase64Image(
-      imageData,
-      userId,
-      { name, description, documentType, extractionPrompt, formId }
-    );
+    const result = await imageIngestionService.processBase64Image(imageData, userId, {
+      name,
+      description,
+      documentType,
+      extractionPrompt,
+      formId,
+    });
 
     res.json({
       success: true,
-      data: result
+      data: result,
     });
-
   } catch (error) {
     console.error('Image capture error:', error);
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -133,19 +137,18 @@ router.get('/', auth, async (req, res) => {
       offset: parseInt(offset) || 0,
       status,
       formId,
-      documentType
+      documentType,
     });
 
     res.json({
       success: true,
-      data: result
+      data: result,
     });
-
   } catch (error) {
     console.error('Get image sources error:', error);
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -164,14 +167,13 @@ router.get('/:id', auth, async (req, res) => {
 
     res.json({
       success: true,
-      data: result
+      data: result,
     });
-
   } catch (error) {
     console.error('Get image source error:', error);
     res.status(error.message.includes('not found') ? 404 : 500).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -190,14 +192,13 @@ router.delete('/:id', auth, async (req, res) => {
 
     res.json({
       success: true,
-      data: result
+      data: result,
     });
-
   } catch (error) {
     console.error('Delete image source error:', error);
     res.status(error.message.includes('not found') ? 404 : 500).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -216,7 +217,7 @@ router.post('/:id/reanalyze', auth, async (req, res) => {
     if (!prompt) {
       return res.status(400).json({
         success: false,
-        error: 'Analysis prompt is required'
+        error: 'Analysis prompt is required',
       });
     }
 
@@ -224,14 +225,13 @@ router.post('/:id/reanalyze', auth, async (req, res) => {
 
     res.json({
       success: true,
-      data: result
+      data: result,
     });
-
   } catch (error) {
     console.error('Reanalyze image error:', error);
     res.status(error.message.includes('not found') ? 404 : 500).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -253,11 +253,11 @@ router.get('/meta/types', (req, res) => {
         { id: 'id_card', name: 'ID Card', description: 'Identity documents' },
         { id: 'business_card', name: 'Business Card', description: 'Contact cards' },
         { id: 'document', name: 'Document', description: 'General documents' },
-        { id: 'photo', name: 'Photo', description: 'Photographs and images' }
+        { id: 'photo', name: 'Photo', description: 'Photographs and images' },
       ],
       supportedFormats: ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'tiff', 'pdf'],
-      maxFileSize: '20MB'
-    }
+      maxFileSize: '20MB',
+    },
   });
 });
 

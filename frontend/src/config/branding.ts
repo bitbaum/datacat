@@ -24,7 +24,7 @@ export const defaultBranding: BrandingConfig = {
   accentColor: '#10B981', // Green
   theme: 'light',
   useCase: 'Erfassung & Inventar',
-  domain: 'datacat.ch'
+  domain: 'datacat.ch',
 };
 
 // Environment-based branding overrides
@@ -40,7 +40,7 @@ export const getBrandingConfig = (): BrandingConfig => {
     accentColor: process.env.NEXT_PUBLIC_BRAND_ACCENT_COLOR,
     theme: process.env.NEXT_PUBLIC_BRAND_THEME as 'light' | 'dark' | 'auto',
     useCase: process.env.NEXT_PUBLIC_BRAND_USE_CASE,
-    domain: process.env.NEXT_PUBLIC_BRAND_DOMAIN
+    domain: process.env.NEXT_PUBLIC_BRAND_DOMAIN,
   };
 
   return {
@@ -51,12 +51,10 @@ export const getBrandingConfig = (): BrandingConfig => {
     // default, blanking the product name, the logo path or the domain with
     // nothing to indicate why. An override has to actually override something.
     ...Object.fromEntries(
-      Object.entries(envBranding).filter(
-        ([, value]) => value !== undefined && value.trim() !== ''
-      )
-    )
+      Object.entries(envBranding).filter(([, value]) => value !== undefined && value.trim() !== ''),
+    ),
   };
 };
 
 // Export the current branding config
-export const branding = getBrandingConfig(); 
+export const branding = getBrandingConfig();

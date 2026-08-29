@@ -10,7 +10,7 @@ export const brandingPresets: Record<string, Partial<BrandingConfig>> = {
     secondaryColor: '#1F2937', // Gray
     accentColor: '#059669', // Green
     useCase: 'HR Intake',
-    domain: 'talentflow.com'
+    domain: 'talentflow.com',
   },
 
   // Medical/Healthcare
@@ -22,7 +22,7 @@ export const brandingPresets: Record<string, Partial<BrandingConfig>> = {
     secondaryColor: '#1F2937', // Gray
     accentColor: '#059669', // Green
     useCase: 'Medical Intake',
-    domain: 'healthintake.com'
+    domain: 'healthintake.com',
   },
 
   // Legal
@@ -34,7 +34,7 @@ export const brandingPresets: Record<string, Partial<BrandingConfig>> = {
     secondaryColor: '#1F2937', // Gray
     accentColor: '#D97706', // Orange
     useCase: 'Legal Intake',
-    domain: 'legalintake.com'
+    domain: 'legalintake.com',
   },
 
   // Government/Public Sector
@@ -46,7 +46,7 @@ export const brandingPresets: Record<string, Partial<BrandingConfig>> = {
     secondaryColor: '#1F2937', // Gray
     accentColor: '#2563EB', // Blue
     useCase: 'Government Services',
-    domain: 'citizenconnect.gov'
+    domain: 'citizenconnect.gov',
   },
 
   // Generic/White Label
@@ -58,7 +58,7 @@ export const brandingPresets: Record<string, Partial<BrandingConfig>> = {
     secondaryColor: '#1F2937', // Gray
     accentColor: '#10B981', // Green
     useCase: 'Universal Intake',
-    domain: 'formbuilder.com'
+    domain: 'formbuilder.com',
   },
 
   // DataCat - Main Brand
@@ -70,8 +70,8 @@ export const brandingPresets: Record<string, Partial<BrandingConfig>> = {
     secondaryColor: '#1F2937',
     accentColor: '#10B981',
     useCase: 'Erfassung & Inventar',
-    domain: 'datacat.ch'
-  }
+    domain: 'datacat.ch',
+  },
 };
 
 // Get branding preset by name
@@ -82,4 +82,4 @@ export const getBrandingPreset = (presetName: string): Partial<BrandingConfig> =
 // List all available presets
 export const getAvailablePresets = (): string[] => {
   return Object.keys(brandingPresets);
-}; 
+};

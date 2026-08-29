@@ -54,79 +54,91 @@ export function ErfassungWorkflow({ onComplete }: ErfassungWorkflowProps) {
   const [product, setProduct] = useState<WorkflowProduct>({
     id: `product-${Date.now()}`,
     photos: [],
-    status: ProductStatus.DRAFT
+    status: ProductStatus.DRAFT,
   });
 
   // Step completion handlers
   const handlePhotosUploaded = useCallback((photos: File[]) => {
-    setProduct(prev => ({
+    setProduct((prev) => ({
       ...prev,
       photos,
-      status: ProductStatus.ANALYZING
+      status: ProductStatus.ANALYZING,
     }));
     setCurrentStep('analysis');
   }, []);
 
-  const handleAnalysisComplete = useCallback((analysisResult: WorkflowProduct['analysisResult']) => {
-    setProduct(prev => ({
-      ...prev,
-      analysisResult,
-      status: ProductStatus.ANALYZED
-    }));
-    setCurrentStep('review');
-  }, []);
+  const handleAnalysisComplete = useCallback(
+    (analysisResult: WorkflowProduct['analysisResult']) => {
+      setProduct((prev) => ({
+        ...prev,
+        analysisResult,
+        status: ProductStatus.ANALYZED,
+      }));
+      setCurrentStep('review');
+    },
+    [],
+  );
 
   const handleReviewComplete = useCallback((reviewedData: any) => {
-    setProduct(prev => ({
+    setProduct((prev) => ({
       ...prev,
       reviewedData,
-      status: ProductStatus.REVIEWED
+      status: ProductStatus.REVIEWED,
     }));
     setCurrentStep('export');
   }, []);
 
-  const handleExportComplete = useCallback((exportData: WorkflowProduct['exportData']) => {
-    const completedProduct = {
-      ...product,
-      exportData,
-      status: ProductStatus.EXPORTED
-    };
-    setProduct(completedProduct);
-    setCurrentStep('table');
-    onComplete?.(completedProduct);
-  }, [product, onComplete]);
+  const handleExportComplete = useCallback(
+    (exportData: WorkflowProduct['exportData']) => {
+      const completedProduct = {
+        ...product,
+        exportData,
+        status: ProductStatus.EXPORTED,
+      };
+      setProduct(completedProduct);
+      setCurrentStep('table');
+      onComplete?.(completedProduct);
+    },
+    [product, onComplete],
+  );
 
   const handleBackToTable = useCallback(() => {
     setCurrentStep('table');
   }, []);
 
-  const canNavigateToStep = useCallback((step: WorkflowStep): boolean => {
-    const stepIndex = steps.indexOf(step);
-    const currentIndex = steps.indexOf(currentStep);
-    
-    // Can navigate to completed steps or current step
-    if (stepIndex <= currentIndex) return true;
-    
-    // Can navigate forward only if previous steps are completed
-    switch (step) {
-      case 'analysis':
-        return product.photos.length > 0;
-      case 'review':
-        return !!product.analysisResult;
-      case 'export':
-        return !!product.reviewedData;
-      case 'table':
-        return !!product.exportData;
-      default:
-        return false;
-    }
-  }, [currentStep, product, steps]);
+  const canNavigateToStep = useCallback(
+    (step: WorkflowStep): boolean => {
+      const stepIndex = steps.indexOf(step);
+      const currentIndex = steps.indexOf(currentStep);
 
-  const navigateToStep = useCallback((step: WorkflowStep) => {
-    if (canNavigateToStep(step)) {
-      setCurrentStep(step);
-    }
-  }, [canNavigateToStep]);
+      // Can navigate to completed steps or current step
+      if (stepIndex <= currentIndex) return true;
+
+      // Can navigate forward only if previous steps are completed
+      switch (step) {
+        case 'analysis':
+          return product.photos.length > 0;
+        case 'review':
+          return !!product.analysisResult;
+        case 'export':
+          return !!product.reviewedData;
+        case 'table':
+          return !!product.exportData;
+        default:
+          return false;
+      }
+    },
+    [currentStep, product, steps],
+  );
+
+  const navigateToStep = useCallback(
+    (step: WorkflowStep) => {
+      if (canNavigateToStep(step)) {
+        setCurrentStep(step);
+      }
+    },
+    [canNavigateToStep],
+  );
 
   // Progress calculation
   const currentStepIndex = steps.indexOf(currentStep);
@@ -145,10 +157,10 @@ export function ErfassungWorkflow({ onComplete }: ErfassungWorkflowProps) {
               Schritt {currentStepIndex + 1} von {steps.length}
             </p>
           </div>
-          
+
           {/* Progress Bar */}
           <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mb-4">
-            <div 
+            <div
               className="bg-indigo-600 h-2 rounded-full transition-all duration-300"
               style={{ width: `${progress}%` }}
             />
@@ -158,15 +170,25 @@ export function ErfassungWorkflow({ onComplete }: ErfassungWorkflowProps) {
           <div className="relative flex items-center justify-between">
             {[
               { key: 'upload', label: 'Fotos', icon: '📸', description: 'Produktfotos hochladen' },
-              { key: 'analysis', label: 'Analyse', icon: '🤖', description: 'KI-Analyse der Bilder' },
-              { key: 'review', label: 'Prüfung', icon: '✏️', description: 'Daten überprüfen und bearbeiten' },
+              {
+                key: 'analysis',
+                label: 'Analyse',
+                icon: '🤖',
+                description: 'KI-Analyse der Bilder',
+              },
+              {
+                key: 'review',
+                label: 'Prüfung',
+                icon: '✏️',
+                description: 'Daten überprüfen und bearbeiten',
+              },
               { key: 'export', label: 'Export', icon: '📄', description: 'Daten exportieren' },
-              { key: 'table', label: 'Tabelle', icon: '📊', description: 'Zur Tabellen-Übersicht' }
+              { key: 'table', label: 'Tabelle', icon: '📊', description: 'Zur Tabellen-Übersicht' },
             ].map((step, index) => {
               const isActive = index === currentStepIndex;
               const isCompleted = index < currentStepIndex;
               const canNavigate = canNavigateToStep(step.key as WorkflowStep);
-              
+
               return (
                 <div key={step.key} className="flex flex-col items-center group">
                   <button
@@ -176,39 +198,40 @@ export function ErfassungWorkflow({ onComplete }: ErfassungWorkflowProps) {
                       isActive
                         ? 'bg-indigo-600 text-white shadow-lg scale-110'
                         : isCompleted
-                        ? 'bg-green-600 text-white hover:bg-green-700 cursor-pointer'  
-                        : canNavigate
-                        ? 'bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-500 cursor-pointer'
-                        : 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'
+                          ? 'bg-green-600 text-white hover:bg-green-700 cursor-pointer'
+                          : canNavigate
+                            ? 'bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-500 cursor-pointer'
+                            : 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'
                     } ${canNavigate ? 'hover:scale-105' : ''}`}
                     title={step.description}
                   >
                     {isCompleted ? '✅' : step.icon}
                   </button>
-                  
-                  <span className={`mt-2 text-xs text-center transition-colors ${
-                    isActive
-                      ? 'text-indigo-600 dark:text-indigo-400 font-semibold'
-                      : isCompleted
-                      ? 'text-green-600 dark:text-green-400 font-medium'
-                      : canNavigate
-                      ? 'text-gray-600 dark:text-gray-300 group-hover:text-gray-800 dark:group-hover:text-gray-100'
-                      : 'text-gray-400 dark:text-gray-500'
-                  }`}>
+
+                  <span
+                    className={`mt-2 text-xs text-center transition-colors ${
+                      isActive
+                        ? 'text-indigo-600 dark:text-indigo-400 font-semibold'
+                        : isCompleted
+                          ? 'text-green-600 dark:text-green-400 font-medium'
+                          : canNavigate
+                            ? 'text-gray-600 dark:text-gray-300 group-hover:text-gray-800 dark:group-hover:text-gray-100'
+                            : 'text-gray-400 dark:text-gray-500'
+                    }`}
+                  >
                     {step.label}
                   </span>
-                  
+
                   {/* Step connector line */}
                   {index < 4 && (
-                    <div className={`absolute top-5 left-1/2 w-full h-0.5 -z-10 transition-colors ${
-                      index < currentStepIndex 
-                        ? 'bg-green-400' 
-                        : 'bg-gray-200 dark:bg-gray-600'
-                    }`} 
-                    style={{ 
-                      transform: 'translateX(20px)',
-                      width: 'calc(100% - 40px)' 
-                    }} 
+                    <div
+                      className={`absolute top-5 left-1/2 w-full h-0.5 -z-10 transition-colors ${
+                        index < currentStepIndex ? 'bg-green-400' : 'bg-gray-200 dark:bg-gray-600'
+                      }`}
+                      style={{
+                        transform: 'translateX(20px)',
+                        width: 'calc(100% - 40px)',
+                      }}
                     />
                   )}
                 </div>
@@ -221,41 +244,35 @@ export function ErfassungWorkflow({ onComplete }: ErfassungWorkflowProps) {
       {/* Step Content */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {currentStep === 'upload' && (
-          <PhotoUploadStep 
-            onPhotosUploaded={handlePhotosUploaded}
-            product={product}
-          />
+          <PhotoUploadStep onPhotosUploaded={handlePhotosUploaded} product={product} />
         )}
-        
+
         {currentStep === 'analysis' && (
-          <AnalysisStep 
+          <AnalysisStep
             photos={product.photos}
             onAnalysisComplete={handleAnalysisComplete}
             product={product}
           />
         )}
-        
+
         {currentStep === 'review' && product.analysisResult && (
-          <DataReviewStep 
+          <DataReviewStep
             analysisResult={product.analysisResult}
             onReviewComplete={handleReviewComplete}
             product={product}
           />
         )}
-        
+
         {currentStep === 'export' && product.reviewedData && (
-          <ExportStep 
+          <ExportStep
             productData={product.reviewedData}
             onExportComplete={handleExportComplete}
             product={product}
           />
         )}
-        
+
         {currentStep === 'table' && (
-          <TableOverviewStep 
-            product={product}
-            onBackToWorkflow={() => setCurrentStep('upload')}
-          />
+          <TableOverviewStep product={product} onBackToWorkflow={() => setCurrentStep('upload')} />
         )}
       </div>
     </div>

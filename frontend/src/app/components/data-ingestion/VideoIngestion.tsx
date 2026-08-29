@@ -40,7 +40,7 @@ export default function VideoIngestion({
   onError,
   formId,
   apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001',
-  token
+  token,
 }: VideoIngestionProps) {
   // State
   const [uploadState, setUploadState] = useState<UploadState>('idle');
@@ -70,36 +70,45 @@ export default function VideoIngestion({
   }, [previewUrl]);
 
   // Handle file selection
-  const handleFileSelect = useCallback((file: File) => {
-    setSelectedFile(file);
-    setError(null);
-    setResult(null);
-    setUploadState('idle');
+  const handleFileSelect = useCallback(
+    (file: File) => {
+      setSelectedFile(file);
+      setError(null);
+      setResult(null);
+      setUploadState('idle');
 
-    if (previewUrl) {
-      URL.revokeObjectURL(previewUrl);
-    }
-    setPreviewUrl(URL.createObjectURL(file));
-  }, [previewUrl]);
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+      setPreviewUrl(URL.createObjectURL(file));
+    },
+    [previewUrl],
+  );
 
   // Handle file input change
-  const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      handleFileSelect(file);
-    }
-  }, [handleFileSelect]);
+  const handleFileChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (file) {
+        handleFileSelect(file);
+      }
+    },
+    [handleFileSelect],
+  );
 
   // Handle drag and drop
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    const file = e.dataTransfer.files[0];
-    if (file && file.type.startsWith('video/')) {
-      handleFileSelect(file);
-    } else {
-      setError('Please drop a video file');
-    }
-  }, [handleFileSelect]);
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      const file = e.dataTransfer.files[0];
+      if (file && file.type.startsWith('video/')) {
+        handleFileSelect(file);
+      } else {
+        setError('Please drop a video file');
+      }
+    },
+    [handleFileSelect],
+  );
 
   // Upload and process video
   const uploadVideo = useCallback(async () => {
@@ -123,13 +132,13 @@ export default function VideoIngestion({
 
       // Simulate progress for large uploads
       const progressInterval = setInterval(() => {
-        setUploadProgress(prev => Math.min(prev + 5, 30));
+        setUploadProgress((prev) => Math.min(prev + 5, 30));
       }, 500);
 
       const response = await fetch(`${apiUrl}/api/v1/videos/upload`, {
         method: 'POST',
         headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-        body: formData
+        body: formData,
       });
 
       clearInterval(progressInterval);
@@ -138,7 +147,7 @@ export default function VideoIngestion({
 
       // Simulate processing progress
       const processingInterval = setInterval(() => {
-        setUploadProgress(prev => Math.min(prev + 10, 90));
+        setUploadProgress((prev) => Math.min(prev + 10, 90));
       }, 2000);
 
       if (!response.ok) {
@@ -154,14 +163,24 @@ export default function VideoIngestion({
       setUploadState('complete');
       setResult(data.data);
       onUploadComplete?.(data.data);
-
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Upload failed';
       setError(errorMsg);
       setUploadState('error');
       onError?.(errorMsg);
     }
-  }, [selectedFile, frameInterval, maxFrames, transcribeAudio, analyzeFrames, apiUrl, formId, token, onUploadComplete, onError]);
+  }, [
+    selectedFile,
+    frameInterval,
+    maxFrames,
+    transcribeAudio,
+    analyzeFrames,
+    apiUrl,
+    formId,
+    token,
+    onUploadComplete,
+    onError,
+  ]);
 
   // Clear selection
   const clearSelection = useCallback(() => {
@@ -196,8 +215,18 @@ export default function VideoIngestion({
   return (
     <div className="w-full max-w-2xl mx-auto p-6 bg-white rounded-xl shadow-lg">
       <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-        <svg className="w-6 h-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+        <svg
+          className="w-6 h-6 text-indigo-600"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+          />
         </svg>
         Video Ingestion
       </h2>
@@ -207,7 +236,12 @@ export default function VideoIngestion({
         <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
           <p className="flex items-center gap-2">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
             </svg>
             {error}
           </p>
@@ -282,15 +316,24 @@ export default function VideoIngestion({
             onClick={() => fileInputRef.current?.click()}
             className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-indigo-400 hover:bg-indigo-50 transition-colors"
           >
-            <svg className="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+            <svg
+              className="w-16 h-16 mx-auto text-gray-400 mb-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+              />
             </svg>
             <p className="text-gray-600 mb-2">
-              <span className="font-semibold text-indigo-600">Click to upload</span> or drag and drop
+              <span className="font-semibold text-indigo-600">Click to upload</span> or drag and
+              drop
             </p>
-            <p className="text-sm text-gray-500">
-              MP4, MOV, AVI, MKV, WebM up to 500MB
-            </p>
+            <p className="text-sm text-gray-500">MP4, MOV, AVI, MKV, WebM up to 500MB</p>
             <p className="text-xs text-gray-400 mt-2">
               Requires FFmpeg installed on the server for processing
             </p>
@@ -313,7 +356,12 @@ export default function VideoIngestion({
               className="absolute top-2 right-2 p-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
           </div>
@@ -332,15 +380,31 @@ export default function VideoIngestion({
               {uploadState === 'uploading' || uploadState === 'processing' ? (
                 <>
                   <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    />
                   </svg>
                   {uploadState === 'uploading' ? 'Uploading...' : 'Processing...'}
                 </>
               ) : (
                 <>
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+                    />
                   </svg>
                   Analyze Video
                 </>
@@ -355,7 +419,9 @@ export default function VideoIngestion({
         <div className="mb-6">
           <div className="flex justify-between text-sm text-gray-600 mb-2">
             <span>
-              {uploadState === 'uploading' ? 'Uploading video...' : 'Extracting frames & transcribing audio...'}
+              {uploadState === 'uploading'
+                ? 'Uploading video...'
+                : 'Extracting frames & transcribing audio...'}
             </span>
             <span>{uploadProgress}%</span>
           </div>
@@ -366,7 +432,8 @@ export default function VideoIngestion({
             />
           </div>
           <p className="text-xs text-gray-400 mt-2 text-center">
-            {uploadState === 'processing' && 'This may take a few minutes depending on video length...'}
+            {uploadState === 'processing' &&
+              'This may take a few minutes depending on video length...'}
           </p>
         </div>
       )}
@@ -376,7 +443,12 @@ export default function VideoIngestion({
         <div className="border border-green-200 bg-green-50 rounded-lg p-6">
           <h3 className="text-lg font-semibold text-green-800 mb-4 flex items-center gap-2">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
             </svg>
             Video Analysis Complete
           </h3>
@@ -385,11 +457,15 @@ export default function VideoIngestion({
           <div className="grid grid-cols-4 gap-3 mb-4 text-sm">
             <div className="bg-white p-3 rounded-lg text-center">
               <p className="text-gray-500">Duration</p>
-              <p className="font-semibold text-gray-800">{formatDuration(result.videoInfo.duration)}</p>
+              <p className="font-semibold text-gray-800">
+                {formatDuration(result.videoInfo.duration)}
+              </p>
             </div>
             <div className="bg-white p-3 rounded-lg text-center">
               <p className="text-gray-500">Resolution</p>
-              <p className="font-semibold text-gray-800">{result.videoInfo.width}x{result.videoInfo.height}</p>
+              <p className="font-semibold text-gray-800">
+                {result.videoInfo.width}x{result.videoInfo.height}
+              </p>
             </div>
             <div className="bg-white p-3 rounded-lg text-center">
               <p className="text-gray-500">FPS</p>
@@ -412,7 +488,10 @@ export default function VideoIngestion({
                   <p className="text-xs text-gray-500 mb-1">Topics</p>
                   <div className="flex flex-wrap gap-2">
                     {result.summary.topics.map((topic, i) => (
-                      <span key={i} className="px-2 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs">
+                      <span
+                        key={i}
+                        className="px-2 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs"
+                      >
                         {topic}
                       </span>
                     ))}
@@ -425,7 +504,10 @@ export default function VideoIngestion({
                   <p className="text-xs text-gray-500 mb-1">Keywords</p>
                   <div className="flex flex-wrap gap-2">
                     {result.summary.keywords.map((keyword, i) => (
-                      <span key={i} className="px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-xs">
+                      <span
+                        key={i}
+                        className="px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-xs"
+                      >
                         {keyword}
                       </span>
                     ))}
@@ -471,9 +553,7 @@ export default function VideoIngestion({
           {/* Processing Info */}
           <div className="mt-4 pt-4 border-t border-green-200 text-sm text-gray-500 flex justify-between">
             <span>Processed in {(result.processingTime / 1000).toFixed(1)}s</span>
-            {result.confidence && (
-              <span>Confidence: {Math.round(result.confidence * 100)}%</span>
-            )}
+            {result.confidence && <span>Confidence: {Math.round(result.confidence * 100)}%</span>}
           </div>
         </div>
       )}

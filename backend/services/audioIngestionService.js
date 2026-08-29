@@ -14,7 +14,7 @@ const mkdir = promisify(fs.mkdir);
 class AudioIngestionService {
   constructor() {
     this.openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY
+      apiKey: process.env.OPENAI_API_KEY,
     });
     this.uploadDir = process.env.UPLOAD_DIR || path.join(__dirname, '../uploads/audio');
     this.supportedFormats = ['mp3', 'mp4', 'mpeg', 'mpga', 'm4a', 'wav', 'webm', 'ogg', 'flac'];
@@ -46,7 +46,7 @@ class AudioIngestionService {
       prompt = null, // Context prompt to improve transcription
       formId = null,
       organizationId = null,
-      responseFormat = 'verbose_json'
+      responseFormat = 'verbose_json',
     } = options;
 
     // Validate file
@@ -67,19 +67,19 @@ class AudioIngestionService {
           language,
           prompt,
           responseFormat,
-          uploadedAt: new Date().toISOString()
+          uploadedAt: new Date().toISOString(),
         },
         userId,
         organizationId,
-        formId
-      }
+        formId,
+      },
     });
 
     try {
       // Update status to processing
       await prisma.dataSource.update({
         where: { id: dataSource.id },
-        data: { status: 'PROCESSING' }
+        data: { status: 'PROCESSING' },
       });
 
       const startTime = Date.now();
@@ -88,7 +88,7 @@ class AudioIngestionService {
       const transcription = await this.transcribeAudio(file.path, {
         language,
         prompt,
-        responseFormat
+        responseFormat,
       });
 
       const processingTime = Date.now() - startTime;
@@ -107,13 +107,13 @@ class AudioIngestionService {
             segments: transcription.segments || [],
             words: transcription.words || [],
             language: transcription.language,
-            duration: transcription.duration
+            duration: transcription.duration,
           },
           processingTime,
           aiModel: 'whisper-1',
           confidence: this.calculateConfidence(transcription),
-          processedAt: new Date()
-        }
+          processedAt: new Date(),
+        },
       });
 
       return {
@@ -125,17 +125,16 @@ class AudioIngestionService {
         segments: transcription.segments,
         extractedData,
         processingTime,
-        confidence: updatedDataSource.confidence
+        confidence: updatedDataSource.confidence,
       };
-
     } catch (error) {
       // Update status to failed
       await prisma.dataSource.update({
         where: { id: dataSource.id },
         data: {
           status: 'FAILED',
-          error: error.message
-        }
+          error: error.message,
+        },
       });
 
       throw error;
@@ -151,7 +150,7 @@ class AudioIngestionService {
     const transcriptionParams = {
       file: fs.createReadStream(filePath),
       model: 'whisper-1',
-      response_format: responseFormat
+      response_format: responseFormat,
     };
 
     if (language) {
@@ -186,15 +185,15 @@ class AudioIngestionService {
             - actionItems: Array of action items or tasks mentioned
             - questions: Array of questions asked
             - decisions: Array of decisions made
-            - type: Type of audio (meeting, interview, voice_note, lecture, conversation, other)`
+            - type: Type of audio (meeting, interview, voice_note, lecture, conversation, other)`,
           },
           {
             role: 'user',
-            content: transcription.text
-          }
+            content: transcription.text,
+          },
         ],
         temperature: 0.3,
-        response_format: { type: 'json_object' }
+        response_format: { type: 'json_object' },
       });
 
       return JSON.parse(response.choices[0].message.content);
@@ -203,7 +202,7 @@ class AudioIngestionService {
       return {
         summary: null,
         topics: [],
-        error: 'Failed to extract structured data'
+        error: 'Failed to extract structured data',
       };
     }
   }
@@ -217,9 +216,10 @@ class AudioIngestionService {
     // Adjust based on available data
     if (transcription.segments && transcription.segments.length > 0) {
       // Calculate average segment confidence if available
-      const avgSegmentConfidence = transcription.segments.reduce((sum, seg) => {
-        return sum + (seg.avg_logprob ? Math.exp(seg.avg_logprob) : 0.8);
-      }, 0) / transcription.segments.length;
+      const avgSegmentConfidence =
+        transcription.segments.reduce((sum, seg) => {
+          return sum + (seg.avg_logprob ? Math.exp(seg.avg_logprob) : 0.8);
+        }, 0) / transcription.segments.length;
 
       confidence = Math.min(avgSegmentConfidence, 0.99);
     }
@@ -248,7 +248,9 @@ class AudioIngestionService {
     // Check file format
     const ext = path.extname(file.originalname).toLowerCase().slice(1);
     if (!this.supportedFormats.includes(ext)) {
-      throw new Error(`Unsupported audio format: ${ext}. Supported formats: ${this.supportedFormats.join(', ')}`);
+      throw new Error(
+        `Unsupported audio format: ${ext}. Supported formats: ${this.supportedFormats.join(', ')}`,
+      );
     }
   }
 
@@ -276,7 +278,7 @@ class AudioIngestionService {
       'audio/ogg': 'ogg',
       'audio/mp4': 'm4a',
       'audio/m4a': 'm4a',
-      'audio/flac': 'flac'
+      'audio/flac': 'flac',
     };
 
     const ext = mimeToExt[mimeType] || 'webm';
@@ -291,7 +293,7 @@ class AudioIngestionService {
       originalname: options.name || filename,
       mimetype: mimeType,
       size: buffer.length,
-      path: filePath
+      path: filePath,
     };
 
     try {
@@ -314,7 +316,7 @@ class AudioIngestionService {
 
     const where = {
       userId,
-      type: 'AUDIO'
+      type: 'AUDIO',
     };
 
     if (status) {
@@ -343,17 +345,17 @@ class AudioIngestionService {
           processingTime: true,
           confidence: true,
           createdAt: true,
-          processedAt: true
-        }
+          processedAt: true,
+        },
       }),
-      prisma.dataSource.count({ where })
+      prisma.dataSource.count({ where }),
     ]);
 
     return {
       dataSources,
       total,
       limit,
-      offset
+      offset,
     };
   }
 
@@ -365,11 +367,11 @@ class AudioIngestionService {
       where: {
         id,
         userId,
-        type: 'AUDIO'
+        type: 'AUDIO',
       },
       include: {
-        analyses: true
-      }
+        analyses: true,
+      },
     });
 
     if (!dataSource) {
@@ -387,8 +389,8 @@ class AudioIngestionService {
       where: {
         id,
         userId,
-        type: 'AUDIO'
-      }
+        type: 'AUDIO',
+      },
     });
 
     if (!dataSource) {
@@ -405,7 +407,7 @@ class AudioIngestionService {
     }
 
     await prisma.dataSource.delete({
-      where: { id }
+      where: { id },
     });
 
     return { success: true };
@@ -428,15 +430,16 @@ class AudioIngestionService {
       messages: [
         {
           role: 'system',
-          content: 'You are an AI analyst. Analyze the following audio transcription based on the user\'s request. Provide detailed, actionable insights.'
+          content:
+            "You are an AI analyst. Analyze the following audio transcription based on the user's request. Provide detailed, actionable insights.",
         },
         {
           role: 'user',
-          content: `Transcription:\n${dataSource.extractedText}\n\nAnalysis Request:\n${analysisPrompt}`
-        }
+          content: `Transcription:\n${dataSource.extractedText}\n\nAnalysis Request:\n${analysisPrompt}`,
+        },
       ],
       temperature: 0.4,
-      max_tokens: 2000
+      max_tokens: 2000,
     });
 
     const processingTime = Date.now() - startTime;
@@ -449,18 +452,18 @@ class AudioIngestionService {
         prompt: analysisPrompt,
         result: {
           content: response.choices[0].message.content,
-          usage: response.usage
+          usage: response.usage,
         },
         model: 'gpt-4-turbo-preview',
         processingTime,
-        status: 'COMPLETED'
-      }
+        status: 'COMPLETED',
+      },
     });
 
     return {
       analysisId: analysis.id,
       result: response.choices[0].message.content,
-      processingTime
+      processingTime,
     };
   }
 }

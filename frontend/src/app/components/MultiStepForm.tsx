@@ -22,8 +22,8 @@ export function MultiStepForm({ steps, onSubmit, onStepsChange }: MultiStepFormP
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
   const [formData, setFormData] = useState<FormData>(() => {
     const data: FormData = {};
-    steps.forEach(step => {
-      step.fields.forEach(field => {
+    steps.forEach((step) => {
+      step.fields.forEach((field) => {
         data[field.name] = '';
       });
     });
@@ -31,26 +31,32 @@ export function MultiStepForm({ steps, onSubmit, onStepsChange }: MultiStepFormP
   });
 
   // Flatten all fields for validation and auto-save
-  const allFields = steps.flatMap(step => step.fields);
+  const allFields = steps.flatMap((step) => step.fields);
   const currentStepFields = steps[currentStep]?.fields || [];
 
-  const { validateForm, validateSingleField, getFieldError, hasErrors } = useFormValidation(allFields);
-  const { savedData, saveNow, clearSavedData, getLastSaveTime, hasSavedData } = useAutoSave(formData, allFields);
+  const { validateForm, validateSingleField, getFieldError, hasErrors } =
+    useFormValidation(allFields);
+  const { savedData, saveNow, clearSavedData, getLastSaveTime, hasSavedData } = useAutoSave(
+    formData,
+    allFields,
+  );
   const { saveTemplate } = useTemplateManager();
   const [showSaveTemplateModal, setShowSaveTemplateModal] = useState(false);
 
   // Load saved data on component mount
   useEffect(() => {
-    if (savedData && Object.keys(formData).every(key => !formData[key])) {
+    if (savedData && Object.keys(formData).every((key) => !formData[key])) {
       setFormData(savedData.formData);
     }
   }, [savedData]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -61,18 +67,18 @@ export function MultiStepForm({ steps, onSubmit, onStepsChange }: MultiStepFormP
 
   const validateCurrentStep = (): boolean => {
     const stepErrors = currentStepFields
-      .map(field => validateSingleField(field.name, formData[field.name] || ''))
-      .filter(error => error !== null);
-    
+      .map((field) => validateSingleField(field.name, formData[field.name] || ''))
+      .filter((error) => error !== null);
+
     return stepErrors.length === 0;
   };
 
   const handleNext = () => {
     if (validateCurrentStep()) {
       if (!completedSteps.includes(currentStep)) {
-        setCompletedSteps(prev => [...prev, currentStep]);
+        setCompletedSteps((prev) => [...prev, currentStep]);
       }
-      
+
       if (currentStep < steps.length - 1) {
         setCurrentStep(currentStep + 1);
       }
@@ -94,20 +100,20 @@ export function MultiStepForm({ steps, onSubmit, onStepsChange }: MultiStepFormP
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validate all steps
     const allErrors = validateForm(formData);
-    
+
     if (allErrors.length === 0) {
       clearSavedData();
       onSubmit(formData);
     } else {
       // Find the first step with errors and navigate to it
       const errorFields = allErrors;
-      const firstErrorStep = steps.findIndex(step => 
-        step.fields.some(field => errorFields.includes(field.name))
+      const firstErrorStep = steps.findIndex((step) =>
+        step.fields.some((field) => errorFields.includes(field.name)),
       );
-      
+
       if (firstErrorStep !== -1) {
         setCurrentStep(firstErrorStep);
       }
@@ -123,23 +129,26 @@ export function MultiStepForm({ steps, onSubmit, onStepsChange }: MultiStepFormP
   const canProceed = validateCurrentStep();
 
   // Group fields by group within current step
-  const groupedFields = currentStepFields.reduce((groups, field) => {
-    const groupName = field.group || 'default';
-    if (!groups[groupName]) {
-      groups[groupName] = [];
-    }
-    groups[groupName].push(field);
-    return groups;
-  }, {} as Record<string, FieldConfig[]>);
+  const groupedFields = currentStepFields.reduce(
+    (groups, field) => {
+      const groupName = field.group || 'default';
+      if (!groups[groupName]) {
+        groups[groupName] = [];
+      }
+      groups[groupName].push(field);
+      return groups;
+    },
+    {} as Record<string, FieldConfig[]>,
+  );
 
   return (
     <div className="space-y-8">
       {/* Progress Indicator */}
       <ProgressIndicator
-        steps={steps.map(step => ({ 
-          id: step.id, 
-          title: step.title, 
-          isOptional: step.isOptional 
+        steps={steps.map((step) => ({
+          id: step.id,
+          title: step.title,
+          isOptional: step.isOptional,
         }))}
         currentStep={currentStep}
         completedSteps={completedSteps}
@@ -153,7 +162,11 @@ export function MultiStepForm({ steps, onSubmit, onStepsChange }: MultiStepFormP
             <div className="flex items-center">
               <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center mr-3">
                 <svg className="h-5 w-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                  <path
+                    fillRule="evenodd"
+                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                    clipRule="evenodd"
+                  />
                 </svg>
               </div>
               <span className="text-sm font-medium text-blue-800 dark:text-blue-200">
@@ -179,9 +192,7 @@ export function MultiStepForm({ steps, onSubmit, onStepsChange }: MultiStepFormP
               {steps[currentStep]?.title}
             </h2>
             {steps[currentStep]?.description && (
-              <p className="text-gray-600 dark:text-gray-300">
-                {steps[currentStep].description}
-              </p>
+              <p className="text-gray-600 dark:text-gray-300">{steps[currentStep].description}</p>
             )}
           </div>
 
@@ -235,47 +246,32 @@ export function MultiStepForm({ steps, onSubmit, onStepsChange }: MultiStepFormP
         <div className="flex justify-between items-center">
           <div className="flex space-x-3">
             {!isFirstStep && (
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handlePrevious}
-              >
+              <Button type="button" variant="outline" onClick={handlePrevious}>
                 ← Zurück
               </Button>
             )}
           </div>
 
           <div className="flex space-x-3">
-            <Button 
-              type="button" 
-              variant="outline" 
+            <Button
+              type="button"
+              variant="outline"
               onClick={() => setShowSaveTemplateModal(true)}
               size="sm"
             >
               Als Vorlage speichern
             </Button>
-            
-            <Button
-              type="button"
-              variant="outline"
-              onClick={saveNow}
-            >
+
+            <Button type="button" variant="outline" onClick={saveNow}>
               Entwurf speichern
             </Button>
 
             {isLastStep ? (
-              <Button
-                type="submit"
-                disabled={hasErrors}
-              >
+              <Button type="submit" disabled={hasErrors}>
                 Formular absenden
               </Button>
             ) : (
-              <Button
-                type="button"
-                onClick={handleNext}
-                disabled={!canProceed}
-              >
+              <Button type="button" onClick={handleNext} disabled={!canProceed}>
                 Weiter →
               </Button>
             )}

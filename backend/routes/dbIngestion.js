@@ -20,7 +20,7 @@ router.post('/test-connection', auth, async (req, res) => {
     if (!type || !host || !database || !username) {
       return res.status(400).json({
         success: false,
-        error: 'Missing required connection parameters: type, host, database, username'
+        error: 'Missing required connection parameters: type, host, database, username',
       });
     }
 
@@ -31,16 +31,15 @@ router.post('/test-connection', auth, async (req, res) => {
       database,
       username,
       password,
-      ssl
+      ssl,
     });
 
     res.json(result);
-
   } catch (error) {
     console.error('Test connection error:', error);
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -57,7 +56,7 @@ router.post('/tables', auth, async (req, res) => {
     if (!type || !host || !database || !username) {
       return res.status(400).json({
         success: false,
-        error: 'Missing required connection parameters'
+        error: 'Missing required connection parameters',
       });
     }
 
@@ -68,16 +67,15 @@ router.post('/tables', auth, async (req, res) => {
       database,
       username,
       password,
-      ssl
+      ssl,
     });
 
     res.json(result);
-
   } catch (error) {
     console.error('Get tables error:', error);
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -94,19 +92,18 @@ router.post('/schema', auth, async (req, res) => {
     if (!connection || !tableName) {
       return res.status(400).json({
         success: false,
-        error: 'Connection config and tableName are required'
+        error: 'Connection config and tableName are required',
       });
     }
 
     const result = await externalDatabaseService.getTableSchema(connection, tableName);
 
     res.json(result);
-
   } catch (error) {
     console.error('Get schema error:', error);
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -124,24 +121,18 @@ router.post('/import', auth, async (req, res) => {
     if (!connection || !tableName) {
       return res.status(400).json({
         success: false,
-        error: 'Connection config and tableName are required'
+        error: 'Connection config and tableName are required',
       });
     }
 
-    const result = await externalDatabaseService.importData(
-      connection,
-      tableName,
-      options,
-      userId
-    );
+    const result = await externalDatabaseService.importData(connection, tableName, options, userId);
 
     res.json(result);
-
   } catch (error) {
     console.error('Import data error:', error);
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -159,19 +150,18 @@ router.post('/query', auth, async (req, res) => {
     if (!connection || !query) {
       return res.status(400).json({
         success: false,
-        error: 'Connection config and query are required'
+        error: 'Connection config and query are required',
       });
     }
 
     const result = await externalDatabaseService.executeQuery(connection, query, userId);
 
     res.json(result);
-
   } catch (error) {
     console.error('Execute query error:', error);
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -188,16 +178,15 @@ router.get('/', auth, async (req, res) => {
 
     const result = await externalDatabaseService.getRecentImports(userId, {
       limit: parseInt(limit) || 20,
-      offset: parseInt(offset) || 0
+      offset: parseInt(offset) || 0,
     });
 
     res.json(result);
-
   } catch (error) {
     console.error('Get recent imports error:', error);
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -215,30 +204,30 @@ router.get('/supported', (req, res) => {
         type: 'postgresql',
         name: 'PostgreSQL',
         defaultPort: 5432,
-        supported: true
+        supported: true,
       },
       {
         type: 'mysql',
         name: 'MySQL',
         defaultPort: 3306,
         supported: false,
-        comingSoon: true
+        comingSoon: true,
       },
       {
         type: 'sqlite',
         name: 'SQLite',
         defaultPort: null,
         supported: false,
-        comingSoon: true
+        comingSoon: true,
       },
       {
         type: 'mssql',
         name: 'Microsoft SQL Server',
         defaultPort: 1433,
         supported: false,
-        comingSoon: true
-      }
-    ]
+        comingSoon: true,
+      },
+    ],
   });
 });
 

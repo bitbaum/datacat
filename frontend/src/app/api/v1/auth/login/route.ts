@@ -22,7 +22,9 @@ export async function POST(req: Request) {
     .setIssuedAt()
     .setExpirationTime('7d')
     .sign(secret);
-  return Response.json({ success: true, token, user: { id: user.id, email: user.email, name: user.name } });
+  return Response.json({
+    success: true,
+    token,
+    user: { id: user.id, email: user.email, name: user.name },
+  });
 }
-
-

@@ -16,14 +16,13 @@ exports.getDatabases = async (req, res) => {
     res.json({
       success: true,
       databases,
-      total: databases.length
+      total: databases.length,
     });
-
   } catch (error) {
     console.error('Get databases error:', error);
     res.status(500).json({
       success: false,
-      message: 'Failed to retrieve databases'
+      message: 'Failed to retrieve databases',
     });
   }
 };
@@ -40,21 +39,20 @@ exports.getDatabaseRecords = async (req, res) => {
       limit: parseInt(limit) || 50,
       filters: filters ? JSON.parse(filters) : {},
       sort: sort || 'submittedAt',
-      sortOrder: sortOrder || 'desc'
+      sortOrder: sortOrder || 'desc',
     };
 
     const result = await databaseService.getDatabaseRecords(databaseId, userId, options);
 
     res.json({
       success: true,
-      ...result
+      ...result,
     });
-
   } catch (error) {
     console.error('Get database records error:', error);
     res.status(404).json({
       success: false,
-      message: error.message || 'Database not found'
+      message: error.message || 'Database not found',
     });
   }
 };
@@ -68,28 +66,27 @@ exports.searchDatabases = async (req, res) => {
     if (!query) {
       return res.status(400).json({
         success: false,
-        message: 'Search query is required'
+        message: 'Search query is required',
       });
     }
 
     const options = {
       databases: databases || [],
       fields: fields || [],
-      limit: parseInt(limit) || 20
+      limit: parseInt(limit) || 20,
     };
 
     const results = await databaseService.searchDatabases(userId, query, options);
 
     res.json({
       success: true,
-      ...results
+      ...results,
     });
-
   } catch (error) {
     console.error('Search databases error:', error);
     res.status(500).json({
       success: false,
-      message: 'Search failed'
+      message: 'Search failed',
     });
   }
 };
@@ -104,14 +101,13 @@ exports.getDatabaseAnalytics = async (req, res) => {
 
     res.json({
       success: true,
-      analytics
+      analytics,
     });
-
   } catch (error) {
     console.error('Get database analytics error:', error);
     res.status(404).json({
       success: false,
-      message: error.message || 'Database not found'
+      message: error.message || 'Database not found',
     });
   }
 };
@@ -124,7 +120,7 @@ exports.exportDatabase = async (req, res) => {
     const { format = 'json', limit } = req.query;
 
     const options = {
-      limit: parseInt(limit) || 10000
+      limit: parseInt(limit) || 10000,
     };
 
     const exportData = await databaseService.exportDatabase(databaseId, userId, format, options);
@@ -139,12 +135,11 @@ exports.exportDatabase = async (req, res) => {
     } else {
       res.send(exportData);
     }
-
   } catch (error) {
     console.error('Export database error:', error);
     res.status(500).json({
       success: false,
-      message: error.message || 'Export failed'
+      message: error.message || 'Export failed',
     });
   }
 };
@@ -161,28 +156,27 @@ exports.analyzeDatabase = async (req, res) => {
     if (!query) {
       return res.status(400).json({
         success: false,
-        message: 'Analysis query is required'
+        message: 'Analysis query is required',
       });
     }
 
     const analysisRequest = {
       query,
       analysisType: analysisType || 'CUSTOM',
-      model: model || 'gpt-4'
+      model: model || 'gpt-4',
     };
 
     const result = await aiAnalysisService.analyzeDatabase(databaseId, userId, analysisRequest);
 
     res.json({
       success: true,
-      analysis: result
+      analysis: result,
     });
-
   } catch (error) {
     console.error('AI analysis error:', error);
     res.status(500).json({
       success: false,
-      message: error.message || 'Analysis failed'
+      message: error.message || 'Analysis failed',
     });
   }
 };
@@ -198,14 +192,13 @@ exports.generateInsights = async (req, res) => {
 
     res.json({
       success: true,
-      insights
+      insights,
     });
-
   } catch (error) {
     console.error('Generate insights error:', error);
     res.status(500).json({
       success: false,
-      message: error.message || 'Insight generation failed'
+      message: error.message || 'Insight generation failed',
     });
   }
 };
@@ -219,27 +212,26 @@ exports.intelligentSearch = async (req, res) => {
     if (!query) {
       return res.status(400).json({
         success: false,
-        message: 'Search query is required'
+        message: 'Search query is required',
       });
     }
 
     const options = {
       databases: databases || [],
-      includeInsights: includeInsights !== false
+      includeInsights: includeInsights !== false,
     };
 
     const results = await aiAnalysisService.intelligentSearch(userId, query, options);
 
     res.json({
       success: true,
-      ...results
+      ...results,
     });
-
   } catch (error) {
     console.error('Intelligent search error:', error);
     res.status(500).json({
       success: false,
-      message: 'Intelligent search failed'
+      message: 'Intelligent search failed',
     });
   }
 };
@@ -254,14 +246,13 @@ exports.getPredictiveInsights = async (req, res) => {
 
     res.json({
       success: true,
-      insights
+      insights,
     });
-
   } catch (error) {
     console.error('Predictive insights error:', error);
     res.status(500).json({
       success: false,
-      message: error.message || 'Predictive analysis failed'
+      message: error.message || 'Predictive analysis failed',
     });
   }
 };
@@ -283,12 +274,11 @@ exports.exportAnalysis = async (req, res) => {
     } else {
       res.send(exportData);
     }
-
   } catch (error) {
     console.error('Export analysis error:', error);
     res.status(404).json({
       success: false,
-      message: error.message || 'Analysis not found'
+      message: error.message || 'Analysis not found',
     });
   }
 };
@@ -302,7 +292,7 @@ exports.getAnalysisHistory = async (req, res) => {
     const whereClause = {
       userId,
       ...(databaseId && { formId: databaseId }),
-      ...(analysisType && { analysisType })
+      ...(analysisType && { analysisType }),
     };
 
     const skip = (parseInt(page) - 1) * parseInt(limit);
@@ -321,19 +311,19 @@ exports.getAnalysisHistory = async (req, res) => {
           form: {
             select: {
               id: true,
-              title: true
-            }
-          }
+              title: true,
+            },
+          },
         },
         orderBy: {
-          createdAt: 'desc'
+          createdAt: 'desc',
         },
         skip,
-        take: parseInt(limit)
+        take: parseInt(limit),
       }),
       prisma.lLMAnalysis.count({
-        where: whereClause
-      })
+        where: whereClause,
+      }),
     ]);
 
     res.json({
@@ -343,15 +333,14 @@ exports.getAnalysisHistory = async (req, res) => {
         page: parseInt(page),
         limit: parseInt(limit),
         total,
-        pages: Math.ceil(total / parseInt(limit))
-      }
+        pages: Math.ceil(total / parseInt(limit)),
+      },
     });
-
   } catch (error) {
     console.error('Get analysis history error:', error);
     res.status(500).json({
       success: false,
-      message: 'Failed to retrieve analysis history'
+      message: 'Failed to retrieve analysis history',
     });
   }
 };

@@ -12,5 +12,3 @@ export async function PUT(req: Request, ctx: any) {
   const updated = await prisma.form.update({ where: { id }, data: { isPublished } });
   return Response.json({ success: true, status: updated.isPublished ? 'published' : 'draft' });
 }
-
-

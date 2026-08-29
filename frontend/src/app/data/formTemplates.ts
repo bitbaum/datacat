@@ -10,27 +10,27 @@ export const hrIntakeTemplate: FormTemplate = {
       type: 'text',
       name: 'firstName',
       label: 'Vorname',
-      required: true
+      required: true,
     },
     {
       id: 'lastName',
       type: 'text',
       name: 'lastName',
       label: 'Nachname',
-      required: true
+      required: true,
     },
     {
       id: 'email',
       type: 'email',
       name: 'email',
       label: 'E-Mail-Adresse',
-      required: true
+      required: true,
     },
     {
       id: 'phone',
       type: 'tel',
       name: 'phone',
-      label: 'Telefonnummer'
+      label: 'Telefonnummer',
     },
     {
       id: 'department',
@@ -47,22 +47,22 @@ export const hrIntakeTemplate: FormTemplate = {
         { value: 'sales', label: 'Vertrieb' },
         { value: 'hr', label: 'Personalwesen' },
         { value: 'finance', label: 'Finanzen' },
-        { value: 'operations', label: 'Betrieb' }
-      ]
+        { value: 'operations', label: 'Betrieb' },
+      ],
     },
     {
       id: 'position',
       type: 'text',
       name: 'position',
       label: 'Position/Titel',
-      required: true
+      required: true,
     },
     {
       id: 'startDate',
       type: 'date',
       name: 'startDate',
       label: 'Startdatum',
-      required: true
+      required: true,
     },
     {
       id: 'employmentType',
@@ -74,8 +74,8 @@ export const hrIntakeTemplate: FormTemplate = {
         { value: 'full-time', label: 'Vollzeit' },
         { value: 'part-time', label: 'Teilzeit' },
         { value: 'contract', label: 'Vertrag' },
-        { value: 'intern', label: 'Praktikant' }
-      ]
+        { value: 'intern', label: 'Praktikant' },
+      ],
     },
     {
       id: 'skills',
@@ -83,7 +83,7 @@ export const hrIntakeTemplate: FormTemplate = {
       name: 'skills',
       label: 'Fähigkeiten & Expertise',
       placeholder: 'Listen Sie relevante Fähigkeiten, Technologien oder Fachbereiche auf...',
-      rows: 3
+      rows: 3,
     },
     {
       id: 'notes',
@@ -91,9 +91,9 @@ export const hrIntakeTemplate: FormTemplate = {
       name: 'notes',
       label: 'Zusätzliche Notizen',
       placeholder: 'Weitere Informationen oder besondere Anforderungen...',
-      rows: 3
-    }
-  ]
+      rows: 3,
+    },
+  ],
 };
 
 import { hrOnboardingTemplate } from './multiStepTemplates';

@@ -1,7 +1,15 @@
 'use client';
 
 import { useState } from 'react';
-import { ArrowLeftIcon, MagnifyingGlassIcon, PlusIcon, PencilIcon, TrashIcon, DocumentDuplicateIcon, EllipsisVerticalIcon } from '@heroicons/react/24/outline';
+import {
+  ArrowLeftIcon,
+  MagnifyingGlassIcon,
+  PlusIcon,
+  PencilIcon,
+  TrashIcon,
+  DocumentDuplicateIcon,
+  EllipsisVerticalIcon,
+} from '@heroicons/react/24/outline';
 import Link from 'next/link';
 
 // Demo data for the table
@@ -15,18 +23,18 @@ const demoProducts = [
     confidence: 0.87,
     price: 649.99,
     stockQuantity: 15,
-    lastModified: '2025-07-29T10:30:00Z'
+    lastModified: '2025-07-29T10:30:00Z',
   },
   {
-    id: '2', 
+    id: '2',
     title: 'Apple MacBook Pro 14"',
     manufacturer: 'Apple',
     articleNumber: 'MKGR3D/A',
     status: 'reviewed',
     confidence: 0.92,
-    price: 2249.00,
+    price: 2249.0,
     stockQuantity: 8,
-    lastModified: '2025-07-29T09:15:00Z'
+    lastModified: '2025-07-29T09:15:00Z',
   },
   {
     id: '3',
@@ -37,31 +45,45 @@ const demoProducts = [
     confidence: 0.95,
     price: 109.99,
     stockQuantity: 25,
-    lastModified: '2025-07-28T16:45:00Z'
-  }
+    lastModified: '2025-07-28T16:45:00Z',
+  },
 ];
 
 const getStatusColor = (status: string) => {
   switch (status) {
-    case 'draft': return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
-    case 'analyzing': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300';
-    case 'analyzed': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300';
-    case 'reviewed': return 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300';
-    case 'exported': return 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/50 dark:text-indigo-300';
-    case 'published': return 'bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-300';
-    default: return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
+    case 'draft':
+      return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
+    case 'analyzing':
+      return 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300';
+    case 'analyzed':
+      return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300';
+    case 'reviewed':
+      return 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300';
+    case 'exported':
+      return 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/50 dark:text-indigo-300';
+    case 'published':
+      return 'bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-300';
+    default:
+      return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
   }
 };
 
 const getStatusText = (status: string) => {
   switch (status) {
-    case 'draft': return 'Entwurf';
-    case 'analyzing': return 'Analyse läuft';
-    case 'analyzed': return 'Analysiert';
-    case 'reviewed': return 'Überprüft';
-    case 'exported': return 'Exportiert';
-    case 'published': return 'Veröffentlicht';
-    default: return status;
+    case 'draft':
+      return 'Entwurf';
+    case 'analyzing':
+      return 'Analyse läuft';
+    case 'analyzed':
+      return 'Analysiert';
+    case 'reviewed':
+      return 'Überprüft';
+    case 'exported':
+      return 'Exportiert';
+    case 'published':
+      return 'Veröffentlicht';
+    default:
+      return status;
   }
 };
 
@@ -72,36 +94,35 @@ export default function TablePage() {
   const [products, setProducts] = useState(demoProducts);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
 
-  const filteredProducts = products.filter(product =>
-    product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    product.manufacturer.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    product.articleNumber.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredProducts = products.filter(
+    (product) =>
+      product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product.manufacturer.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product.articleNumber.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const handleSelectAll = () => {
     if (selectedProducts.length === filteredProducts.length) {
       setSelectedProducts([]);
     } else {
-      setSelectedProducts(filteredProducts.map(p => p.id));
+      setSelectedProducts(filteredProducts.map((p) => p.id));
     }
   };
 
   const handleSelectProduct = (productId: string) => {
-    setSelectedProducts(prev => 
-      prev.includes(productId) 
-        ? prev.filter(id => id !== productId)
-        : [...prev, productId]
+    setSelectedProducts((prev) =>
+      prev.includes(productId) ? prev.filter((id) => id !== productId) : [...prev, productId],
     );
   };
 
   const handleDeleteProduct = (productId: string) => {
-    setProducts(prev => prev.filter(p => p.id !== productId));
+    setProducts((prev) => prev.filter((p) => p.id !== productId));
     setShowDeleteConfirm(null);
-    setSelectedProducts(prev => prev.filter(id => id !== productId));
+    setSelectedProducts((prev) => prev.filter((id) => id !== productId));
   };
 
   const handleCopyProduct = (productId: string) => {
-    const productToCopy = products.find(p => p.id === productId);
+    const productToCopy = products.find((p) => p.id === productId);
     if (productToCopy) {
       const newProduct = {
         ...productToCopy,
@@ -109,9 +130,9 @@ export default function TablePage() {
         title: `${productToCopy.title} (Kopie)`,
         articleNumber: `${productToCopy.articleNumber}-COPY`,
         status: 'draft',
-        lastModified: new Date().toISOString()
+        lastModified: new Date().toISOString(),
       };
-      setProducts(prev => [newProduct, ...prev]);
+      setProducts((prev) => [newProduct, ...prev]);
     }
   };
 
@@ -123,14 +144,13 @@ export default function TablePage() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      
       {/* Header */}
       <div className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
-              <Link 
-                href="/erfassung" 
+              <Link
+                href="/erfassung"
                 className="flex items-center text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 mr-4"
               >
                 <ArrowLeftIcon className="h-5 w-5 mr-2" />
@@ -195,7 +215,10 @@ export default function TablePage() {
                   <th className="px-6 py-3 text-left">
                     <input
                       type="checkbox"
-                      checked={selectedProducts.length === filteredProducts.length && filteredProducts.length > 0}
+                      checked={
+                        selectedProducts.length === filteredProducts.length &&
+                        filteredProducts.length > 0
+                      }
                       onChange={handleSelectAll}
                       className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
                     />
@@ -231,7 +254,10 @@ export default function TablePage() {
               </thead>
               <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                 {filteredProducts.map((product) => (
-                  <tr key={product.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                  <tr
+                    key={product.id}
+                    className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                  >
                     <td className="px-6 py-4 whitespace-nowrap">
                       <input
                         type="checkbox"
@@ -256,7 +282,9 @@ export default function TablePage() {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(product.status)}`}>
+                      <span
+                        className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(product.status)}`}
+                      >
                         {getStatusText(product.status)}
                       </span>
                     </td>
@@ -266,8 +294,8 @@ export default function TablePage() {
                           {Math.round(product.confidence * 100)}%
                         </div>
                         <div className="ml-2 w-16 bg-gray-200 dark:bg-gray-600 rounded-full h-2">
-                          <div 
-                            className="bg-indigo-600 h-2 rounded-full" 
+                          <div
+                            className="bg-indigo-600 h-2 rounded-full"
                             style={{ width: `${product.confidence * 100}%` }}
                           ></div>
                         </div>
@@ -321,14 +349,26 @@ export default function TablePage() {
 
           {filteredProducts.length === 0 && (
             <div className="text-center py-12">
-              <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              <svg
+                className="mx-auto h-12 w-12 text-gray-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                />
               </svg>
               <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">
                 Keine Produkte gefunden
               </h3>
               <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                {searchTerm ? 'Versuchen Sie andere Suchbegriffe.' : 'Erfassen Sie Ihr erstes Produkt, um zu beginnen.'}
+                {searchTerm
+                  ? 'Versuchen Sie andere Suchbegriffe.'
+                  : 'Erfassen Sie Ihr erstes Produkt, um zu beginnen.'}
               </p>
               <div className="mt-6">
                 <Link
@@ -381,11 +421,11 @@ export default function TablePage() {
                 </p>
               </div>
             </div>
-            
+
             <div className="bg-red-50 dark:bg-red-900/20 rounded p-3 mb-4">
               <div className="text-sm text-red-800 dark:text-red-200">
-                <strong>Warnung:</strong> Diese Aktion kann nicht rückgängig gemacht werden. 
-                Das Produkt und alle zugehörigen Daten werden permanent gelöscht.
+                <strong>Warnung:</strong> Diese Aktion kann nicht rückgängig gemacht werden. Das
+                Produkt und alle zugehörigen Daten werden permanent gelöscht.
               </div>
             </div>
 

@@ -11,7 +11,9 @@ import { fieldTemplates } from '../data/fieldTemplates';
 export interface ModernFieldBuilderProps {
   field: FieldConfig;
   value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
+  onChange: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
+  ) => void;
   onUpdateField: (updates: Partial<FieldConfig>) => void;
   onRemoveField: () => void;
   onDuplicateField: () => void;
@@ -36,14 +38,9 @@ export function ModernFieldBuilder({
   const [tempPlaceholder, setTempPlaceholder] = useState(field.placeholder || '');
   const [showOptions, setShowOptions] = useState(false);
 
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id: field.id });
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: field.id,
+  });
 
   const style: React.CSSProperties = {
     transform: CSS.Transform.toString(transform),
@@ -58,9 +55,9 @@ export function ModernFieldBuilder({
 
   const handleLabelSave = () => {
     if (tempLabel.trim()) {
-      onUpdateField({ 
+      onUpdateField({
         label: tempLabel.trim(),
-        name: tempLabel.toLowerCase().replace(/\s+/g, '_')
+        name: tempLabel.toLowerCase().replace(/\s+/g, '_'),
       });
     }
     setIsEditing(false);
@@ -123,13 +120,13 @@ export function ModernFieldBuilder({
       },
       checkbox: {
         label: 'Checkbox',
-        options: [{ value: 'true', label: 'Aktiviert' }]
+        options: [{ value: 'true', label: 'Aktiviert' }],
       },
       radio: {
         label: 'Radio',
         options: [
-            { value: 'option1', label: 'Option 1' },
-            { value: 'option2', label: 'Option 2' },
+          { value: 'option1', label: 'Option 1' },
+          { value: 'option2', label: 'Option 2' },
         ],
       },
       number: {
@@ -202,21 +199,24 @@ export function ModernFieldBuilder({
     range: 'Bereich',
     file: 'Datei',
     url: 'URL',
-    password: 'Passwort'
+    password: 'Passwort',
   };
 
   return (
-    <div 
-      ref={setNodeRef} 
-      style={style} 
+    <div
+      ref={setNodeRef}
+      style={style}
       onClick={onSelect}
       className={`group relative bg-white dark:bg-gray-800 rounded-lg border-2 transition-all duration-200 ${
-      isDragging ? 'border-blue-500 shadow-lg scale-105' : 
-      isSelected ? 'border-blue-500 shadow-md' :
-      error ? 'border-red-300 dark:border-red-600' : 
-      'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
-    } ${isEditing ? 'border-blue-500 shadow-lg' : ''}`}>
-      
+        isDragging
+          ? 'border-blue-500 shadow-lg scale-105'
+          : isSelected
+            ? 'border-blue-500 shadow-md'
+            : error
+              ? 'border-red-300 dark:border-red-600'
+              : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+      } ${isEditing ? 'border-blue-500 shadow-lg' : ''}`}
+    >
       {/* Drag Handle */}
       <div
         className="absolute left-2 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing"
@@ -224,8 +224,18 @@ export function ModernFieldBuilder({
         {...listeners}
       >
         <div className="absolute -inset-1 bg-blue-500/20 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
-        <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+        <svg
+          className="w-5 h-5 text-gray-400"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M4 6h16M4 12h16M4 18h16"
+          />
         </svg>
       </div>
 
@@ -249,8 +259,18 @@ export function ModernFieldBuilder({
                 className="text-lg font-medium text-gray-900 dark:text-white cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
               >
                 {field.label}
-                <svg className="inline w-4 h-4 ml-1 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                <svg
+                  className="inline w-4 h-4 ml-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                  />
                 </svg>
               </div>
             )}
@@ -263,8 +283,18 @@ export function ModernFieldBuilder({
               className="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
             >
               {fieldTypeLabels[field.type]}
-              <svg className="inline w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              <svg
+                className="inline w-4 h-4 ml-1"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 9l-7 7-7-7"
+                />
               </svg>
             </button>
 
@@ -278,7 +308,9 @@ export function ModernFieldBuilder({
                       setShowOptions(false);
                     }}
                     className={`block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
-                      field.type === type ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' : ''
+                      field.type === type
+                        ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
+                        : ''
                     }`}
                   >
                     {label}
@@ -336,8 +368,10 @@ export function ModernFieldBuilder({
               onChange={onChange}
               className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
             >
-              {(field.options || []).map(option => (
-                <option key={option.value} value={option.value}>{option.label}</option>
+              {(field.options || []).map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
               ))}
             </select>
           )}
@@ -360,13 +394,15 @@ export function ModernFieldBuilder({
                 onChange={onChange}
                 className="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
               />
-              <label className="ml-3 text-gray-700 dark:text-gray-300">{field.options?.[0]?.label || 'Label'}</label>
+              <label className="ml-3 text-gray-700 dark:text-gray-300">
+                {field.options?.[0]?.label || 'Label'}
+              </label>
             </div>
           )}
 
           {field.type === 'radio' && (
             <div className="flex flex-col space-y-2">
-              {(field.options || []).map(option => (
+              {(field.options || []).map((option) => (
                 <label key={option.value} className="flex items-center">
                   <input
                     type="radio"
@@ -456,16 +492,18 @@ export function ModernFieldBuilder({
                 onChange={toggleRequired}
                 className="sr-only"
               />
-              <div className={`relative w-11 h-6 rounded-full transition-colors ${
-                field.required ? 'bg-blue-500' : 'bg-gray-300 dark:bg-gray-600'
-              }`}>
-                <div className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition-transform ${
-                  field.required ? 'translate-x-5' : 'translate-x-0'
-                }`} />
+              <div
+                className={`relative w-11 h-6 rounded-full transition-colors ${
+                  field.required ? 'bg-blue-500' : 'bg-gray-300 dark:bg-gray-600'
+                }`}
+              >
+                <div
+                  className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition-transform ${
+                    field.required ? 'translate-x-5' : 'translate-x-0'
+                  }`}
+                />
               </div>
-              <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
-                Pflichtfeld
-              </span>
+              <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Pflichtfeld</span>
             </label>
 
             {/* Placeholder Editor */}
@@ -490,7 +528,12 @@ export function ModernFieldBuilder({
               title="Feld duplizieren"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                />
               </svg>
             </button>
             <button
@@ -499,7 +542,12 @@ export function ModernFieldBuilder({
               title="Feld löschen"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                />
               </svg>
             </button>
           </div>
@@ -507,12 +555,7 @@ export function ModernFieldBuilder({
       </div>
 
       {/* Click outside to close options */}
-      {showOptions && (
-        <div
-          className="fixed inset-0 z-[5]"
-          onClick={() => setShowOptions(false)}
-        />
-      )}
+      {showOptions && <div className="fixed inset-0 z-[5]" onClick={() => setShowOptions(false)} />}
     </div>
   );
 }
@@ -522,9 +565,11 @@ export function ModernFieldBuilder({
 interface ModernFormBuilderProps {
   fields: FieldConfig[];
   formData: Record<string, string>;
-  onFieldChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
+  onFieldChange: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
+  ) => void;
   onUpdateField: (id: string, updates: Partial<FieldConfig>) => void;
-  onRemoveField: (id:string) => void;
+  onRemoveField: (id: string) => void;
   onDuplicateField: (id: string) => void;
   onSelectField: (id: string) => void; // Add this
   selectedFieldId?: string; // Add this
@@ -554,21 +599,21 @@ export function ModernFormBuilder({
   }
 
   return (
-    <SortableContext items={fields.map(f => f.id)} strategy={verticalListSortingStrategy}>
+    <SortableContext items={fields.map((f) => f.id)} strategy={verticalListSortingStrategy}>
       <div className="space-y-6">
-        {fields.map(field => (
-            <ModernFieldBuilder
-              key={field.id}
-              field={field}
-              value={formData[field.name] || ''}
-              onChange={onFieldChange}
-              onUpdateField={(updates) => onUpdateField(field.id, updates)}
-              onRemoveField={() => onRemoveField(field.id)}
-              onDuplicateField={() => onDuplicateField(field.id)}
-              onSelect={() => onSelectField(field.id)} // Add this
-              isSelected={selectedFieldId === field.id} // Add this
-              error={errors[field.name]}
-            />
+        {fields.map((field) => (
+          <ModernFieldBuilder
+            key={field.id}
+            field={field}
+            value={formData[field.name] || ''}
+            onChange={onFieldChange}
+            onUpdateField={(updates) => onUpdateField(field.id, updates)}
+            onRemoveField={() => onRemoveField(field.id)}
+            onDuplicateField={() => onDuplicateField(field.id)}
+            onSelect={() => onSelectField(field.id)} // Add this
+            isSelected={selectedFieldId === field.id} // Add this
+            error={errors[field.name]}
+          />
         ))}
         {/* inline add placeholder */}
         <div className="flex items-center justify-center py-6">

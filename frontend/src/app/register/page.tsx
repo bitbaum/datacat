@@ -31,10 +31,14 @@ const RegisterPage = () => {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md dark:bg-gray-800">
-        <h2 className="text-2xl font-bold text-center text-gray-900 dark:text-white">Konto erstellen</h2>
+        <h2 className="text-2xl font-bold text-center text-gray-900 dark:text-white">
+          Konto erstellen
+        </h2>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div>
-            <label htmlFor="email" className="sr-only">Email address</label>
+            <label htmlFor="email" className="sr-only">
+              Email address
+            </label>
             <input
               id="email"
               name="email"
@@ -48,7 +52,9 @@ const RegisterPage = () => {
             />
           </div>
           <div>
-            <label htmlFor="password" className="sr-only">Password</label>
+            <label htmlFor="password" className="sr-only">
+              Password
+            </label>
             <input
               id="password"
               name="password"
@@ -83,4 +89,4 @@ const RegisterPage = () => {
   );
 };
 
-export default RegisterPage; 
+export default RegisterPage;

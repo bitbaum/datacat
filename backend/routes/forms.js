@@ -33,4 +33,4 @@ router.put('/:id', auth, formController.updateForm);
 // @access  Private
 router.patch('/:id/publish', auth, formController.publishForm);
 
-module.exports = router; 
+module.exports = router;

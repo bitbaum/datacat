@@ -44,5 +44,3 @@ export async function DELETE(req: Request, ctx: any) {
   await prisma.form.delete({ where: { id } });
   return Response.json({ success: true });
 }
-
-

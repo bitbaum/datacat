@@ -12,7 +12,7 @@ export const hrOnboardingSteps: FormStep[] = [
         name: 'firstName',
         label: 'Vorname',
         required: true,
-        group: 'Name'
+        group: 'Name',
       },
       {
         id: 'lastName',
@@ -20,7 +20,7 @@ export const hrOnboardingSteps: FormStep[] = [
         name: 'lastName',
         label: 'Nachname',
         required: true,
-        group: 'Name'
+        group: 'Name',
       },
       {
         id: 'email',
@@ -28,14 +28,14 @@ export const hrOnboardingSteps: FormStep[] = [
         name: 'email',
         label: 'E-Mail-Adresse',
         required: true,
-        group: 'Kontakt'
+        group: 'Kontakt',
       },
       {
         id: 'phone',
         type: 'tel',
         name: 'phone',
         label: 'Telefonnummer',
-        group: 'Kontakt'
+        group: 'Kontakt',
       },
       {
         id: 'birthDate',
@@ -43,7 +43,7 @@ export const hrOnboardingSteps: FormStep[] = [
         name: 'birthDate',
         label: 'Geburtsdatum',
         required: true,
-        group: 'Persönliche Details'
+        group: 'Persönliche Details',
       },
       {
         id: 'address',
@@ -52,9 +52,9 @@ export const hrOnboardingSteps: FormStep[] = [
         label: 'Adresse',
         placeholder: 'Straße, Hausnummer\nPLZ Stadt\nLand',
         rows: 3,
-        group: 'Persönliche Details'
-      }
-    ]
+        group: 'Persönliche Details',
+      },
+    ],
   },
   {
     id: 'employment-details',
@@ -76,9 +76,9 @@ export const hrOnboardingSteps: FormStep[] = [
           { value: 'sales', label: 'Vertrieb' },
           { value: 'hr', label: 'Personalwesen' },
           { value: 'finance', label: 'Finanzen' },
-          { value: 'operations', label: 'Betrieb' }
+          { value: 'operations', label: 'Betrieb' },
         ],
-        group: 'Position'
+        group: 'Position',
       },
       {
         id: 'position',
@@ -86,7 +86,7 @@ export const hrOnboardingSteps: FormStep[] = [
         name: 'position',
         label: 'Position/Titel',
         required: true,
-        group: 'Position'
+        group: 'Position',
       },
       {
         id: 'manager',
@@ -94,7 +94,7 @@ export const hrOnboardingSteps: FormStep[] = [
         name: 'manager',
         label: 'Direkter Vorgesetzter',
         placeholder: 'Name des direkten Vorgesetzten',
-        group: 'Position'
+        group: 'Position',
       },
       {
         id: 'startDate',
@@ -102,7 +102,7 @@ export const hrOnboardingSteps: FormStep[] = [
         name: 'startDate',
         label: 'Startdatum',
         required: true,
-        group: 'Arbeitsvereinbarung'
+        group: 'Arbeitsvereinbarung',
       },
       {
         id: 'employmentType',
@@ -114,9 +114,9 @@ export const hrOnboardingSteps: FormStep[] = [
           { value: 'full-time', label: 'Vollzeit' },
           { value: 'part-time', label: 'Teilzeit' },
           { value: 'contract', label: 'Vertrag' },
-          { value: 'intern', label: 'Praktikant' }
+          { value: 'intern', label: 'Praktikant' },
         ],
-        group: 'Arbeitsvereinbarung'
+        group: 'Arbeitsvereinbarung',
       },
       {
         id: 'workLocation',
@@ -128,11 +128,11 @@ export const hrOnboardingSteps: FormStep[] = [
           { value: '', label: 'Arbeitsort auswählen' },
           { value: 'office', label: 'Büro' },
           { value: 'remote', label: 'Remote' },
-          { value: 'hybrid', label: 'Hybrid' }
+          { value: 'hybrid', label: 'Hybrid' },
         ],
-        group: 'Arbeitsvereinbarung'
-      }
-    ]
+        group: 'Arbeitsvereinbarung',
+      },
+    ],
   },
   {
     id: 'skills-experience',
@@ -146,7 +146,7 @@ export const hrOnboardingSteps: FormStep[] = [
         label: 'Bildungsabschluss',
         placeholder: 'Hochschulabschluss, Ausbildung, Zertifikate...',
         rows: 3,
-        group: 'Qualifikationen'
+        group: 'Qualifikationen',
       },
       {
         id: 'skills',
@@ -156,7 +156,7 @@ export const hrOnboardingSteps: FormStep[] = [
         placeholder: 'Listen Sie relevante Fähigkeiten, Technologien oder Fachbereiche auf...',
         rows: 4,
         required: true,
-        group: 'Qualifikationen'
+        group: 'Qualifikationen',
       },
       {
         id: 'languages',
@@ -165,7 +165,7 @@ export const hrOnboardingSteps: FormStep[] = [
         label: 'Sprachkenntnisse',
         placeholder: 'Deutsch (Muttersprache), Englisch (Fließend), etc.',
         rows: 2,
-        group: 'Qualifikationen'
+        group: 'Qualifikationen',
       },
       {
         id: 'previousExperience',
@@ -174,9 +174,9 @@ export const hrOnboardingSteps: FormStep[] = [
         label: 'Bisherige Berufserfahrung',
         placeholder: 'Relevante Positionen und Erfahrungen...',
         rows: 4,
-        group: 'Erfahrung'
-      }
-    ]
+        group: 'Erfahrung',
+      },
+    ],
   },
   {
     id: 'additional-info',
@@ -190,7 +190,7 @@ export const hrOnboardingSteps: FormStep[] = [
         name: 'emergencyContact',
         label: 'Notfallkontakt',
         placeholder: 'Name und Telefonnummer',
-        group: 'Notfall & Sicherheit'
+        group: 'Notfall & Sicherheit',
       },
       {
         id: 'medicalInfo',
@@ -199,7 +199,7 @@ export const hrOnboardingSteps: FormStep[] = [
         label: 'Medizinische Informationen',
         placeholder: 'Allergien, besondere Bedürfnisse, etc. (optional)',
         rows: 2,
-        group: 'Notfall & Sicherheit'
+        group: 'Notfall & Sicherheit',
       },
       {
         id: 'equipmentNeeds',
@@ -208,7 +208,7 @@ export const hrOnboardingSteps: FormStep[] = [
         label: 'Ausstattungsbedarf',
         placeholder: 'Laptop, Monitor, spezielle Software, etc.',
         rows: 3,
-        group: 'Arbeitsplatz'
+        group: 'Arbeitsplatz',
       },
       {
         id: 'accessRequirements',
@@ -217,7 +217,7 @@ export const hrOnboardingSteps: FormStep[] = [
         label: 'Zugangsberechtigungen',
         placeholder: 'Systeme, Gebäudebereiche, etc.',
         rows: 2,
-        group: 'Arbeitsplatz'
+        group: 'Arbeitsplatz',
       },
       {
         id: 'notes',
@@ -226,19 +226,19 @@ export const hrOnboardingSteps: FormStep[] = [
         label: 'Weitere Notizen',
         placeholder: 'Weitere Informationen oder besondere Anforderungen...',
         rows: 3,
-        group: 'Sonstiges'
-      }
-    ]
-  }
+        group: 'Sonstiges',
+      },
+    ],
+  },
 ];
 
 export const hrOnboardingTemplate: FormTemplate = {
   id: 'hr-onboarding-multistep',
   name: 'HR Mitarbeiter-Onboarding (Mehrstufig)',
   description: 'Umfassendes mehrstufiges Onboarding-Formular für neue Mitarbeiter',
-  fields: hrOnboardingSteps.flatMap(step => step.fields),
+  fields: hrOnboardingSteps.flatMap((step) => step.fields),
   steps: hrOnboardingSteps,
-  isMultiStep: true
+  isMultiStep: true,
 };
 
 export const multiStepTemplates = [hrOnboardingTemplate];

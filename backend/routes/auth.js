@@ -9,12 +9,28 @@ const { authLimiter } = require('../middleware/rateLimit');
 // @route   POST api/auth/register
 // @desc    Register a new user
 // @access  Public
-router.post('/register', authLimiter, validate({ body: z.object({ email: z.string().email(), password: z.string().min(8), name: z.string().optional() }) }), authController.register);
+router.post(
+  '/register',
+  authLimiter,
+  validate({
+    body: z.object({
+      email: z.string().email(),
+      password: z.string().min(8),
+      name: z.string().optional(),
+    }),
+  }),
+  authController.register,
+);
 
 // @route   POST api/auth/login
 // @desc    Authenticate user & get token
 // @access  Public
-router.post('/login', authLimiter, validate({ body: z.object({ email: z.string().email(), password: z.string().min(1) }) }), authController.login);
+router.post(
+  '/login',
+  authLimiter,
+  validate({ body: z.object({ email: z.string().email(), password: z.string().min(1) }) }),
+  authController.login,
+);
 
 // @route   POST api/auth/logout
 // @desc    Logout user (clear cookies)
@@ -41,4 +57,4 @@ router.post('/change-password', auth, authController.changePassword);
 // @access  Private
 router.get('/verify', auth, authController.verifyToken);
 
-module.exports = router; 
+module.exports = router;
