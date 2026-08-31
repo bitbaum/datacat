@@ -5,6 +5,7 @@ import { Dialog, Menu, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import { useAuth } from '../context/AuthContext';
 import { useBrandName } from '../../hooks/useBranding';
@@ -106,6 +107,15 @@ const navigation = [
 
 export function TopNavigation({ currentView, onViewChange = () => {} }: TopNavigationProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  // GlobalNavigation computes `currentView` from the path and passes it down,
+  // but nothing here ever read it — the whole "highlight the current page"
+  // feature was wired end to end and then dropped on the floor, so neither a
+  // sighted user nor a screen reader could tell which top-level page they were
+  // on. `currentView`'s own mapping (mapPathToView) is coarser than the nav
+  // items — 'Forms' maps to the view key 'saved-forms', 'Blog' isn't mapped at
+  // all — so comparing against the live path directly, the way every other nav
+  // in the fleet does, is more robust than threading that mapping through.
+  const pathname = usePathname();
   const { token, user, logout, loading } = useAuth(); // Use the auth context
   const displayName = (user?.name && user.name.trim()) || user?.email || '';
   const displayInitial = displayName ? displayName.charAt(0).toUpperCase() : 'U';
@@ -468,16 +478,24 @@ export function TopNavigation({ currentView, onViewChange = () => {} }: TopNavig
           <div className="mt-6 flow-root">
             <div className="-my-6 divide-y divide-gray-500/10">
               <div className="space-y-2 py-6">
-                {navigation.map((item) => (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 dark:text-white dark:hover:bg-gray-800"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    {item.name}
-                  </Link>
-                ))}
+                {navigation.map((item) => {
+                  const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
+                  return (
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      aria-current={isActive ? 'page' : undefined}
+                      className={`-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 hover:bg-gray-50 dark:hover:bg-gray-800 ${
+                        isActive
+                          ? 'text-blue-600 dark:text-blue-400'
+                          : 'text-gray-900 dark:text-white'
+                      }`}
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      {item.name}
+                    </Link>
+                  );
+                })}
               </div>
               <div className="py-6">
                 {!loading && (
