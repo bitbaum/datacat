@@ -7,6 +7,7 @@ import { notFound } from 'next/navigation';
 import { MDXContentClient } from './MDXContentClient';
 import Image from 'next/image';
 import Link from 'next/link';
+import { ROUTES } from '@/lib/routes';
 
 export const generateStaticParams = async () => allPosts.map((p) => ({ slug: p.slug }));
 
@@ -45,7 +46,7 @@ export default async function BlogPostPage({ params }: PageProps) {
       <div className="mt-16 border-t pt-10 text-center">
         <h2 className="text-2xl font-bold mb-4">Teste den Universal Form Builder selbst</h2>
         <Link
-          href="/builder"
+          href={ROUTES.builder}
           className="inline-block rounded-lg bg-indigo-600 px-6 py-3 text-white font-semibold hover:bg-indigo-700"
         >
           Zum Builder →

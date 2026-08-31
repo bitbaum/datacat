@@ -3,6 +3,7 @@
 import { DocumentChartBarIcon, PlusIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { WorkflowProduct } from './ErfassungWorkflow';
+import { ROUTES } from '@/lib/routes';
 
 interface TableOverviewStepProps {
   product: WorkflowProduct;
@@ -125,7 +126,7 @@ export function TableOverviewStep({ product, onBackToWorkflow }: TableOverviewSt
       {/* Action Buttons */}
       <div className="flex flex-col sm:flex-row gap-4 justify-center">
         <Link
-          href="/erfassung/table"
+          href={ROUTES.erfassungTable}
           className="inline-flex items-center justify-center px-6 py-3 bg-indigo-600 text-white rounded-md font-medium hover:bg-indigo-700 transition-colors"
         >
           <DocumentChartBarIcon className="h-5 w-5 mr-2" />
@@ -141,7 +142,7 @@ export function TableOverviewStep({ product, onBackToWorkflow }: TableOverviewSt
         </button>
 
         <Link
-          href="/erfassung"
+          href={ROUTES.erfassung}
           className="inline-flex items-center justify-center px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 rounded-md font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
         >
           Zurück zur Übersicht

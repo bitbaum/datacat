@@ -8,6 +8,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useAuth } from '../context/AuthContext';
 import { useBrandName } from '../../hooks/useBranding';
+import { ROUTES } from '@/lib/routes';
 
 // Define types for navigation items
 type NavItem = {
@@ -96,11 +97,11 @@ interface TopNavigationProps {
 }
 
 const navigation = [
-  { name: 'Builder', href: '/builder' },
-  { name: 'Forms', href: '/forms' },
-  { name: 'Templates', href: '/templates' },
-  { name: 'About', href: '/about' },
-  { name: 'Blog', href: '/blog' },
+  { name: 'Builder', href: ROUTES.builder },
+  { name: 'Forms', href: ROUTES.forms },
+  { name: 'Templates', href: ROUTES.templates },
+  { name: 'About', href: ROUTES.about },
+  { name: 'Blog', href: ROUTES.blog },
 ];
 
 export function TopNavigation({ currentView, onViewChange = () => {} }: TopNavigationProps) {
@@ -117,13 +118,13 @@ export function TopNavigation({ currentView, onViewChange = () => {} }: TopNavig
   const primaryLinks: NavItem[] = [
     {
       name: 'Form-Tool',
-      href: '/builder',
+      href: ROUTES.builder,
       description: 'Builder, Bibliothek & Gespeicherte unter einem Dach.',
       icon: DocumentChartBarIcon,
     },
     {
       name: 'Foto-Inventar',
-      href: '/erfassung',
+      href: ROUTES.erfassung,
       description: 'Inventar-Erfassung per Fotoscan mit KI.',
       icon: CameraIcon,
     },
@@ -133,19 +134,19 @@ export function TopNavigation({ currentView, onViewChange = () => {} }: TopNavig
   const formSubmenuItems: NavItem[] = [
     {
       name: 'Form Builder',
-      href: '/builder',
+      href: ROUTES.builder,
       description: 'Erstelle neue Formulare mit unserem Builder.',
       icon: DocumentChartBarIcon,
     },
     {
       name: 'Template Library',
-      href: '/templates',
+      href: ROUTES.templates,
       description: 'Durchsuche vorgefertigte Form-Templates.',
       icon: FolderIcon,
     },
     {
       name: 'Saved Forms',
-      href: '/forms',
+      href: ROUTES.forms,
       description: 'Verwalte deine gespeicherten Formulare.',
       icon: DocumentDuplicateIcon,
     },
@@ -259,9 +260,9 @@ export function TopNavigation({ currentView, onViewChange = () => {} }: TopNavig
                                           key={subItem.name}
                                           href={subItem.href}
                                           onClick={(e) => {
-                                            if (subItem.href === '/forms' && !token) {
+                                            if (subItem.href === ROUTES.forms && !token) {
                                               e.preventDefault();
-                                              window.location.href = '/login';
+                                              window.location.href = ROUTES.login;
                                               return;
                                             }
                                             e.preventDefault();
@@ -324,7 +325,7 @@ export function TopNavigation({ currentView, onViewChange = () => {} }: TopNavig
                     <div className="px-5 py-5 bg-gray-50 dark:bg-gray-800 space-y-6 sm:flex sm:space-y-0 sm:space-x-10 sm:px-8">
                       <div className="flow-root">
                         <Link
-                          href="/about"
+                          href={ROUTES.about}
                           onClick={() => {
                             onViewChange('about');
                             setMegaMenuOpen(false);
@@ -356,21 +357,21 @@ export function TopNavigation({ currentView, onViewChange = () => {} }: TopNavig
             </div>
 
             <Link
-              href="/about"
+              href={ROUTES.about}
               onClick={() => onViewChange('about')}
               className="text-base font-medium text-gray-500 hover:text-gray-900"
             >
               Über uns
             </Link>
             <Link
-              href="/about/faq"
+              href={ROUTES.aboutFaq}
               onClick={() => onViewChange('about')}
               className="text-base font-medium text-gray-500 hover:text-gray-900"
             >
               FAQ
             </Link>
             <Link
-              href="/blog"
+              href={ROUTES.blog}
               onClick={() => onViewChange('about')}
               className="text-base font-medium text-gray-500 hover:text-gray-900"
             >
@@ -402,7 +403,7 @@ export function TopNavigation({ currentView, onViewChange = () => {} }: TopNavig
                         <Menu.Item>
                           {({ active }) => (
                             <Link
-                              href="/profile"
+                              href={ROUTES.profile}
                               className={`${active ? 'bg-gray-100 dark:bg-gray-700' : ''} group flex w-full items-center rounded-md px-2 py-2 text-sm text-gray-900 dark:text-gray-100`}
                             >
                               Profil
@@ -426,13 +427,13 @@ export function TopNavigation({ currentView, onViewChange = () => {} }: TopNavig
               ) : (
                 <>
                   <Link
-                    href="/login"
+                    href={ROUTES.login}
                     className="text-base font-medium text-gray-500 hover:text-gray-900"
                   >
                     Anmelden
                   </Link>
                   <Link
-                    href="/register"
+                    href={ROUTES.register}
                     className="inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700"
                   >
                     Registrieren
@@ -496,14 +497,17 @@ export function TopNavigation({ currentView, onViewChange = () => {} }: TopNavig
                     ) : (
                       <div>
                         <Link
-                          href="/register"
+                          href={ROUTES.register}
                           className="w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700"
                         >
                           Registrieren
                         </Link>
                         <p className="mt-6 text-center text-base font-medium text-gray-500">
                           Bestehender Kunde?{' '}
-                          <Link href="/login" className="text-indigo-600 hover:text-indigo-500">
+                          <Link
+                            href={ROUTES.login}
+                            className="text-indigo-600 hover:text-indigo-500"
+                          >
                             Anmelden
                           </Link>
                         </p>

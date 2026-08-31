@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '../context/AuthContext';
 import { http, ApiSuccess } from '../services/http';
+import { ROUTES } from '@/lib/routes';
 
 const RegisterPage = () => {
   const [email, setEmail] = useState('');
@@ -80,7 +81,7 @@ const RegisterPage = () => {
         </form>
         <p className="text-sm text-center text-gray-600 dark:text-gray-400">
           Bereits registriert?{' '}
-          <Link href="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
+          <Link href={ROUTES.login} className="font-medium text-indigo-600 hover:text-indigo-500">
             Anmelden
           </Link>
         </p>

@@ -2,6 +2,7 @@
 
 import { CameraIcon, DocumentChartBarIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
+import { ROUTES } from '@/lib/routes';
 
 export default function ErfassungPage() {
   return (
@@ -22,14 +23,14 @@ export default function ErfassungPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
-              href="/erfassung/new"
+              href={ROUTES.erfassungNew}
               className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition-colors"
             >
               <CameraIcon className="h-5 w-5 mr-2" />
               Produkt scannen
             </Link>
             <Link
-              href="/erfassung/table"
+              href={ROUTES.erfassungTable}
               className="inline-flex items-center px-6 py-3 border border-gray-300 dark:border-gray-600 text-base font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
             >
               <DocumentChartBarIcon className="h-5 w-5 mr-2" />
@@ -216,7 +217,7 @@ export default function ErfassungPage() {
             KI-gestützten Katalogisierung.
           </p>
           <Link
-            href="/erfassung/new"
+            href={ROUTES.erfassungNew}
             className="inline-flex items-center px-8 py-3 border border-transparent text-lg font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition-colors"
           >
             <CameraIcon className="h-6 w-6 mr-3" />
