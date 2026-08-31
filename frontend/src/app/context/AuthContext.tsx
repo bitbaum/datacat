@@ -3,6 +3,7 @@
 import React, { createContext, useContext, ReactNode } from 'react';
 import { signOut, signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import { ROUTES } from '@/lib/routes';
 
 interface User {
   id: string;
@@ -28,7 +29,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const loginWithCredentials = async (email: string, password: string) => {
     const res = await signIn('credentials', { redirect: false, email, password });
     if (res?.ok) {
-      router.push('/builder');
+      router.push(ROUTES.builder);
       return true;
     }
     return false;
@@ -36,7 +37,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const logout = async () => {
     await signOut({ redirect: false });
-    router.push('/login');
+    router.push(ROUTES.login);
   };
 
   const value: AuthContextType = {

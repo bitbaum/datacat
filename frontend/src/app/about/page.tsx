@@ -15,6 +15,7 @@ import {
   CheckCircleIcon,
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
+import { ROUTES } from '@/lib/routes';
 
 const AboutPage = () => {
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
@@ -475,14 +476,14 @@ const AboutPage = () => {
 
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
             <Link
-              href="/builder"
+              href={ROUTES.builder}
               className="inline-flex items-center justify-center rounded-xl bg-white px-8 py-4 text-lg font-semibold text-blue-600 shadow-lg hover:bg-gray-50 transition-all hover:scale-105"
             >
               <RocketLaunchIcon className="mr-3 h-6 w-6" />
               Formular-Builder testen
             </Link>
             <Link
-              href="/erfassung"
+              href={ROUTES.erfassung}
               className="inline-flex items-center justify-center rounded-xl bg-transparent border-2 border-white px-8 py-4 text-lg font-semibold text-white hover:bg-white hover:text-blue-600 transition-all hover:scale-105"
             >
               <CameraIcon className="mr-3 h-6 w-6" />

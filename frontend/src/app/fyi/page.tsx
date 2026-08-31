@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { ROUTES } from '@/lib/routes';
 
 export default function FYIPage() {
   return (
@@ -60,13 +61,13 @@ export default function FYIPage() {
           <ul className="list-disc pl-6 text-gray-700 dark:text-gray-300 space-y-1">
             <li>
               Build a form in the{' '}
-              <Link href="/builder" className="text-blue-600 dark:text-blue-400 underline">
+              <Link href={ROUTES.builder} className="text-blue-600 dark:text-blue-400 underline">
                 Form Builder
               </Link>
             </li>
             <li>
               Learn how AI defines schemas in{' '}
-              <Link href="/about" className="text-blue-600 dark:text-blue-400 underline">
+              <Link href={ROUTES.about} className="text-blue-600 dark:text-blue-400 underline">
                 About
               </Link>
             </li>

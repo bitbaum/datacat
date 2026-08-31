@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '../context/AuthContext';
 import { http, ApiSuccess } from '../services/http';
+import { ROUTES } from '@/lib/routes';
 
 interface LoginFormProps {
   onSuccess?: () => void; // Optional callback for successful login
@@ -90,7 +91,10 @@ export function LoginForm({ onSuccess, showRegisterLink = true, className = '' }
       {showRegisterLink && (
         <p className="text-sm text-center text-gray-600 dark:text-gray-400">
           Noch kein Konto?{' '}
-          <Link href="/register" className="font-medium text-indigo-600 hover:text-indigo-500">
+          <Link
+            href={ROUTES.register}
+            className="font-medium text-indigo-600 hover:text-indigo-500"
+          >
             Registrieren
           </Link>
         </p>

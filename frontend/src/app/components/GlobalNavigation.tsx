@@ -6,11 +6,12 @@
 
 import { usePathname, useRouter } from 'next/navigation';
 import { TopNavigation } from './TopNavigation';
+import { ROUTES } from '@/lib/routes';
 
 function mapPathToView(path: string): 'builder' | 'templates' | 'saved-forms' | 'about' {
-  if (path.startsWith('/templates')) return 'templates';
-  if (path.startsWith('/forms')) return 'saved-forms';
-  if (path.startsWith('/about')) return 'about';
+  if (path.startsWith(ROUTES.templates)) return 'templates';
+  if (path.startsWith(ROUTES.forms)) return 'saved-forms';
+  if (path.startsWith(ROUTES.about)) return 'about';
   return 'builder';
 }
 
@@ -22,7 +23,7 @@ export default function GlobalNavigation() {
     <TopNavigation
       currentView={currentView}
       onViewChange={(view) => {
-        const target = view === 'saved-forms' ? '/forms' : `/${view}`;
+        const target = view === 'saved-forms' ? ROUTES.forms : `/${view}`;
         router.push(target);
       }}
     />

@@ -10,6 +10,7 @@ import {
   CloudArrowUpIcon,
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
+import { ROUTES } from '@/lib/routes';
 
 export default function Home() {
   return (
@@ -32,14 +33,14 @@ export default function Home() {
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
               <Link
-                href="/builder"
+                href={ROUTES.builder}
                 className="inline-flex items-center justify-center rounded-xl bg-indigo-600 px-8 py-4 text-lg font-semibold text-white shadow-lg hover:bg-indigo-500 transition-colors"
               >
                 <DocumentTextIcon className="mr-2 h-5 w-5" />
                 Formular-Erfassung
               </Link>
               <Link
-                href="/erfassung"
+                href={ROUTES.erfassung}
                 className="inline-flex items-center justify-center rounded-xl bg-purple-600 px-8 py-4 text-lg font-semibold text-white shadow-lg hover:bg-purple-500 transition-colors"
               >
                 <CameraIcon className="mr-2 h-5 w-5" />
@@ -133,7 +134,7 @@ export default function Home() {
               </div>
               <div className="mt-6">
                 <Link
-                  href="/builder"
+                  href={ROUTES.builder}
                   className="inline-flex items-center text-indigo-600 dark:text-indigo-400 font-medium hover:text-indigo-500 transition-colors"
                 >
                   Formular erstellen →
@@ -169,7 +170,7 @@ export default function Home() {
               </div>
               <div className="mt-6">
                 <Link
-                  href="/erfassung"
+                  href={ROUTES.erfassung}
                   className="inline-flex items-center text-purple-600 dark:text-purple-400 font-medium hover:text-purple-500 transition-colors"
                 >
                   Produkt-Scan starten →
@@ -205,14 +206,14 @@ export default function Home() {
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
-              href="/builder"
+              href={ROUTES.builder}
               className="inline-flex items-center justify-center rounded-xl bg-white px-8 py-4 text-lg font-semibold text-indigo-600 shadow-lg hover:bg-gray-50 transition-colors"
             >
               <DocumentTextIcon className="mr-2 h-5 w-5" />
               Formular-Erfassung starten
             </Link>
             <Link
-              href="/erfassung"
+              href={ROUTES.erfassung}
               className="inline-flex items-center justify-center rounded-xl bg-white/10 border border-white/20 px-8 py-4 text-lg font-semibold text-white shadow-lg hover:bg-white/20 transition-colors"
             >
               <CameraIcon className="mr-2 h-5 w-5" />

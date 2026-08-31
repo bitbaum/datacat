@@ -11,6 +11,7 @@ import {
   EllipsisVerticalIcon,
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
+import { ROUTES } from '@/lib/routes';
 
 // Demo data for the table
 const demoProducts = [
@@ -150,7 +151,7 @@ export default function TablePage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <Link
-                href="/erfassung"
+                href={ROUTES.erfassung}
                 className="flex items-center text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 mr-4"
               >
                 <ArrowLeftIcon className="h-5 w-5 mr-2" />
@@ -166,7 +167,7 @@ export default function TablePage() {
               </div>
             </div>
             <Link
-              href="/erfassung/new"
+              href={ROUTES.erfassungNew}
               className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition-colors"
             >
               <PlusIcon className="h-4 w-4 mr-2" />
@@ -372,7 +373,7 @@ export default function TablePage() {
               </p>
               <div className="mt-6">
                 <Link
-                  href="/erfassung/new"
+                  href={ROUTES.erfassungNew}
                   className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition-colors"
                 >
                   <PlusIcon className="h-4 w-4 mr-2" />

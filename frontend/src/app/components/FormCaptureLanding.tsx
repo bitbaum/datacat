@@ -12,6 +12,7 @@ import {
   ServerIcon,
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
+import { ROUTES } from '@/lib/routes';
 
 interface FormCaptureLandingProps {
   onStartBuilding: () => void;
@@ -410,7 +411,7 @@ export function FormCaptureLanding({ onStartBuilding }: FormCaptureLandingProps)
               Formular erstellen
             </button>
             <Link
-              href="/erfassung"
+              href={ROUTES.erfassung}
               className="inline-flex items-center justify-center rounded-xl bg-white/10 border border-white/20 px-8 py-4 text-lg font-semibold text-white shadow-lg hover:bg-white/20 transition-colors"
             >
               Produkt-Erfassung erkunden →
