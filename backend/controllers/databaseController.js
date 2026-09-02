@@ -151,7 +151,11 @@ exports.analyzeDatabase = async (req, res) => {
   try {
     const { databaseId } = req.params;
     const userId = req.user.id;
-    const { query, analysisType, model } = req.body;
+    // `model` used to let callers pin gpt-4 vs gpt-3.5 — both the same
+    // vendor, so never a real fallback. Which model actually answers is now
+    // decided by the free-tier chain (backend/lib/aiChain.js); any `model`
+    // sent by an old client is accepted but ignored.
+    const { query, analysisType } = req.body;
 
     if (!query) {
       return res.status(400).json({
@@ -163,7 +167,6 @@ exports.analyzeDatabase = async (req, res) => {
     const analysisRequest = {
       query,
       analysisType: analysisType || 'CUSTOM',
-      model: model || 'gpt-4',
     };
 
     const result = await aiAnalysisService.analyzeDatabase(databaseId, userId, analysisRequest);

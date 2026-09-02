@@ -1,22 +1,27 @@
 const prisma = require('../lib/prisma');
-const OpenAI = require('openai');
+const { chatText, isChainConfigured } = require('../lib/aiChain');
 
 /**
  * AI Analysis Service for intelligent database querying and insights
  * Integrates with LLM models to analyze form submission data
+ *
+ * Text generation runs through the shared free-tier fallback chain
+ * (backend/lib/aiChain.js — Groq -> OpenRouter via ai-kit) instead of a
+ * single hardcoded OpenAI client, so a single vendor's outage/billing hiccup
+ * no longer takes every database analysis feature down with it.
  */
 class AIAnalysisService {
-  constructor() {
-    this.openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-    });
-  }
-
   /**
    * Analyze form database with natural language queries
    */
   async analyzeDatabase(formId, userId, analysisRequest) {
-    const { query, analysisType = 'CUSTOM', model = 'gpt-4' } = analysisRequest;
+    // `model` is accepted for backward compatibility with existing callers but
+    // no longer selects a specific vendor model — the free-tier fallback chain
+    // (backend/lib/aiChain.js) decides which vendor/model actually answers,
+    // since pinning one model here is exactly the single point of failure
+    // this change removes. The record's `model` field is filled in with the
+    // model that actually answered once the call completes.
+    const { query, analysisType = 'CUSTOM' } = analysisRequest;
 
     // Get form and submissions data
     const formData = await this.getFormDataForAnalysis(formId, userId);
@@ -31,7 +36,7 @@ class AIAnalysisService {
         formId,
         analysisType,
         prompt: query,
-        model,
+        model: 'ai-chain',
         userId,
         status: 'PROCESSING',
       },
@@ -48,7 +53,7 @@ class AIAnalysisService {
       const userPrompt = this.generateUserPrompt(query, dataContext);
 
       // Call AI model
-      const aiResponse = await this.callAIModel(model, systemPrompt, userPrompt);
+      const aiResponse = await this.callAIModel(systemPrompt, userPrompt);
 
       const processingTime = Date.now() - startTime;
 
@@ -57,6 +62,7 @@ class AIAnalysisService {
         where: { id: analysis.id },
         data: {
           result: aiResponse,
+          model: aiResponse.model,
           processingTime,
           status: 'COMPLETED',
         },
@@ -100,7 +106,6 @@ class AIAnalysisService {
     const insights = await this.analyzeDatabase(formId, userId, {
       query: this.getInsightPrompt(insightType, formData),
       analysisType: 'SUMMARY',
-      model: 'gpt-4',
     });
 
     return insights;
@@ -144,7 +149,6 @@ class AIAnalysisService {
         const analysis = await this.analyzeDatabase(form.id, userId, {
           query: `Search and analyze this database for: "${searchQuery}". Provide relevant matches and insights.`,
           analysisType: 'EXTRACTION',
-          model: 'gpt-4',
         });
 
         searchResults.databases.push({
@@ -191,7 +195,6 @@ class AIAnalysisService {
       4. Data quality issues
       5. Recommendations for optimization`,
       analysisType: 'SUMMARY',
-      model: 'gpt-4',
     });
 
     return {
@@ -339,20 +342,31 @@ ${JSON.stringify(dataContext.sampleRecords, null, 2)}
 Please analyze this data and respond to the query above.`;
   }
 
-  async callAIModel(model, systemPrompt, userPrompt) {
+  /**
+   * Run one completion through the shared free-tier fallback chain.
+   *
+   * The `model` selector this used to take is gone — it only ever picked
+   * between two hardcoded OpenAI models, both from the same vendor, so it was
+   * never a real fallback. Which vendor/model actually answers is now decided
+   * by backend/lib/aiChain.js.
+   */
+  async callAIModel(systemPrompt, userPrompt) {
+    if (!(await isChainConfigured())) {
+      throw new Error(
+        'No AI vendor configured (set GROQ_API_KEY and/or OPENROUTER_API_KEY) — AI analysis is unavailable',
+      );
+    }
+
     try {
-      const response = await this.openai.chat.completions.create({
-        model: model === 'gpt-4' ? 'gpt-4-turbo-preview' : 'gpt-3.5-turbo',
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: userPrompt },
-        ],
+      const response = await chatText({
+        system: systemPrompt,
+        prompt: userPrompt,
         temperature: 0.3,
-        max_tokens: 2000,
+        maxTokens: 2000,
       });
 
       return {
-        content: response.choices[0].message.content,
+        content: response.content,
         usage: response.usage,
         model: response.model,
       };
@@ -420,7 +434,6 @@ Please analyze this data and respond to the query above.`;
 
     try {
       const response = await this.callAIModel(
-        'gpt-4',
         'You are analyzing insights across multiple databases. Identify patterns, correlations, and insights that span across the different databases.',
         `Original Query: ${query}
 

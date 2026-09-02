@@ -141,7 +141,10 @@ NEXT_PUBLIC_BRAND_NAME=DataCat
 ```bash
 DATABASE_URL=postgresql://...
 REDIS_URL=redis://localhost:6379
-OPENAI_API_KEY=...
+GROQ_API_KEY=...       # text analysis chain (backend/lib/aiChain.js), free tier
+OPENROUTER_API_KEY=... # text analysis chain fallback, free tier
+OPENAI_API_KEY=...     # vision/image ingestion + Whisper audio only (no free
+                        # multi-vendor equivalent — see backend/lib/aiChain.js)
 ```
 
 ---

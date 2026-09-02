@@ -1,32 +1,14 @@
-const OpenAI = require('openai');
 const prisma = require('../lib/prisma');
+const { chatJSON, isChainConfigured } = require('../lib/aiChain');
 
 class LLMAnalysisService {
-  constructor() {
-    // Don't initialize OpenAI immediately - lazy load it
-    this.openai = null;
-  }
-
-  // Lazy initialization of OpenAI client
-  getOpenAIClient() {
-    if (!this.openai) {
-      if (!process.env.OPENAI_API_KEY) {
-        throw new Error(
-          'OPENAI_API_KEY environment variable is required for LLM analysis. Add it to your .env file or disable LLM features.',
-        );
-      }
-      this.openai = new OpenAI({
-        apiKey: process.env.OPENAI_API_KEY,
-      });
-    }
-    return this.openai;
-  }
-
   // Main analysis orchestrator
   async analyzeSubmission(submissionId, analysisTypes = ['SENTIMENT', 'CLASSIFICATION']) {
-    // Check if LLM is available before proceeding
-    if (!process.env.OPENAI_API_KEY) {
-      console.warn('LLM analysis skipped: OPENAI_API_KEY not configured');
+    // Check if any AI vendor is configured before proceeding (Groq / OpenRouter
+    // free tier via ai-kit — see backend/lib/aiChain.js for why this replaced
+    // a hard OPENAI_API_KEY-only gate).
+    if (!(await isChainConfigured())) {
+      console.warn('LLM analysis skipped: no AI vendor configured (GROQ_API_KEY / OPENROUTER_API_KEY)');
       return [];
     }
 
@@ -89,7 +71,7 @@ class LLMAnalysisService {
             result: {},
             status: 'FAILED',
             error: error.message,
-            model: 'gpt-4',
+            model: 'ai-chain',
             userId: submission.form.userId,
           },
         });
@@ -119,7 +101,6 @@ class LLMAnalysisService {
 
   // Sentiment analysis
   async analyzeSentiment(submissionData, form) {
-    const openai = this.getOpenAIClient();
     const textFields = this.extractTextFields(submissionData, form.schema);
     const combinedText = textFields.join(' ');
 
@@ -128,42 +109,29 @@ class LLMAnalysisService {
 Form: ${form.title}
 Content: ${combinedText}
 
-Provide a JSON response with:
+Respond with ONLY a JSON object (no other text) with:
 - sentiment: "positive", "negative", or "neutral"
 - confidence: number between 0 and 1
 - emotions: array of detected emotions
 - reasoning: brief explanation of the analysis`;
 
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4',
-      messages: [
-        {
-          role: 'system',
-          content:
-            'You are an expert sentiment analysis AI. Provide accurate sentiment analysis in the requested JSON format.',
-        },
-        {
-          role: 'user',
-          content: prompt,
-        },
-      ],
-      response_format: { type: 'json_object' },
+    const { json: analysis, model } = await chatJSON({
+      system:
+        'You are an expert sentiment analysis AI. Provide accurate sentiment analysis in the requested JSON format.',
+      prompt,
       temperature: 0.3,
     });
-
-    const analysis = JSON.parse(completion.choices[0].message.content);
 
     return {
       prompt,
       analysis,
       confidence: analysis.confidence,
-      model: 'gpt-4',
+      model,
     };
   }
 
   // Classification analysis
   async classifySubmission(submissionData, form) {
-    const openai = this.getOpenAIClient();
     const textFields = this.extractTextFields(submissionData, form.schema);
     const combinedText = textFields.join(' ');
 
@@ -176,43 +144,29 @@ Form: ${form.title}
 Content: ${combinedText}
 Possible Categories: ${categories.join(', ')}
 
-Provide a JSON response with:
+Respond with ONLY a JSON object (no other text) with:
 - primaryCategory: the main category
 - secondaryCategories: array of additional relevant categories
 - confidence: number between 0 and 1
 - tags: array of relevant keywords/tags
 - reasoning: brief explanation`;
 
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4',
-      messages: [
-        {
-          role: 'system',
-          content:
-            'You are an expert content classifier. Analyze and categorize content accurately.',
-        },
-        {
-          role: 'user',
-          content: prompt,
-        },
-      ],
-      response_format: { type: 'json_object' },
+    const { json: analysis, model } = await chatJSON({
+      system: 'You are an expert content classifier. Analyze and categorize content accurately.',
+      prompt,
       temperature: 0.2,
     });
-
-    const analysis = JSON.parse(completion.choices[0].message.content);
 
     return {
       prompt,
       analysis,
       confidence: analysis.confidence,
-      model: 'gpt-4',
+      model,
     };
   }
 
   // Key information extraction
   async extractKeyInfo(submissionData, form) {
-    const openai = this.getOpenAIClient();
     const allData = JSON.stringify(submissionData, null, 2);
 
     const prompt = `Extract key information and insights from this form submission.
@@ -220,43 +174,30 @@ Provide a JSON response with:
 Form: ${form.title}
 Data: ${allData}
 
-Provide a JSON response with:
+Respond with ONLY a JSON object (no other text) with:
 - keyPoints: array of the most important information points
 - entities: object with extracted entities (names, dates, locations, etc.)
 - priorities: array of items that seem to need attention
 - actionItems: suggested actions based on the submission
 - confidence: number between 0 and 1`;
 
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4',
-      messages: [
-        {
-          role: 'system',
-          content:
-            'You are an expert at extracting key information from structured data. Focus on actionable insights.',
-        },
-        {
-          role: 'user',
-          content: prompt,
-        },
-      ],
-      response_format: { type: 'json_object' },
+    const { json: analysis, model } = await chatJSON({
+      system:
+        'You are an expert at extracting key information from structured data. Focus on actionable insights.',
+      prompt,
       temperature: 0.1,
     });
-
-    const analysis = JSON.parse(completion.choices[0].message.content);
 
     return {
       prompt,
       analysis,
       confidence: analysis.confidence,
-      model: 'gpt-4',
+      model,
     };
   }
 
   // Summary generation
   async summarizeSubmission(submissionData, form) {
-    const openai = this.getOpenAIClient();
     const allData = JSON.stringify(submissionData, null, 2);
 
     const prompt = `Create a comprehensive summary of this form submission.
@@ -264,42 +205,29 @@ Provide a JSON response with:
 Form: ${form.title}
 Data: ${allData}
 
-Provide a JSON response with:
+Respond with ONLY a JSON object (no other text) with:
 - executiveSummary: brief 2-3 sentence overview
 - detailedSummary: comprehensive paragraph summary
 - highlights: array of key highlights
 - concerns: array of any potential issues or concerns
 - recommendations: array of suggested next steps`;
 
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4',
-      messages: [
-        {
-          role: 'system',
-          content: 'You are an expert at creating clear, actionable summaries of form submissions.',
-        },
-        {
-          role: 'user',
-          content: prompt,
-        },
-      ],
-      response_format: { type: 'json_object' },
+    const { json: analysis, model } = await chatJSON({
+      system: 'You are an expert at creating clear, actionable summaries of form submissions.',
+      prompt,
       temperature: 0.4,
     });
-
-    const analysis = JSON.parse(completion.choices[0].message.content);
 
     return {
       prompt,
       analysis,
       confidence: 0.9, // Summaries are generally reliable
-      model: 'gpt-4',
+      model,
     };
   }
 
   // Custom analysis based on form settings
   async customAnalysis(submissionData, form) {
-    const openai = this.getOpenAIClient();
     const customPrompt = form.settings?.customAnalysisPrompt;
     if (!customPrompt) {
       throw new Error('Custom analysis prompt not configured for this form');
@@ -311,35 +239,23 @@ Provide a JSON response with:
 
 Form Data: ${allData}
 
-Please provide your analysis in JSON format with at least these fields:
+Respond with ONLY a JSON object (no other text) with at least these fields:
 - result: your main analysis result
 - confidence: number between 0 and 1
 - reasoning: explanation of your analysis`;
 
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4',
-      messages: [
-        {
-          role: 'system',
-          content:
-            'You are an expert analyst. Follow the custom prompt instructions carefully and provide results in JSON format.',
-        },
-        {
-          role: 'user',
-          content: prompt,
-        },
-      ],
-      response_format: { type: 'json_object' },
+    const { json: analysis, model } = await chatJSON({
+      system:
+        'You are an expert analyst. Follow the custom prompt instructions carefully and provide results in JSON format.',
+      prompt,
       temperature: 0.3,
     });
-
-    const analysis = JSON.parse(completion.choices[0].message.content);
 
     return {
       prompt,
       analysis,
       confidence: analysis.confidence || 0.8,
-      model: 'gpt-4',
+      model,
     };
   }
 
