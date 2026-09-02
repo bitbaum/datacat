@@ -65,6 +65,19 @@ npm run docker:dev
 npm run verify
 ```
 
+**Start every session with `npm run preflight`.** It is read-only and takes a
+second; `npm run preflight -- --fix` repairs what it finds. It checks the three
+things a bare `git status` reports as "clean" while they are silently broken:
+
+| Check | Why it exists |
+|-------|---------------|
+| `main` behind/ahead of origin (after an explicit `git fetch`) | Merges land as squashed PRs on GitHub, so the local checkout drifts without ever looking dirty. Repaired by hand three times: 2026-08-29 (local held a commit origin never got, breaking `git pull --ff-only` for every entering run), 2026-08-31 (2 behind), 2026-09-02 (3 behind). |
+| Merged worktree branches still checked out | Agent worktrees under `.claude/worktrees/` survive their PR being squash-merged. `git branch --merged` misses them — the squash is a different commit — so the check compares patch ids with `git cherry`. |
+| `node_modules` older than `package-lock.json` | The failure that reads most like a repo bug and never is. On 2026-09-02 a stale `frontend/node_modules` predated the prettier devDependency from #233, so `npm run verify` died on `prettier: not found` at its very first gate. |
+
+If `verify` fails in a way that has nothing to do with your change, run
+`preflight` before debugging the code.
+
 **Before declaring any change done, run `npm run verify`.** It runs the same
 hermetic gates as CI (`.github/workflows/ci.yml`: frontend lint + typecheck +
 vitest unit suite + build), so green locally means green on `main`.
