@@ -15,6 +15,7 @@
     "lint": "cd frontend && npm run lint",
     "install-frontend": "cd frontend && npm install",
     "setup": "npm run install-frontend",
+    "preflight": "bash scripts/dev/preflight.sh",
     "docker:dev": "docker-compose up --build",
     "docker:prod": "docker-compose -f docker-compose.prod.yml up --build",
     "docker:down": "docker-compose down",
