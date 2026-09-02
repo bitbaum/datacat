@@ -1,6 +1,7 @@
 const { router, authedProcedure, adminProcedure, prisma, z, TRPCError } = require('../../lib/trpc');
 const LLMAnalysisService = require('../../services/llm-analysis');
 const { QueueManager } = require('../../jobs/queue');
+const { isChainConfigured } = require('../../lib/aiChain');
 
 // Lazy load the LLM service to avoid startup crashes
 let llmAnalysisService = null;
@@ -65,8 +66,12 @@ const llmAnalysisRouter = router({
         });
       }
 
-      // Check if OpenAI API key is configured
-      if (!process.env.OPENAI_API_KEY) {
+      // Text analysis runs on the free-tier fallback chain (Groq/OpenRouter via
+      // ai-kit, see backend/lib/aiChain.js), not OpenAI — this used to check
+      // OPENAI_API_KEY specifically, which would wrongly report "not
+      // configured" on a deployment that only carries GROQ_API_KEY /
+      // OPENROUTER_API_KEY.
+      if (!(await isChainConfigured())) {
         throw new TRPCError({
           code: 'PRECONDITION_FAILED',
           message: 'LLM analysis is not configured. Please contact your administrator.',

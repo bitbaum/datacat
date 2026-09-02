@@ -9,6 +9,7 @@ const { trpcMiddleware } = require('./middleware/trpc');
 const cookieParser = require('cookie-parser');
 const pinoHttp = require('pino-http');
 const webSocketService = require('./services/websocket');
+const { getAIHealth } = require('./lib/aiChain');
 
 // Middleware
 app.use(
@@ -39,13 +40,23 @@ app.get('/', (req, res) => {
 });
 
 // Dedicated health endpoint for deployment monitoring
-app.get('/health', (req, res) => {
+app.get('/health', async (req, res) => {
+  // AI health is informational only — it never flips this endpoint's overall
+  // `status`. A dead AI vendor chain is a real, user-visible degradation, but
+  // this app has non-AI features too; gating deploy health on it would take
+  // the whole box "down" for an outage in one dependency. See
+  // backend/lib/aiChain.js and ai-kit's health.ts for why this is tracked at
+  // all: a chain that silently swallows every failure looks identical to a
+  // healthy one from the outside.
+  const ai = await getAIHealth().catch(() => null);
+
   res.json({
     status: 'healthy',
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
     version: '2.0.0',
     environment: process.env.NODE_ENV || 'development',
+    ai,
   });
 });
 
