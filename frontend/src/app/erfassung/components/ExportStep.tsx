@@ -92,8 +92,7 @@ export function ExportStep({ productData, onExportComplete, product }: ExportSte
     }
   };
 
-  const generatePreviewData = () => {
-    const primary = selectedFormats[0];
+  const generatePreviewData = (primary: string) => {
     const format = exportFormats.find((f) => f.id === primary);
 
     if (primary === 'csv_kivitendo') {
@@ -134,6 +133,45 @@ export function ExportStep({ productData, onExportComplete, product }: ExportSte
     }
 
     return `${format?.name} Export Preview`;
+  };
+
+  const exportFileExtensions: Record<string, string> = {
+    csv_kivitendo: 'csv',
+    xlsx: 'xlsx',
+    json: 'json',
+    xml: 'xml',
+    shopify_product_json: 'json',
+    shopware_product_json: 'json',
+  };
+
+  const exportMimeTypes: Record<string, string> = {
+    csv_kivitendo: 'text/csv',
+    json: 'application/json',
+    xml: 'application/xml',
+    shopify_product_json: 'application/json',
+    shopware_product_json: 'application/json',
+  };
+
+  const handleDownload = () => {
+    const primary = selectedFormats[0];
+    if (!primary) return;
+
+    const content = generatePreviewData(primary);
+    const mimeType = exportMimeTypes[primary] ?? 'text/plain';
+    const extension = exportFileExtensions[primary] ?? 'txt';
+    const baseName = (productData.articleNumber || productData.title || 'export')
+      .toString()
+      .replace(/[^a-z0-9_-]+/gi, '_');
+
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${baseName}.${extension}`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
   };
 
   return (
@@ -203,7 +241,7 @@ export function ExportStep({ productData, onExportComplete, product }: ExportSte
             </h3>
             <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
               <pre className="text-sm text-gray-700 dark:text-gray-300 overflow-x-auto">
-                {generatePreviewData()}
+                {generatePreviewData(selectedFormats[0])}
               </pre>
             </div>
           </div>
@@ -269,7 +307,10 @@ export function ExportStep({ productData, onExportComplete, product }: ExportSte
 
           {/* Actions */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="px-6 py-3 bg-green-600 text-white rounded-md font-medium hover:bg-green-700 transition-colors">
+            <button
+              onClick={handleDownload}
+              className="px-6 py-3 bg-green-600 text-white rounded-md font-medium hover:bg-green-700 transition-colors"
+            >
               📥 Datei herunterladen
             </button>
             <button
