@@ -19,7 +19,7 @@
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   Frontend      │    │   Backend       │    │   Database      │
-│   Next.js 15    │    │   Node.js +     │    │   PostgreSQL    │
+│   Next.js 16    │    │   Node.js +     │    │   PostgreSQL    │
 │   Port: 3000    │◄──►│   Express       │◄──►│   Port: 5432    │
 │                 │    │   Port: 5001    │    │                 │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
@@ -65,7 +65,7 @@ pnpm run docker:dev
 ### System Requirements:
 - **Docker**: >= 20.10.0
 - **Docker Compose**: >= 2.0.0
-- **Node.js**: >= 18.0.0 (for local development)
+- **Node.js**: >= 20.0.0 (for local development; `.nvmrc` pins 24)
 - **Memory**: >= 4GB RAM
 - **Storage**: >= 10GB free space
 
@@ -244,19 +244,18 @@ networks:
 
 ## 🚦 CI/CD Pipeline
 
-### GitHub Actions Workflow:
-- **Quality Gate**: ESLint, TypeScript, Security Audit
-- **Testing**: Unit tests, Integration tests, E2E Playwright
-- **Build**: Multi-stage Docker build
-- **Deploy**: Automated deployment with health checks
-- **Monitoring**: Post-deployment smoke tests
+### GitHub Actions Workflows (actual):
+- **CI** (`.github/workflows/ci.yml`): frontend `verify` — Prettier format check, ESLint, TypeScript, Vitest unit suite, production build
+- **Auto-merge** (`.github/workflows/auto-merge.yml`): merges green, ready PRs via `scripts/ci/auto-merge-sweep.sh` (the policy lives in that script)
+- **Deploy** (`.github/workflows/deploy.yml`): push to `main` → the fleet's `selfhost-deploy` workflow ships the app to the Hetzner box (bitbaum, behind Caddy) after this commit's CI is green
+- The full-stack Playwright E2E is deferred (needs both servers plus a seeded DB) — run it manually
 
 ### Pipeline Stages:
 ```
-┌─────────┐  ┌─────────┐  ┌─────────┐  ┌─────────┐  ┌─────────┐
-│ Quality │─▶│ Testing │─▶│  Build  │─▶│ Deploy  │─▶│ Monitor │
-│ Checks  │  │ Suite   │  │ Images  │  │ Prod    │  │ Health  │
-└─────────┘  └─────────┘  └─────────┘  └─────────┘  └─────────┘
+┌─────────┐  ┌─────────────┐  ┌──────────────────────┐
+│   CI    │─▶│ Auto-merge  │─▶│ Deploy to bitbaum    │
+│ verify  │  │ green PRs   │  │ (Hetzner, via Caddy) │
+└─────────┘  └─────────────┘  └──────────────────────┘
 ```
 
 ---

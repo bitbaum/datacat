@@ -28,7 +28,7 @@
 
 ```
 datacat/
-├── frontend/            # Next.js 15 (port 3000)
+├── frontend/            # Next.js 16 (port 3000)
 │   ├── src/app/        # App Router pages
 │   ├── src/components/ # React components
 │   └── src/stores/     # Zustand state
@@ -50,35 +50,35 @@ datacat/
 
 ```bash
 # Start both servers
-npm run dev
+pnpm run dev
 # Frontend: http://localhost:3000
 # Backend: http://localhost:5001
 
 # Or individually
-npm run dev:frontend
-npm run dev:backend
+pnpm run dev:frontend
+pnpm run dev:backend
 
 # Docker
-npm run docker:dev
+pnpm run docker:dev
 
 # Verify a change before declaring it done (mirrors CI: lint + typecheck + test + build)
-npm run verify
+pnpm run verify
 ```
 
-**Start every session with `npm run preflight`.** It is read-only and takes a
-second; `npm run preflight -- --fix` repairs what it finds. It checks the three
+**Start every session with `pnpm run preflight`.** It is read-only and takes a
+second; `pnpm run preflight --fix` repairs what it finds. It checks the three
 things a bare `git status` reports as "clean" while they are silently broken:
 
 | Check | Why it exists |
 |-------|---------------|
 | `main` behind/ahead of origin (after an explicit `git fetch`) | Merges land as squashed PRs on GitHub, so the local checkout drifts without ever looking dirty. Repaired by hand three times: 2026-08-29 (local held a commit origin never got, breaking `git pull --ff-only` for every entering run), 2026-08-31 (2 behind), 2026-09-02 (3 behind). |
 | Merged worktree branches still checked out | Agent worktrees under `.claude/worktrees/` survive their PR being squash-merged. `git branch --merged` misses them — the squash is a different commit — so the check compares patch ids with `git cherry`. |
-| `node_modules` older than `package-lock.json` | The failure that reads most like a repo bug and never is. On 2026-09-02 a stale `frontend/node_modules` predated the prettier devDependency from #233, so `npm run verify` died on `prettier: not found` at its very first gate. |
+| `node_modules` older than `pnpm-lock.yaml` | The failure that reads most like a repo bug and never is. On 2026-09-02 a stale `frontend/node_modules` predated the prettier devDependency from #233, so `verify` died on `prettier: not found` at its very first gate. (The check originally watched `package-lock.json`; #243 migrated the repo to pnpm and the check now watches `pnpm-lock.yaml`.) |
 
 If `verify` fails in a way that has nothing to do with your change, run
 `preflight` before debugging the code.
 
-**Before declaring any change done, run `npm run verify`.** It runs the same
+**Before declaring any change done, run `pnpm run verify`.** It runs the same
 hermetic gates as CI (`.github/workflows/ci.yml`: frontend lint + typecheck +
 vitest unit suite + build), so green locally means green on `main`.
 
@@ -88,7 +88,7 @@ removed, so `/blog/[slug]` threw `d.getOwner is not a function` during prerender
 and production sat on a stale build for weeks. Lint and typecheck were green the
 whole time — only a build could have caught it.
 
-Note: the build needs Node 20 (`.nvmrc`) — next 16 requires Node ≥ 20.9, so the
+Note: the build needs a modern Node (`.nvmrc` pins 24) — next 16 requires Node ≥ 20.9, so the
 old "build under Node 18 for contentlayer" rule is dead; contentlayer's only
 remaining Node 20+ quirk is the harmless exit error described below. The
 full-stack Playwright e2e is still not gated — it needs both servers plus a
@@ -96,9 +96,9 @@ seeded DB, so run it manually until that is wired.
 
 > **Prerequisite:** `verify`'s typecheck reads `frontend/.contentlayer/generated`
 > (git-ignored, produced by `frontend`'s `postinstall` → `contentlayer build`).
-> CI regenerates it via `npm ci`. Locally, if `verify` fails with
+> CI regenerates it via `pnpm install --frozen-lockfile`. Locally, if `verify` fails with
 > `TS2307: Cannot find module '../../../.contentlayer/generated'` for the blog
-> pages, you skipped that step — run `cd frontend && npx contentlayer build`
+> pages, you skipped that step — run `cd frontend && pnpm exec contentlayer build`
 > once (it prints a harmless `ERR_INVALID_ARG_TYPE` on exit under Node 20+ but
 > still generates the types), then re-run `verify`.
 
@@ -223,4 +223,4 @@ All design tokens live in the main CSS file only. Tailwind config MUST reference
 
 ---
 
-**Last Updated**: 2026-08-21
+**Last Updated**: 2026-09-04

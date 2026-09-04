@@ -2,8 +2,8 @@
 
 ---
 created_date: 2025-07-28
-last_modified_date: 2025-01-27
-last_modified_summary: "Updated with expanded business case and universal AI-powered form intelligence platform vision"
+last_modified_date: 2026-09-04
+last_modified_summary: "Stack and setup commands synced with the actual repo (pnpm, Next.js 16, Node 20+)."
 ---
 
 ## Project Overview
@@ -542,7 +542,7 @@ Transform any form responses into actionable intelligence by combining user data
 ## ️ Architecture
 
 ### **Frontend**
-- **Next.js 15.3.5** with App Router
+- **Next.js 16** with App Router
 - **React 19.0.0** with TypeScript
 - **Tailwind CSS** for styling
 - **Zustand** for state management
@@ -561,7 +561,7 @@ Transform any form responses into actionable intelligence by combining user data
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Node.js 18+
+- Node.js 20+
 - PostgreSQL 14+
 - (Optional) Docker for database setup
 
@@ -570,19 +570,19 @@ Transform any form responses into actionable intelligence by combining user data
 ```bash
 # Clone the repository
 git clone <repository-url>
-cd formular
+cd datacat
 
 # Install dependencies
-npm install
-cd frontend && npm install --legacy-peer-deps
-cd ../backend && npm install
+pnpm install
+cd frontend && pnpm install
+cd ../backend && pnpm install
 
 # Set up environment variables
 cp backend/.env.example backend/.env
-cp frontend/.env.example frontend/.env.local
+cp frontend/env.example frontend/.env.local
 
 # Start development servers
-npm run dev
+pnpm run dev
 ```
 
 ### Access the Application
@@ -635,8 +635,8 @@ npm run dev
 
 ##  Community
 
-- **Issues**: [GitHub Issues](https://github.com/your-org/formular/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/your-org/formular/discussions)
+- **Issues**: [GitHub Issues](https://github.com/bitbaum/datacat/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/bitbaum/datacat/discussions)
 - **Documentation**: [docs/](docs/)
 
 ## 📄 License
@@ -792,10 +792,10 @@ graph TB
 | Technology | Purpose | Status |
 |------------|---------|--------|
 | **ESLint** | Code linting | ✅ Active |
-| **Prettier** | Code formatting |  Planned |
-| **Jest** | Testing framework | 🔄 Planned |
-| **Docker** | Containerization |  In Progress |
-| **GitHub Actions** | CI/CD |  Planned |
+| **Prettier** | Code formatting | ✅ Active |
+| **Vitest** | Testing framework | ✅ Active |
+| **Docker** | Containerization | ✅ Active |
+| **GitHub Actions** | CI/CD | ✅ Active |
 
 ## Data Architecture
 

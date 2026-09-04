@@ -196,22 +196,22 @@ Submission Created → Queue Analysis Job → LLM Processing → Results Stored 
 ### Setup Commands
 ```bash
 # Install dependencies
-npm install
+pnpm install
 
 # Set up database
-npm run migrate
+pnpm run migrate
 
 # Generate Prisma client
-npm run generate
+pnpm run generate
 
 # Start development server with workers
-npm run dev
+pnpm run dev
 
 # Run server only
-npm start
+pnpm start
 
 # Run workers only  
-npm run workers
+pnpm run workers
 ```
 
 ### Environment Variables

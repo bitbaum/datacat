@@ -1,14 +1,14 @@
-# Formular Documentation
+# DataCat Documentation
 
 ---
 created_date: 2025-07-28
-last_modified_date: 2025-01-27
-last_modified_summary: "Updated with expanded business case and universal AI-powered form intelligence platform vision"
+last_modified_date: 2026-09-04
+last_modified_summary: "Renamed Formular -> DataCat; index now lists only documents that exist."
 ---
 
 ## Project Overview
 
-**Formular** is a universal AI-powered form intelligence platform that transforms any form responses into actionable business insights by combining user data with contextual knowledge and AI analysis.
+**DataCat** (formerly Formular) is a universal AI-powered data capture platform that transforms any form responses into actionable business insights by combining user data with contextual knowledge and AI analysis.
 
 ### **Vision**
 Create an intuitive form builder that collects responses and uses AI to extract actionable insights across any industry or use case where form responses need intelligent analysis.
@@ -23,12 +23,10 @@ docs/
 ├── README.md                 # This file - documentation index
 ├── getting-started/          # Onboarding and quick start guides
 ├── architecture/             # System design and architecture docs
-├── development/              # Development guides and workflows
+├── development/              # Development guides (rearchitecture plan)
 ├── deployment/               # Deployment and operations guides
-├── api/                      # API documentation
-├── user-guides/              # End-user documentation
-├── contributing/             # Contribution guidelines
 ├── business/                 # Business case and market analysis
+├── features/                 # Feature documentation (Erfassung)
 └── decisions/                # Architecture Decision Records (ADRs)
 ```
 
@@ -38,41 +36,25 @@ docs/
 - [Getting Started Guide](getting-started/README.md)
 - [Development Setup](getting-started/development-setup.md)
 - [Business Case & Use Cases](business/README.md)
-- [First Contribution](contributing/first-contribution.md)
 
 ### 🏗️ Architecture & Design
 - [System Architecture](architecture/README.md)
-- [Database Schema](architecture/database.md)
-- [AI/LLM Integration](architecture/ai-integration.md)
-- [Architecture Decisions](decisions/README.md)
+- [Backend Architecture](../backend/ARCHITECTURE.md)
+- [Architecture Decisions](decisions/2025-08-12-architecture-big-bang.md)
 
 ### 👩‍💻 Development
-- [Development Workflow](development/workflow.md)
-- [Coding Standards](development/coding-standards.md)
-- [Testing Strategy](development/testing.md)
-- [Rebranding System](development/rebranding.md)
+- [Rearchitecture Plan](development/rearchitecture-plan.md)
 
 ### 🚀 Deployment
-- [Docker Setup](deployment/docker.md)
-- [Environment Configuration](deployment/environment.md)
-- [Production Deployment](deployment/production.md)
+- [Docker Setup](deployment/docker-setup.md)
+- [Deployment Guide](../DEPLOYMENT.md)
 
-### 📡 API
-- [API Overview](api/README.md)
-- [Authentication](api/authentication.md)
-- [Endpoints](api/endpoints.md)
-- [tRPC Integration](api/trpc.md)
-
-### 👤 User Guides
-- [Form Builder Guide](user-guides/form-builder.md)
-- [Admin Dashboard](user-guides/admin.md)
-- [LLM Analysis Guide](user-guides/llm-analysis.md)
+### 🐱 Features
+- [Erfassung — AI-Powered Product Cataloging](features/erfassung/README.md)
 
 ### 📊 Business & Market
-- [Business Model](business/business-model.md)
+- [Business Case](business/README.md)
 - [Use Cases](business/use-cases.md)
-- [Competitive Analysis](business/competitive-analysis.md)
-- [Go-to-Market Strategy](business/goto-market.md)
 
 ## Documentation Standards
 
@@ -85,9 +67,7 @@ docs/
 ## Contributing to Documentation
 
 - Documentation updates should accompany code changes
-- Follow the [Documentation Style Guide](contributing/documentation-style.md)
 - Review documentation regularly for accuracy
-- Use the automated update mechanisms where available
 
 ---
-*Last updated: 2025-01-27*
+*Last updated: 2026-09-04*

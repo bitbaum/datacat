@@ -2,8 +2,8 @@
 
 ---
 created_date: 2025-07-28
-last_modified_date: 2025-07-28
-last_modified_summary: "Initial creation of development setup guide"
+last_modified_date: 2026-09-04
+last_modified_summary: "Synced with the actual repo: pnpm, Node 20+, backend port 5001, Vitest/Playwright testing status."
 ---
 
 ## Prerequisites
@@ -12,8 +12,8 @@ last_modified_summary: "Initial creation of development setup guide"
 
 | Tool | Version | Purpose |
 |------|---------|---------|
-| Node.js | 18+ | Runtime for frontend and backend |
-| npm | 8+ | Package manager |
+| Node.js | 20+ (`.nvmrc` pins 24) | Runtime for frontend and backend |
+| pnpm | 11+ (see `packageManager` in `package.json`) | Package manager |
 | Git | Latest | Version control |
 | Docker | Latest | Database and containerization (recommended) |
 | PostgreSQL | 14+ | Database (if not using Docker) |
@@ -34,27 +34,25 @@ last_modified_summary: "Initial creation of development setup guide"
 
 ```bash
 git clone <repository-url>
-cd formular
+cd datacat
 ```
 
 ### 2. Install Dependencies
 
 ```bash
 # Root dependencies (concurrently for dev servers)
-npm install
+pnpm install
 
 # Frontend dependencies
 cd frontend
-npm install --legacy-peer-deps
+pnpm install
 cd ..
 
 # Backend dependencies
 cd backend
-npm install
+pnpm install
 cd ..
 ```
-
-> **Note**: We use `--legacy-peer-deps` for frontend due to Next.js 15 and contentlayer compatibility issues.
 
 ### 3. Database Setup
 
@@ -65,10 +63,10 @@ the schema — there is no standalone SQL script to load.
 
 ```bash
 # Start PostgreSQL, Redis, backend, frontend
-npm run docker:dev
+pnpm run docker:dev
 
 # In a separate terminal, once postgres is healthy: apply Prisma migrations
-npm run docker:migrate
+pnpm run docker:migrate
 ```
 
 #### Option B: Local PostgreSQL
@@ -80,7 +78,7 @@ npm run docker:migrate
    CREATE USER formbuilder WITH PASSWORD 'devpassword';
    GRANT ALL PRIVILEGES ON DATABASE formbuilder TO formbuilder;
    ```
-3. Apply the schema: `cd backend && npm run migrate` (runs `prisma migrate dev`)
+3. Apply the schema: `cd backend && pnpm run migrate` (runs `prisma migrate dev`)
 
 ### 4. Environment Configuration
 
@@ -99,7 +97,7 @@ DB_PASSWORD=devpassword
 JWT_SECRET=your-super-secret-jwt-key-change-in-production
 
 # Server
-PORT=5000
+PORT=5001
 NODE_ENV=development
 ```
 
@@ -108,7 +106,7 @@ NODE_ENV=development
 Create `frontend/.env.local`:
 ```env
 # API Configuration
-NEXT_PUBLIC_API_URL=http://localhost:5000
+NEXT_PUBLIC_API_URL=http://localhost:5001
 
 # Branding (using default)
 NEXT_PUBLIC_BRAND_PRESET=generic
@@ -118,10 +116,10 @@ NEXT_PUBLIC_BRAND_PRESET=generic
 
 ```bash
 # Start both servers
-npm run d
+pnpm run d
 
 # Check endpoints
-curl http://localhost:5000  # Should return "Form Builder Backend is running!"
+curl http://localhost:5001  # Backend API
 curl http://localhost:3000  # Should load the Next.js app
 ```
 
@@ -131,12 +129,12 @@ curl http://localhost:3000  # Should load the Next.js app
 
 ```bash
 # Start both frontend and backend
-npm run d
+pnpm run d
 
 # Or start individually
-npm run dev           # Both servers with concurrently
-cd frontend && npm run dev  # Frontend only
-cd backend && npm run start # Backend only
+pnpm run dev           # Both servers with concurrently
+cd frontend && pnpm run dev  # Frontend only
+cd backend && pnpm run start # Backend only
 ```
 
 ### Available Scripts
@@ -145,17 +143,18 @@ From root directory:
 
 | Command | Description |
 |---------|-------------|
-| `npm run d` | Start both dev servers (shortcut) |
-| `npm run dev` | Start both dev servers |
-| `npm run build` | Build frontend for production |
-| `npm run lint` | Lint frontend code |
+| `pnpm run d` | Start both dev servers (shortcut) |
+| `pnpm run dev` | Start both dev servers |
+| `pnpm run build` | Build frontend for production |
+| `pnpm run lint` | Lint frontend code |
+| `pnpm run verify` | Full gate: format check + lint + typecheck + unit tests + build |
 
 ### Ports
 
 | Service | Port | URL |
 |---------|------|-----|
 | Frontend | 3000 | http://localhost:3000 |
-| Backend | 5000 | http://localhost:5000 |
+| Backend | 5001 | http://localhost:5001 |
 | Database | 5432 | localhost:5432 |
 
 ## Common Issues
@@ -163,7 +162,7 @@ From root directory:
 ### Frontend Won't Start
 
 **Issue**: `Cannot find module 'next-contentlayer'`
-**Solution**: Run `npm install --legacy-peer-deps` in frontend directory
+**Solution**: Run `pnpm install` in frontend directory
 
 ### Database Connection Failed
 
@@ -220,20 +219,17 @@ Install recommended extensions:
 }
 ```
 
-## Testing Setup (Planned)
+## Testing Setup
 
-Currently manual testing only. Automated testing setup planned for Phase 2:
-
-- **Frontend**: Jest + React Testing Library
-- **Backend**: Jest + Supertest
-- **E2E**: Playwright (planned)
+- **Unit tests**: Vitest (`pnpm test` from the repo root; covers `frontend/src/**/*.test.ts` and `backend/**/*.test.js`)
+- **E2E**: Playwright (`pnpm run test:e2e`; needs both servers plus a database running — not part of CI yet)
 
 ## Next Steps
 
 1. **Explore the Codebase**: Start with `frontend/src/app/page.tsx`
 2. **Read Architecture**: [System Architecture](../architecture/README.md)
-3. **Check Development Workflow**: [Development Workflow](../development/workflow.md)
-4. **Try Rebranding**: [Rebranding System](../development/rebranding.md)
+3. **Check the Rearchitecture Plan**: [Rearchitecture Plan](../development/rearchitecture-plan.md)
+4. **Try Rebranding**: `./scripts/dev/rebrand.sh medical`
 
 ---
 

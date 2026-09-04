@@ -4,7 +4,7 @@ Universal AI-powered data ingestion and form builder platform.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6.svg)](https://www.typescriptlang.org/)
-[![Next.js](https://img.shields.io/badge/Next.js-15-black.svg)](https://nextjs.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-16-black.svg)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19-61dafb.svg)](https://react.dev/)
 
 ---
@@ -76,7 +76,7 @@ Each layer catches what the previous one missed:
 
 tRPC provides end-to-end type safety from frontend to backend — no generated clients, no schema drift.
 
-Current structure: monorepo with Next.js 15 frontend (port 3000) and Express 5.1 backend (port 5001). Consolidating toward a unified Next.js App Router + tRPC architecture.
+Current structure: monorepo with Next.js 16 frontend (port 3000) and Express 5.1 backend (port 5001). Consolidating toward a unified Next.js App Router + tRPC architecture.
 
 Bull job queues manage async processing. Socket.io handles real-time updates. Redis backs both.
 
@@ -86,15 +86,15 @@ Bull job queues manage async processing. Socket.io handles real-time updates. Re
 
 | Layer | Technology |
 |---|---|
-| Frontend | Next.js 15, React 19, TypeScript 5, Tailwind 4 |
+| Frontend | Next.js 16, React 19, TypeScript 5, Tailwind 4 |
 | State | Zustand, @dnd-kit (drag-and-drop) |
 | Backend | Express.js 5.1, tRPC 11.4 |
-| Database | PostgreSQL 14+ (Prisma 6.12), Redis |
+| Database | PostgreSQL 14+ (Prisma 6), Redis |
 | AI | OpenAI GPT-4 Vision, Google Vision API, Tesseract.js |
 | Jobs | Bull 4.16 (Redis-backed queues) |
 | Real-time | Socket.io 4.8 |
-| Testing | Playwright (478 test files) |
-| Deployment | Docker, GitHub Actions |
+| Testing | Vitest (unit), Playwright (E2E) |
+| Deployment | Docker, GitHub Actions (self-hosted on the Hetzner box behind Caddy) |
 
 ---
 
@@ -111,12 +111,13 @@ Bull job queues manage async processing. Socket.io handles real-time updates. Re
 ### Setup
 
 ```bash
-git clone https://github.com/your-org/datacat.git
+git clone https://github.com/bitbaum/datacat.git
 cd datacat
-cp .env.example .env        # Configure database, Redis, API keys
-pnpm install
-pnpm run db:migrate           # Run Prisma migrations
-pnpm run dev                  # Starts frontend (3000) + backend (5001)
+cp backend/.env.example backend/.env      # Configure database, Redis, API keys
+cp frontend/env.example frontend/.env.local
+pnpm install                              # Also run in frontend/ and backend/
+cd backend && pnpm run migrate && cd ..   # Run Prisma migrations
+pnpm run dev                              # Starts frontend (3000) + backend (5001)
 ```
 
 ### Environment Variables
@@ -143,20 +144,15 @@ docker compose up -d         # PostgreSQL, Redis, app
 
 ```
 datacat/
-  apps/
-    web/                     # Next.js 15 frontend
-    api/                     # Express 5.1 + tRPC backend
-  packages/
-    shared/                  # Shared types, Zod schemas, utilities
-    ui/                      # Component library
-  prisma/
-    schema.prisma            # Database schema (SSOT for types)
-    migrations/              # Version-controlled migrations
+  frontend/                  # Next.js 16 app (App Router, Zustand, Tailwind)
+  backend/                   # Express 5.1 + tRPC backend (flat layout)
+    prisma/
+      schema.prisma          # Database schema (SSOT for types)
+      migrations/            # Version-controlled migrations
   scripts/
     dev/
       rebrand.sh             # White-label rebranding
-  tests/
-    e2e/                     # Playwright test suites
+  tests/                     # Playwright E2E suites
 ```
 
 ---

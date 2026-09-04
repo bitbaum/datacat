@@ -9,7 +9,7 @@
 | Aspect | Details |
 |--------|---------|
 | Type | Full-stack web application |
-| Frontend | Next.js 15, React 19, TypeScript, Tailwind, Zustand |
+| Frontend | Next.js 16, React 19, TypeScript, Tailwind, Zustand |
 | Backend | Express.js, tRPC, Prisma |
 | Database | PostgreSQL, Redis |
 | AI | Multi-LLM (OpenAI, Claude) |
@@ -28,8 +28,9 @@ pnpm run dev:frontend
 pnpm run dev:backend
 
 # Testing
-pnpm test              # Playwright E2E
-pnpm run test:ui       # Interactive mode
+pnpm test              # Vitest unit suite (frontend + backend)
+pnpm run test:e2e      # Playwright E2E (needs both servers + DB)
+pnpm run test:e2e:ui   # Playwright interactive mode
 
 # Docker
 pnpm run docker:dev    # Full stack
@@ -51,11 +52,10 @@ datacat/
 │   │   ├── stores/        # Zustand state
 │   │   └── lib/           # Utilities
 │   └── package.json
-├── backend/                # Express API
-│   ├── src/
-│   │   ├── routes/        # API endpoints
-│   │   ├── services/      # Business logic
-│   │   └── middleware/    # Auth, validation
+├── backend/                # Express API (flat layout — no src/)
+│   ├── routes/            # API endpoints
+│   ├── services/          # Business logic
+│   ├── middleware/        # Auth, validation
 │   ├── prisma/            # Database schema
 │   └── package.json
 ├── docs/                   # Documentation
@@ -196,4 +196,4 @@ All design tokens live in the main CSS file only. Tailwind config MUST reference
 
 ---
 
-**Last Updated**: 2026-01-08
+**Last Updated**: 2026-09-04

@@ -2,8 +2,8 @@
 
 ---
 created_date: 2025-01-27
-last_modified_date: 2025-01-27
-last_modified_summary: "Initial creation of Docker setup guide for development and production"
+last_modified_date: 2026-09-04
+last_modified_summary: "Commands updated to pnpm (the repo's package manager)."
 ---
 
 ## Overview
@@ -49,7 +49,7 @@ OPENAI_API_KEY=your-openai-api-key-here  # Optional for basic functionality
 ### 3. Start Development Environment
 ```bash
 # Start all services
-npm run docker:dev
+pnpm run docker:dev
 
 # Or using docker-compose directly
 docker-compose up --build
@@ -67,11 +67,11 @@ docker-compose up --build
 
 | Command | Description |
 |---------|-------------|
-| `npm run docker:dev` | Start development environment |
-| `npm run docker:down` | Stop all containers |
-| `npm run docker:clean` | Stop and remove all containers/volumes |
-| `npm run docker:logs` | View container logs |
-| `npm run docker:migrate` | Run database migrations |
+| `pnpm run docker:dev` | Start development environment |
+| `pnpm run docker:down` | Stop all containers |
+| `pnpm run docker:clean` | Stop and remove all containers/volumes |
+| `pnpm run docker:logs` | View container logs |
+| `pnpm run docker:migrate` | Run database migrations |
 
 ### Working with Containers
 
@@ -130,7 +130,7 @@ NEXT_PUBLIC_API_URL=https://your-domain.com
 ### 2. Deploy Production Stack
 ```bash
 # Start production environment
-npm run docker:prod
+pnpm run docker:prod
 
 # Or with custom environment file
 docker-compose -f docker-compose.prod.yml --env-file .env.production up -d
@@ -222,7 +222,7 @@ docker-compose up postgres
 #### Out of Disk Space
 ```bash
 # Clean up Docker system
-npm run docker:clean
+pnpm run docker:clean
 docker system prune -a
 
 # Remove unused images
@@ -302,7 +302,7 @@ docker run --rm -v formular_postgres_data:/data -v $(pwd):/backup alpine tar xzf
 
 ## Next Steps
 
-1. **Development**: Use `npm run docker:dev` for daily development
+1. **Development**: Use `pnpm run docker:dev` for daily development
 2. **Testing**: Set up automated testing with Docker
 3. **CI/CD**: Integrate Docker builds with GitHub Actions
 4. **Production**: Deploy to cloud provider with Docker Compose

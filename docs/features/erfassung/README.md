@@ -13,23 +13,19 @@ Erfassung is an integrated feature of the Formular platform that transforms phys
 ### Technical Documentation
 - [Architecture Overview](./architecture.md) - System architecture and technical design
 - [Component Design](./components.md) - UI component specifications leveraging Formular's form technology
-- [API Specification](./api.md) - Backend API endpoints and data contracts
 - [AI Integration](./ai-integration.md) - OCR and machine learning service integration
 
-### Implementation Guides  
-- [Development Setup](./development-setup.md) - Setting up local development environment
-- [Testing Strategy](./testing.md) - Unit, integration, and end-to-end testing approach
-- [Deployment Guide](./deployment.md) - Production deployment instructions
+### Implementation Guides (planned — not yet written)
+- API Specification, Development Setup, Testing Strategy, Deployment Guide
 
-### User Documentation
-- [User Guide](./user-guide.md) - End-user documentation for product cataloging workflow
-- [Administrator Guide](./admin-guide.md) - System administration and configuration
+### User Documentation (planned — not yet written)
+- User Guide, Administrator Guide
 
 ## Quick Start
 For developers new to Erfassung, start with:
 1. [Product Requirements Document](./prd.md) - Understand the business requirements
 2. [Architecture Overview](./architecture.md) - Understand the technical approach
-3. [Development Setup](./development-setup.md) - Set up your development environment
+3. [Development Setup](../../getting-started/development-setup.md) - Set up your development environment
 
 ## Vision & Roadmap
 Erfassung represents Formular's expansion into AI-powered business process automation. The feature demonstrates how form-building technology can be applied to complex data entry workflows beyond traditional forms.
@@ -39,7 +35,7 @@ Erfassung represents Formular's expansion into AI-powered business process autom
 **Future Phases**: Multi-tenant deployment, advanced AI features, ERP integrations
 
 ## Key Technologies
-- **Frontend**: Next.js 15, TypeScript, Tailwind CSS (consistent with Formular)
+- **Frontend**: Next.js 16, TypeScript, Tailwind CSS (consistent with the platform)
 - **Backend**: Node.js, tRPC, Prisma ORM (extending existing Formular stack)
 - **AI/ML**: OpenAI GPT-4 Vision, Tesseract OCR, custom classification models
 - **Database**: PostgreSQL (extending existing Formular schema)

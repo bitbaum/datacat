@@ -7,7 +7,7 @@
 ## Context
 
 - **Project**: DataCat - AI-powered data capture platform
-- **Frontend**: Next.js 15, React 19, TypeScript, Tailwind, Zustand
+- **Frontend**: Next.js 16, React 19, TypeScript, Tailwind, Zustand
 - **Backend**: Express.js, tRPC, Prisma
 - **Database**: PostgreSQL, Redis
 - **AI**: Multi-LLM (OpenAI, Claude)

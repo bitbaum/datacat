@@ -2,8 +2,8 @@
 
 ---
 created_date: 2025-07-28
-last_modified_date: 2025-08-13
-last_modified_summary: "Consolidate to Next.js API, AI FormSchema pipeline, and data integrity layers."
+last_modified_date: 2026-09-04
+last_modified_summary: "Tooling table synced with reality (Prettier/Vitest/Docker/GitHub Actions all active)."
 ---
 
 ## Overview
@@ -117,10 +117,10 @@ graph TB
 | Technology | Purpose | Status |
 |------------|---------|--------|
 | **ESLint** | Code linting | ✅ Active |
-| **Prettier** | Code formatting | 🔄 Planned |
-| **Jest** | Testing framework | 🔄 Planned |
-| **Docker** | Containerization | 🔄 In Progress |
-| **GitHub Actions** | CI/CD | 🔄 Planned |
+| **Prettier** | Code formatting | ✅ Active |
+| **Vitest** | Testing framework | ✅ Active |
+| **Docker** | Containerization | ✅ Active |
+| **GitHub Actions** | CI/CD | ✅ Active |
 
 ## Data Architecture
 
