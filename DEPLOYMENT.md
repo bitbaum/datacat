@@ -54,8 +54,8 @@ export NEXT_PUBLIC_API_URL="https://your-domain.com:5001"
 # Start all services
 docker-compose up --build -d
 
-# Or use npm shortcut
-npm run docker:dev
+# Or use the pnpm shortcut
+pnpm run docker:dev
 ```
 
 ---
@@ -269,7 +269,7 @@ networks:
 ```bash
 # Check contentlayer issues
 export SKIP_CONTENTLAYER=true
-npm run build
+pnpm run build
 
 # Clear Docker cache
 docker system prune -a

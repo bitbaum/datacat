@@ -67,7 +67,7 @@ services:
     volumes:
       - ./backend:/app/backend:ro
       - backend_node_modules:/app/backend/node_modules
-    command: ['npm', 'run', 'dev:backend']
+    command: ['pnpm', 'run', 'dev:backend']
     healthcheck:
       test: ['CMD', 'curl', '-f', 'http://localhost:5001/health']
       interval: 30s
@@ -97,7 +97,7 @@ services:
       - ./frontend:/app/frontend:ro
       - frontend_node_modules:/app/frontend/node_modules
       - ./frontend/.next:/app/frontend/.next
-    command: ['npm', 'run', 'dev:frontend']
+    command: ['pnpm', 'run', 'dev:frontend']
 
   # Database Migration Service (runs once)
   migrate:

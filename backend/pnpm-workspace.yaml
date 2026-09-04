@@ -1,0 +1,9 @@
+# pnpm 11 blocks dependency build scripts by default; allow only what we trust.
+# ai-kit is our own github: dependency — its prepare script builds dist/.
+allowBuilds:
+  '@prisma/client': true
+  '@prisma/engines': true
+  'ai-kit@https://codeload.github.com/bitbaum/ai-kit/tar.gz/ace11f14d817079ae2bf4cdc010b6daa9faacbec': true
+  msgpackr-extract: true
+  prisma: true
+  puppeteer: true

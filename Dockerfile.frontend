@@ -1,19 +1,23 @@
 # Frontend Development Dockerfile
-FROM node:18-alpine
+# node:24 — pnpm 11 needs Node >= 22.13, and 24 is the fleet default.
+FROM node:24-alpine
 
 WORKDIR /app
 
 # Install system dependencies
 RUN apk add --no-cache libc6-compat
 
+# corepack reads the packageManager pin from package.json
+RUN corepack enable pnpm
+
 # Copy package files
-COPY package*.json ./
-COPY frontend/package*.json ./frontend/
+COPY package.json pnpm-lock.yaml ./
+COPY frontend/package.json frontend/pnpm-lock.yaml frontend/pnpm-workspace.yaml ./frontend/
 
 # Install dependencies
 ENV SKIP_CONTENTLAYER=true
-RUN npm ci
-RUN cd frontend && npm ci --legacy-peer-deps
+RUN pnpm install --frozen-lockfile
+RUN cd frontend && pnpm install --frozen-lockfile
 
 # Copy frontend source
 COPY frontend ./frontend
@@ -32,4 +36,4 @@ EXPOSE 3000
 WORKDIR /app/frontend
 
 # Start frontend in development mode
-CMD ["npm", "run", "dev"] 
+CMD ["pnpm", "run", "dev"]

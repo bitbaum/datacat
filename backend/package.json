@@ -3,13 +3,14 @@
   "version": "1.0.0",
   "description": "DataCat Backend API - Universal Data Capture System",
   "main": "index.js",
+  "packageManager": "pnpm@11.25.0",
   "scripts": {
     "start": "nodemon index.js",
-    "dev": "concurrently \"npm start\" \"npm run workers\"",
+    "dev": "concurrently \"pnpm start\" \"pnpm run workers\"",
     "workers": "nodemon jobs/processors.js",
-    "migrate": "npx prisma migrate dev",
-    "generate": "npx prisma generate",
-    "db:reset": "npx prisma migrate reset",
+    "migrate": "pnpm exec prisma migrate dev",
+    "generate": "pnpm exec prisma generate",
+    "db:reset": "pnpm exec prisma migrate reset",
     "db:seed": "node prisma/seed.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

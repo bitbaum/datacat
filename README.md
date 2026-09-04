@@ -114,9 +114,9 @@ Bull job queues manage async processing. Socket.io handles real-time updates. Re
 git clone https://github.com/your-org/datacat.git
 cd datacat
 cp .env.example .env        # Configure database, Redis, API keys
-npm install
-npm run db:migrate           # Run Prisma migrations
-npm run dev                  # Starts frontend (3000) + backend (5001)
+pnpm install
+pnpm run db:migrate           # Run Prisma migrations
+pnpm run dev                  # Starts frontend (3000) + backend (5001)
 ```
 
 ### Environment Variables
