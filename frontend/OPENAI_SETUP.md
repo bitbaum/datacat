@@ -38,7 +38,7 @@ ENABLE_VISION_API=true
 ### Step 4: Restart Your App
 
 ```bash
-npm run dev
+pnpm run dev
 ```
 
 ### Step 5: Test Upload

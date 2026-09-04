@@ -1,15 +1,15 @@
 # DataCat Frontend
 
-The Next.js 15 frontend for DataCat, a universal AI-powered data capture platform (forms → AI analysis → action delivery).
+The Next.js 16 frontend for DataCat, a universal AI-powered data capture platform (forms → AI analysis → action delivery).
 
 ## Getting Started
 
-From the repository root, `npm run dev` starts both the frontend (port 3000) and the Express/tRPC backend (port 5001). To run the frontend alone:
+From the repository root, `pnpm run dev` starts both the frontend (port 3000) and the Express/tRPC backend (port 5001). To run the frontend alone:
 
 ```bash
 cd frontend
-npm install
-npm run dev
+pnpm install
+pnpm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) in your browser. Edit pages under `src/app/` — the page auto-updates as you save.
@@ -18,8 +18,8 @@ Fonts are loaded via `next/font` (Geist). The frontend talks to the backend thro
 
 ---
 created_date: 2024-07-08
-last_modified_date: 2025-08-12
-last_modified_summary: "Updated to reflect DataCat rebranding and current frontend features."
+last_modified_date: 2026-09-04
+last_modified_summary: "Commands updated to pnpm; Next.js version corrected to 16."
 
 ---
 
@@ -61,7 +61,7 @@ Falls Sie das Projekt zum ersten Mal auschecken oder neue Abhängigkeiten instal
 
 ```bash
 cd frontend
-npm install
+pnpm install
 ```
 
 Die neuen DnD-Bibliotheken werden automatisch mitinstalliert.

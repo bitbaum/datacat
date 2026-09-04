@@ -2,8 +2,8 @@
 
 ---
 created_date: 2025-07-28
-last_modified_date: 2025-08-12
-last_modified_summary: "Updated to reflect DataCat rebranding and current system capabilities."
+last_modified_date: 2026-09-04
+last_modified_summary: "Synced commands and stack claims with the actual repo (pnpm, Node 20+, port 5001, Vitest/Playwright, Prisma)."
 ---
 
 ## Overview
@@ -16,7 +16,7 @@ DataCat is a universal AI-powered data capture system designed to collect and st
 
 ### Prerequisites
 
-- Node.js 18+ and npm
+- Node.js 20+ (`.nvmrc` pins 24) and pnpm
 - Git
 - (Optional) Docker for database setup
 
@@ -27,10 +27,10 @@ git clone <repository-url>
 cd datacat
 
 # Install root dependencies
-npm install
+pnpm install
 
-# Install frontend dependencies  
-cd frontend && npm install --legacy-peer-deps
+# Install frontend dependencies
+cd frontend && pnpm install
 cd ..
 ```
 
@@ -38,18 +38,18 @@ cd ..
 
 ```bash
 # Start both frontend and backend
-npm run d
+pnpm run d
 ```
 
 This will start:
 - **Frontend** (Next.js): http://localhost:3000
-- **Backend** (Express): http://localhost:5000
+- **Backend** (Express): http://localhost:5001
 
 ### 3. Access the Application
 
 - **Form Builder**: http://localhost:3000/builder
 - **Forms List**: http://localhost:3000/forms
-- **API Health**: http://localhost:5000
+- **API Health**: http://localhost:5001
 
 ## Project Structure
 
@@ -124,8 +124,7 @@ Notes:
 
 1. **Read the Architecture**: [System Architecture](../architecture/README.md)
 2. **Set up Development Environment**: [Development Setup](development-setup.md)
-3. **Understand the Workflow**: [Development Workflow](../development/workflow.md)
-4. **Explore the Rebranding System**: [Rebranding Guide](../development/rebranding.md)
+3. **Understand the Rearchitecture Plan**: [Rearchitecture Plan](../development/rearchitecture-plan.md)
 
 ## Getting Help
 
@@ -136,24 +135,24 @@ Notes:
 ## Tech Stack
 
 ### Frontend
-- **Framework**: Next.js 15.3.5 with App Router
+- **Framework**: Next.js 16 with App Router
 - **Styling**: Tailwind CSS v4
 - **State Management**: Zustand
 - **Drag & Drop**: @dnd-kit
 - **Forms**: React Hook Form (planned)
-- **Validation**: Zod (planned)
+- **Validation**: Zod
 
 ### Backend
 - **Runtime**: Node.js with Express
 - **Database**: PostgreSQL
 - **Authentication**: JWT
-- **ORM**: Raw SQL (migrations planned)
+- **ORM**: Prisma (migrations in `backend/prisma/migrations/`)
 
 ### Development
-- **Package Manager**: npm
+- **Package Manager**: pnpm
 - **Linting**: ESLint with Next.js config
 - **Git Hooks**: Planned (Husky)
-- **Testing**: Planned (Jest, React Testing Library)
+- **Testing**: Vitest (unit), Playwright (E2E)
 
 ---
 
