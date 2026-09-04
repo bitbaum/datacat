@@ -12,10 +12,16 @@
 #               predated the prettier devDependency added in #233 — so the very
 #               first gate of `npm run verify` died on "prettier: not found",
 #               which looks like a repo bug and is not one.
-# A bare `git status` reports "clean" in all three cases. This closes the class.
+#   2026-09-04  #243 migrated npm -> pnpm (package-lock.json -> pnpm-lock.yaml)
+#               but this check still watched package-lock.json; once that file
+#               was deleted, `[[ -f "$lock" ]] || continue` made the freshness
+#               check a silent no-op for both packages, so a checkout still
+#               holding the old npm-flat node_modules — five commits and a
+#               package-manager migration stale — reported "clean".
+# A bare `git status` reports "clean" in all these cases. This closes the class.
 #
-# Usage: npm run preflight   (read-only by default)
-#        npm run preflight -- --fix   (fast-forward, prune, reinstall)
+# Usage: pnpm run preflight   (read-only by default)
+#        pnpm run preflight -- --fix   (fast-forward, prune, reinstall)
 
 set -euo pipefail
 
@@ -83,16 +89,18 @@ else
 fi
 
 # 3. Installed dependencies older than the lockfile. This is what breaks
-#    `npm run verify` in a way that reads as a repo bug (see #233/prettier).
+#    `pnpm run verify` in a way that reads as a repo bug (see #233/prettier).
 for pkg in frontend backend; do
-  lock="$pkg/package-lock.json"
-  stamp="$pkg/node_modules/.package-lock.json"
+  lock="$pkg/pnpm-lock.yaml"
+  stamp="$pkg/node_modules/.modules.yaml"
   [[ -f "$lock" ]] || continue
-  if [[ ! -d "$pkg/node_modules" || "$lock" -nt "$stamp" ]]; then
+  if [[ ! -d "$pkg/node_modules" || ! -f "$stamp" || "$lock" -nt "$stamp" ]]; then
     warn "$pkg/node_modules is stale or missing (older than $lock)"
     if [[ $FIX == 1 ]]; then
-      # --legacy-peer-deps mirrors CI; frontend has unresolvable peers otherwise.
-      (cd "$pkg" && npm ci --legacy-peer-deps) && note "reinstalled $pkg"
+      # A leftover npm-flat node_modules (from before the #243 pnpm migration)
+      # doesn't get cleanly overwritten by pnpm's symlinked layout — wipe first.
+      rm -rf "$pkg/node_modules"
+      (cd "$pkg" && pnpm install --frozen-lockfile) && note "reinstalled $pkg"
     fi
   else
     ok "$pkg/node_modules matches lockfile"
@@ -100,7 +108,7 @@ for pkg in frontend backend; do
 done
 
 if [[ $drift == 1 && $FIX == 0 ]]; then
-  printf '\n%s\n' "${YELLOW}Drift found. Re-run with:${NC} npm run preflight -- --fix"
+  printf '\n%s\n' "${YELLOW}Drift found. Re-run with:${NC} pnpm run preflight -- --fix"
   exit 1
 fi
 printf '\n%s\n' "${GREEN}Preflight clean.${NC}"
