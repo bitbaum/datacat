@@ -15,5 +15,6 @@ jobs:
     uses: bitbaum/fleetcrown/.github/workflows/selfhost-deploy.yml@main
     with:
       app: datacat-web
-      install-flags: --legacy-peer-deps
+      # No install-flags: the repo is pnpm now, and pnpm rejects npm's
+      # --legacy-peer-deps (peer conflicts are warnings under pnpm anyway).
     secrets: inherit
