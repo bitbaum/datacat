@@ -21,7 +21,7 @@
 # A bare `git status` reports "clean" in all these cases. This closes the class.
 #
 # Usage: pnpm run preflight   (read-only by default)
-#        pnpm run preflight -- --fix   (fast-forward, prune, reinstall)
+#        pnpm run preflight --fix   (fast-forward, prune, reinstall)
 
 set -euo pipefail
 
@@ -108,7 +108,7 @@ for pkg in frontend backend; do
 done
 
 if [[ $drift == 1 && $FIX == 0 ]]; then
-  printf '\n%s\n' "${YELLOW}Drift found. Re-run with:${NC} pnpm run preflight -- --fix"
+  printf '\n%s\n' "${YELLOW}Drift found. Re-run with:${NC} pnpm run preflight --fix"
   exit 1
 fi
 printf '\n%s\n' "${GREEN}Preflight clean.${NC}"
