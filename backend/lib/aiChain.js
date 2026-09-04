@@ -7,7 +7,7 @@
  * hardcoded — the moment OpenAI has a billing hiccup, an outage, or retires
  * gpt-4, every text-analysis feature in this app goes dead with no recovery
  * until someone notices and redeploys. This module gives both services a real
- * multi-vendor fallback chain via `ai-kit` (github:bitbaum/ai-kit), the same
+ * multi-vendor fallback chain via `@bitbaum/ai-kit` (from npm), the same
  * package already adopted across the fleet for exactly this failure mode.
  *
  * SCOPE: this is for plain chat-completion TEXT calls only. Vision/image
@@ -26,7 +26,7 @@
 let aiKitPromise = null;
 function loadAIKit() {
   if (!aiKitPromise) {
-    aiKitPromise = import('ai-kit');
+    aiKitPromise = import('@bitbaum/ai-kit');
   }
   return aiKitPromise;
 }
