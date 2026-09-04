@@ -30,10 +30,10 @@ Build a beautiful, modular, and schema-driven intake form builder, starting with
 ## 4. Key Commands
 
 This section will be updated as the project is set up.
-- **Install Dependencies**: `npm install`
-- **Run Development Server**: `npm run dev`
-- **Run Tests**: `npm test`
-- **Lint & Format**: `npm run lint`
+- **Install Dependencies**: `pnpm install`
+- **Run Development Server**: `pnpm run dev`
+- **Run Tests**: `pnpm test`
+- **Lint & Format**: `pnpm run lint`
 
 ## 5. Development Roadmap & Current Status
 

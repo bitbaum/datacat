@@ -1,12 +1,13 @@
 # Golden CI floor — see dotfiles/templates/ci/README.md.
-# datacat: npm monorepo (frontend/ + backend/). The only tests are full-stack
-# Playwright e2e that need both servers + a DB running — NOT hermetic, so they
-# are deferred to a future e2e job (lift revampit's e2e-local pattern once a
-# seeded DB service is wired). This floor gates the frontend quality signals
-# that currently never run: lint, typecheck, build (contentlayer + prisma
-# generate + next build). The frontend needs --legacy-peer-deps (proven in the
-# old deploy workflow). The production Docker deploy stays disabled — enabling a
-# deploy is an outward-facing decision, not part of the CI floor.
+# datacat: pnpm monorepo (frontend/ + backend/, separate installs). The only
+# tests are full-stack Playwright e2e that need both servers + a DB running —
+# NOT hermetic, so they are deferred to a future e2e job (lift revampit's
+# e2e-local pattern once a seeded DB service is wired). This floor gates the
+# frontend quality signals that currently never run: lint, typecheck, build
+# (contentlayer + prisma generate + next build). npm needed --legacy-peer-deps
+# here; pnpm treats peer conflicts as warnings, so no flag is required. The
+# production Docker deploy stays disabled — enabling a deploy is an
+# outward-facing decision, not part of the CI floor.
 name: CI
 
 on:
@@ -27,18 +28,18 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
+      # pnpm before setup-node so `cache: pnpm` can find the store.
+      - uses: pnpm/action-setup@v6
+
       - uses: actions/setup-node@v7
         with:
-          # Node 18: contentlayer (unmaintained) crashes on exit under Node 20+
-          # (ERR_INVALID_ARG_TYPE in clipanion) even though it generates docs
-          # fine. The old deploy workflow pinned 18 for the same reason.
           node-version-file: .nvmrc
-          cache: npm
-          cache-dependency-path: frontend/package-lock.json
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
 
       - name: Install
         working-directory: frontend
-        run: npm ci --legacy-peer-deps
+        run: pnpm install --frozen-lockfile
 
       # SSOT: one definition of "verified" lives in the ROOT package.json
       # `verify` (lint + typecheck + build), run identically here and locally.
@@ -51,7 +52,7 @@ jobs:
       # both green — only a build could have caught it. The breakage sat on main
       # while every CI run reported success.
       - name: Verify
-        run: npm run verify
+        run: pnpm run verify
 
       # The full-stack Playwright e2e is still DEFERRED, not skipped silently:
       # it needs both servers plus a seeded DB (lift revampit's e2e-local pattern

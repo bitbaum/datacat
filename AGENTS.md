@@ -19,21 +19,21 @@
 
 ```bash
 # Development (both servers)
-npm run dev
+pnpm run dev
 # Frontend: http://localhost:3000
 # Backend: http://localhost:5001
 
 # Individual services
-npm run dev:frontend
-npm run dev:backend
+pnpm run dev:frontend
+pnpm run dev:backend
 
 # Testing
-npm test              # Playwright E2E
-npm run test:ui       # Interactive mode
+pnpm test              # Playwright E2E
+pnpm run test:ui       # Interactive mode
 
 # Docker
-npm run docker:dev    # Full stack
-npm run docker:down   # Stop
+pnpm run docker:dev    # Full stack
+pnpm run docker:down   # Stop
 
 # Rebranding
 ./scripts/dev/rebrand.sh medical
@@ -188,8 +188,8 @@ All design tokens live in the main CSS file only. Tailwind config MUST reference
 
 ## Pre-Commit Checklist
 
-- [ ] `npm run lint` passes
-- [ ] `npm test` passes
+- [ ] `pnpm run lint` passes
+- [ ] `pnpm test` passes
 - [ ] Database migrations applied if schema changed
 - [ ] Brand names use environment variables
 - [ ] No hardcoded credentials
