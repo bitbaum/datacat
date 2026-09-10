@@ -3,10 +3,20 @@ import Credentials from 'next-auth/providers/credentials';
 import { prisma } from '@/lib/db';
 import { compare } from 'bcryptjs';
 import { SignJWT } from 'jose';
+import { resolveApiTokenSecret, resolveAuthSecret } from './secret';
 
-const secret = new TextEncoder().encode(process.env.JWT_SECRET || 'dev-secret');
+// Signs the inner access token only. Stays JWT_SECRET-specific on purpose:
+// frontend/src/lib/auth.ts and the Express backend both verify with that exact
+// env var, so this key may not follow next-auth's NEXTAUTH_SECRET preference.
+const apiTokenKey = new TextEncoder().encode(resolveApiTokenSecret() ?? '');
 
 export const authOptions: NextAuthOptions = {
+  // next-auth v4 refuses to run in production without this, and it was absent:
+  // the key above was used ONLY for the inner token, so next-auth itself had no
+  // secret and /api/auth/session 500'd on every page load. `undefined` here is
+  // reachable only in a build with no runtime env — a production server without
+  // a secret never gets this far (src/instrumentation.ts).
+  secret: resolveAuthSecret(),
   session: { strategy: 'jwt' },
   providers: [
     Credentials({
@@ -42,7 +52,7 @@ export const authOptions: NextAuthOptions = {
           .setProtectedHeader({ alg: 'HS256' })
           .setIssuedAt()
           .setExpirationTime('7d')
-          .sign(secret);
+          .sign(apiTokenKey);
       }
       return token;
     },
