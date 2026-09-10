@@ -38,8 +38,8 @@ importers:
         specifier: ^3.0.2
         version: 3.0.2
       bip-kit:
-        specifier: ^0.2.3
-        version: 0.2.3(katex@0.16.47)(mermaid@11.17.2)(react@19.1.0)(shiki@1.29.2)
+        specifier: ^0.2.6
+        version: 0.2.6(katex@0.16.47)(mermaid@11.17.2)(react@19.1.0)(shiki@1.29.2)
       geist:
         specifier: ^1.7.2
         version: 1.7.2(next@16.3.1(@playwright/test@1.57.0)(@types/node@20.19.4)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))
@@ -1493,8 +1493,8 @@ packages:
     resolution: {integrity: sha512-k38b3XOZKv60C4E2hVsXTolJWfkGRMbILBIe2IBITXciy5bOsTKot5kDrf3ZfufQtQOUN5mXceUEpU1rTl9Uog==}
     hasBin: true
 
-  bip-kit@0.2.3:
-    resolution: {integrity: sha512-Zp2VJMD9E/lLZvSy3HZNZERHORdTEmb5aBQAOb51s+kqHw/DsgxNy4YbaGyr0KMy+0a+0R3218Dd6Ny61mdQXg==}
+  bip-kit@0.2.6:
+    resolution: {integrity: sha512-SyXnD0z7v37/UDltFTi7otWfoNmb/55wm+u+I8wy7vzuYLk8XzudxvGvK55HAZZ2UT2uuxbLuyUADNXe7rRbcA==}
     engines: {node: '>=20'}
     peerDependencies:
       katex: '>=0.16'
@@ -4587,7 +4587,7 @@ snapshots:
 
   bcryptjs@3.0.2: {}
 
-  bip-kit@0.2.3(katex@0.16.47)(mermaid@11.17.2)(react@19.1.0)(shiki@1.29.2):
+  bip-kit@0.2.6(katex@0.16.47)(mermaid@11.17.2)(react@19.1.0)(shiki@1.29.2):
     dependencies:
       react: 19.1.0
     optionalDependencies:
