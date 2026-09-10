@@ -35,9 +35,10 @@
     "test:e2e:headed": "pnpm exec playwright test --headed",
     "test:e2e:report": "pnpm exec playwright show-report",
     "typecheck": "cd frontend && pnpm run prisma:generate && pnpm exec tsc --noEmit",
-    "verify": "pnpm run format:check && pnpm run lint && pnpm run typecheck && pnpm run test && pnpm run build",
+    "verify": "pnpm run format:check && pnpm run check:content-images && pnpm run lint && pnpm run typecheck && pnpm run test && pnpm run build",
     "format": "cd frontend && pnpm run format",
-    "format:check": "cd frontend && pnpm run format:check"
+    "format:check": "cd frontend && pnpm run format:check",
+    "check:content-images": "node frontend/scripts/check-content-images.mjs"
   },
   "keywords": [
     "data-capture",
