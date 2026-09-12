@@ -49,6 +49,22 @@ export function FilterControls({
 }: FilterControlsProps) {
   const [pillSearchTerms, setPillSearchTerms] = useState<Record<string, string>>({});
 
+  /**
+   * "Filter zurücksetzen" must clear everything the reader narrowed, including
+   * the per-facet pill search that lives in THIS component rather than in the
+   * parent's filter state.
+   *
+   * It did not. `onClearAll` resets the parent, which knows nothing about
+   * `pillSearchTerms`, so a reader who typed into the tag box and then pressed
+   * reset was left looking at a filtered list of pills — and `isFiltered` had
+   * gone false, so the button that would have cleared it was no longer
+   * rendered. A filter with no way out.
+   */
+  const handleClearAll = () => {
+    setPillSearchTerms({});
+    onClearAll?.();
+  };
+
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 mb-6">
       <div className="flex flex-col gap-4">
@@ -126,7 +142,7 @@ export function FilterControls({
 
             {isFiltered && (
               <button
-                onClick={onClearAll}
+                onClick={handleClearAll}
                 className="text-sm text-blue-600 dark:text-blue-400 hover:underline whitespace-nowrap"
               >
                 Filter zurücksetzen
