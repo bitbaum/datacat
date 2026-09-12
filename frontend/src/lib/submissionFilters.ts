@@ -32,6 +32,24 @@ export function escapeLikePattern(value: string): string {
   return value.replace(/([\\%_])/g, '\\$1');
 }
 
+/**
+ * A ceiling on `page` so `skip` stays an exact integer.
+ *
+ * It was `Number.MAX_SAFE_INTEGER`, which is a bound on the page NUMBER and not
+ * on the arithmetic done with it: `skip = (page - 1) * limit`, so
+ * `?page=9007199254740991&limit=500` overflows the safe range and the offset
+ * that reaches Postgres is a rounded approximation of what was asked for.
+ *
+ * The query returns nothing either way — there is no page nine quadrillion —
+ * so this is a correctness smell rather than a way in. It is still worth a
+ * bound: a number that cannot be computed with is not a page number, and
+ * refusing it at the boundary is this module's whole job.
+ *
+ * One million pages at MAX_LIMIT is 500 million rows, comfortably past any
+ * real form, and leaves `skip` exact.
+ */
+const MAX_PAGE = 1_000_000;
+
 function parseDate(raw: string | null): Date | null | 'invalid' {
   if (raw === null || raw === '') return null;
   const date = new Date(raw);
@@ -57,7 +75,7 @@ export function parseSubmissionFilters(params: URLSearchParams): ParsedFilters {
     return { success: false, error: 'startDate must be before endDate' };
   }
 
-  const page = parseCount(params.get('page'), 1, 1, Number.MAX_SAFE_INTEGER);
+  const page = parseCount(params.get('page'), 1, 1, MAX_PAGE);
   if (page === 'invalid') return { success: false, error: 'Invalid page' };
 
   const limit = parseCount(params.get('limit'), DEFAULT_LIMIT, 1, MAX_LIMIT);

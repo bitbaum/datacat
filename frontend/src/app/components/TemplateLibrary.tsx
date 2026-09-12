@@ -537,7 +537,7 @@ export function TemplateLibrary({
         </FilterControls>
 
         {/* Popular Templates */}
-        {searchTerm === '' && selectedFilters.category === 'all' && (
+        {!isFiltered && (
           <div className="mb-8">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
               <span className="mr-2">🔥</span>

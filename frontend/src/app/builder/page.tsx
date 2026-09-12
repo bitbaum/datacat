@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { ModernFormBuilderLayout } from '../components/ModernFormBuilderLayout';
 import { FormCaptureLanding } from '../components/FormCaptureLanding';
 import { FieldConfig, FormData } from '../types/form';
-import type { SavedForm } from '../components/SavedForms';
+import type { SavedForm } from '../types/saved-form';
 
 export default function FormBuilderPage() {
   const [showFormBuilder, setShowFormBuilder] = useState(false);

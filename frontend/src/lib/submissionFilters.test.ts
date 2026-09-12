@@ -56,6 +56,31 @@ describe('parseSubmissionFilters', () => {
     expect(result).toEqual({ success: false, error: 'startDate must be before endDate' });
   });
 
+  it('clamps an absurd page so skip stays an exact integer', () => {
+    // The ceiling used to be Number.MAX_SAFE_INTEGER, which bounds the page
+    // NUMBER and not the arithmetic done with it: skip = (page - 1) * limit
+    // then leaves the safe range, and the offset reaching Postgres is a rounded
+    // approximation of what was asked for.
+    //
+    // Clamping rather than rejecting follows this module's existing convention,
+    // the same one `limit` uses: too large is capped, while below the minimum
+    // or non-integer is a 400. Either way the query returns nothing — there is
+    // no page nine quadrillion — but skip is now always computable.
+    const result = parse('page=9007199254740991&limit=500');
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+    expect(result.filters.page).toBe(1_000_000);
+    expect(Number.isSafeInteger(result.filters.skip)).toBe(true);
+    expect(result.filters.skip).toBe(499_999_500);
+  });
+
+  it('leaves a page below the ceiling alone', () => {
+    const result = parse('page=999999&limit=500');
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+    expect(result.filters.page).toBe(999_999);
+  });
+
   it('computes skip from page and limit', () => {
     const result = parse('page=3&limit=20');
     expect(result.success && result.filters.skip).toBe(40);
