@@ -7,7 +7,7 @@ const app = express();
 const server = createServer(app);
 const { trpcMiddleware } = require('./middleware/trpc');
 const cookieParser = require('cookie-parser');
-const pinoHttp = require('pino-http');
+const { httpLogger, logger } = require('./lib/logger');
 const webSocketService = require('./services/websocket');
 const { getAIHealth } = require('./lib/aiChain');
 
@@ -20,11 +20,7 @@ app.use(
 );
 app.use(express.json());
 app.use(cookieParser());
-app.use(
-  pinoHttp({
-    redact: ['req.headers.authorization', 'req.headers.cookie'],
-  }),
-);
+app.use(httpLogger);
 
 // Health check
 app.get('/', (req, res) => {
@@ -109,8 +105,8 @@ const PORT = process.env.PORT || 5001;
 webSocketService.initialize(server);
 
 server.listen(PORT, '0.0.0.0', () => {
-  console.log(`🚀 DataCat Backend Server running on port ${PORT}`);
-  console.log(`📊 API endpoints available at http://localhost:${PORT}/api/trpc`);
-  console.log(`🔌 WebSocket server ready for real-time connections`);
-  console.log(`📚 Architecture documentation: /backend/ARCHITECTURE.md`);
+  logger.info(`🚀 DataCat Backend Server running on port ${PORT}`);
+  logger.info(`📊 API endpoints available at http://localhost:${PORT}/api/trpc`);
+  logger.info(`🔌 WebSocket server ready for real-time connections`);
+  logger.info(`📚 Architecture documentation: /backend/ARCHITECTURE.md`);
 });

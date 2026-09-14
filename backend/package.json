@@ -12,7 +12,8 @@
     "generate": "pnpm exec prisma generate",
     "db:reset": "pnpm exec prisma migrate reset",
     "db:seed": "node prisma/seed.js",
-    "test": "vitest run"
+    "test": "vitest run",
+    "lint": "eslint ."
   },
   "keywords": [
     "datacat",
@@ -52,6 +53,7 @@
   },
   "devDependencies": {
     "concurrently": "^9.2.0",
+    "eslint": "^9.39.5",
     "nodemon": "^3.1.10",
     "vitest": "^5.0.0"
   },
