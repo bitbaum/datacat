@@ -81,6 +81,12 @@ exports/
 # Prisma
 prisma/*.db
 prisma/*.db-journal
+# The backend Prisma client is generated into backend/generated/prisma by
+# `prisma generate` (typecheck, build and the Dockerfile all run it). It is
+# already ignored by backend/.gitignore; it is repeated here because tools
+# that only read the root ignore file (jscpd, sweeps) otherwise count ~1,300
+# generated lines as duplicated source.
+backend/generated/
 
 # Secrets and credentials
 *.pem
