@@ -1,6 +1,7 @@
 import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/db';
 import { getAuthUserFromRequest } from '@/lib/auth';
+import type { StoredFormStructure } from '@/app/types/saved-form';
 
 type FormWithSubmissionCount = Prisma.FormGetPayload<{
   include: { _count: { select: { submissions: true } } };
@@ -16,18 +17,22 @@ export async function GET(req: Request) {
     include: { _count: { select: { submissions: true } } },
   });
 
-  const data = forms.map((f: FormWithSubmissionCount) => ({
-    id: f.id,
-    title: f.title,
-    description: f.description,
-    structure: f.schema as any,
-    isMultiStep: (f.schema as any)?.isMultiStep ?? false,
-    status: f.isPublished ? 'published' : 'draft',
-    is_template: f.isTemplate,
-    created_at: f.createdAt,
-    updated_at: f.updatedAt,
-    submission_count: f._count?.submissions ?? 0,
-  }));
+  const data = forms.map((f: FormWithSubmissionCount) => {
+    // `schema` is an untyped Json column; the builder only ever writes a StoredFormStructure into it.
+    const structure = f.schema as unknown as StoredFormStructure | null;
+    return {
+      id: f.id,
+      title: f.title,
+      description: f.description,
+      structure,
+      isMultiStep: structure?.isMultiStep ?? false,
+      status: f.isPublished ? 'published' : 'draft',
+      is_template: f.isTemplate,
+      created_at: f.createdAt,
+      updated_at: f.updatedAt,
+      submission_count: f._count?.submissions ?? 0,
+    };
+  });
 
   return Response.json(data);
 }

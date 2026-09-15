@@ -1,6 +1,5 @@
 'use client';
 
-// @ts-ignore – Typings for react-hot-toast available in dev deps
 import { toast } from 'react-hot-toast';
 import React, { useState, useCallback, useEffect } from 'react';
 import { ModernSidebar } from '../components/ModernSidebar';
@@ -9,7 +8,7 @@ import { SaveTemplateModal } from './SaveTemplateModal';
 import type { TemplateData } from './TemplateLibrary';
 import { TemplateLibrary } from './TemplateLibrary';
 import type { SavedForm } from '../types/saved-form';
-import type { FieldConfig, FormData, FormTemplate, FormStep } from '../types/form';
+import type { FieldConfig, FieldTemplate, FormTemplate } from '../types/form';
 import { useFormValidation } from '../hooks/useFormValidation';
 import { useAutoSave } from '../hooks/useAutoSave';
 import { DndContext, closestCenter } from '@dnd-kit/core';
@@ -29,15 +28,11 @@ import { SavedFormsLibrary } from './SavedFormsLibrary';
 interface ModernFormBuilderLayoutProps {
   initialState?: Partial<ReturnType<typeof useFormBuilderStore.getState>>;
   editingForm?: SavedForm;
-  onSubmit: (data: FormData) => void;
-  onFieldsChange: (fields: FieldConfig[]) => void;
 }
 
 export function ModernFormBuilderLayout({
   initialState,
   editingForm,
-  onSubmit,
-  onFieldsChange,
 }: ModernFormBuilderLayoutProps) {
   const {
     fields,
@@ -51,14 +46,10 @@ export function ModernFormBuilderLayout({
     updateField,
     removeField,
     duplicateField,
-    addField,
     addTemplateFields,
-    loadTemplate,
   } = useFormBuilderStore();
   const { token } = useAuth();
 
-  const [savedForms, setSavedForms] = useState<SavedForm[]>([]);
-  const [formsLoading, setFormsLoading] = useState(true);
   const [showSaveTemplateModal, setShowSaveTemplateModal] = useState(false);
   const [selectedFieldId, setSelectedFieldId] = useState<string | undefined>(undefined);
   const [currentView, setCurrentView] = useState<
@@ -102,44 +93,9 @@ export function ModernFormBuilderLayout({
     setHasUnsavedChanges(false);
   }, [editingForm, setInitialState]);
 
-  useEffect(() => {
-    const fetchForms = async () => {
-      if (currentView !== 'saved-forms' || !token) {
-        setFormsLoading(false);
-        return;
-      }
-      try {
-        setFormsLoading(true);
-        const res = await fetch('/api/v1/forms', { headers: { 'x-auth-token': token } });
-        if (!res.ok) throw new Error('Failed to fetch forms');
-        const data = await res.json();
-        const parsedData = data.map((form: any): SavedForm => ({
-          id: form.id,
-          title: form.title,
-          description: form.description,
-          fields: form.structure.fields || [],
-          steps: form.structure.steps || [],
-          isMultiStep: form.structure.isMultiStep || false,
-          createdAt: form.created_at,
-          updatedAt: form.updated_at,
-          status: form.status,
-          submissionCount: form.submission_count || 0,
-          tags: form.structure.tags || [],
-          category: form.structure.category,
-        }));
-        setSavedForms(parsedData);
-      } catch (error) {
-        console.error('Error fetching forms:', error);
-      } finally {
-        setFormsLoading(false);
-      }
-    };
-    fetchForms();
-  }, [token, currentView]);
-
   const allFields = isMultiStep ? steps.flatMap((s) => s.fields) : fields;
   const { hasErrors, errors } = useFormValidation(allFields);
-  const { saveNow } = useAutoSave(formData, allFields);
+  useAutoSave(formData, allFields);
 
   const getStepsWithErrors = useCallback((): Set<string> => {
     const stepErrorSet = new Set<string>();
@@ -167,7 +123,7 @@ export function ModernFormBuilderLayout({
     setHasUnsavedChanges(true);
   };
 
-  const handleDragEnd = (event: any) => {
+  const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (over && active.id !== over.id) {
       const flatFields = isMultiStep ? steps.flatMap((s) => s.fields) : fields;
@@ -215,14 +171,7 @@ export function ModernFormBuilderLayout({
     });
     if (!response.ok) throw new Error(`Failed to ${isUpdating ? 'update' : 'save'} form`);
     const savedForm = await response.json();
-    if (isUpdating) {
-      setSavedForms((prev) =>
-        prev.map((f) =>
-          f.id === editingFormId ? { ...f, ...savedForm, ...savedForm.structure } : f,
-        ),
-      );
-    } else {
-      setSavedForms((prev) => [savedForm, ...prev]);
+    if (!isUpdating) {
       setEditingFormId(savedForm.id);
     }
     setShowSaveTemplateModal(false);
@@ -242,7 +191,18 @@ export function ModernFormBuilderLayout({
   const handleUseTemplate = (item: TemplateData | SavedForm) => {
     // Use addTemplateFields instead of loadTemplate so templates behave like sections
     const stepId = isMultiStep ? steps[currentStep]?.id : undefined;
-    addTemplateFields(item as any, stepId);
+    // addTemplateFields only reads `fields`; a saved form just carries them under a different envelope.
+    const template: FieldTemplate =
+      'title' in item
+        ? {
+            id: item.id,
+            name: item.title,
+            description: item.description ?? '',
+            icon: '📋',
+            fields: item.fields,
+          }
+        : item;
+    addTemplateFields(template, stepId);
     setCurrentView('builder');
     setHasUnsavedChanges(true);
   };
@@ -257,7 +217,6 @@ export function ModernFormBuilderLayout({
         headers: { 'x-auth-token': token },
       });
       if (!response.ok) throw new Error('Failed to delete form');
-      setSavedForms((prev) => prev.filter((f) => f.id !== formId));
     } catch (error) {
       console.error('Error deleting form:', error);
       toast.error('Formular konnte nicht gelöscht werden.');
@@ -286,8 +245,6 @@ export function ModernFormBuilderLayout({
         }),
       });
       if (!response.ok) throw new Error('Failed to duplicate form');
-      const duplicated = await response.json();
-      setSavedForms((prev) => [duplicated, ...prev]);
       toast.success('Formular dupliziert.');
     } catch (error) {
       console.error('Error duplicating form:', error);
@@ -309,7 +266,6 @@ export function ModernFormBuilderLayout({
         body: JSON.stringify({ status: newStatus }),
       });
       if (!response.ok) throw new Error('Failed to update status');
-      setSavedForms((prev) => prev.map((f) => (f.id === formId ? { ...f, status: newStatus } : f)));
     } catch (error) {
       console.error('Error updating status:', error);
       toast.error('Status konnte nicht aktualisiert werden.');
@@ -537,8 +493,11 @@ export function ModernFormBuilderLayout({
         id: selectedTemplatePreview.id,
         name: isSavedForm ? selectedTemplatePreview.title : selectedTemplatePreview.name,
         description: selectedTemplatePreview.description || '',
-        fields: (selectedTemplatePreview.fields || []).map((field: any) =>
-          field.id ? field : { ...field, id: `field_${Date.now()}_${Math.random()}` },
+        fields: (selectedTemplatePreview.fields || []).map(
+          (field: FieldConfig | Omit<FieldConfig, 'id'>): FieldConfig =>
+            'id' in field && field.id
+              ? field
+              : { ...field, id: `field_${Date.now()}_${Math.random()}` },
         ),
         steps: selectedTemplatePreview.steps || [],
         isMultiStep: selectedTemplatePreview.isMultiStep || false,

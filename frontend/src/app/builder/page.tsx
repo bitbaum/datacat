@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from 'react';
 import { ModernFormBuilderLayout } from '../components/ModernFormBuilderLayout';
 import { FormCaptureLanding } from '../components/FormCaptureLanding';
-import { FieldConfig, FormData } from '../types/form';
 import type { SavedForm } from '../types/saved-form';
 
 export default function FormBuilderPage() {
@@ -22,17 +21,6 @@ export default function FormBuilderPage() {
     }
   }, []);
 
-  const handleSubmit = (data: FormData) => {
-    // For MVP: persist form data locally until backend is ready
-    const submissions = JSON.parse(localStorage.getItem('submittedForms') || '[]');
-    submissions.push({ id: Date.now(), data });
-    localStorage.setItem('submittedForms', JSON.stringify(submissions));
-  };
-
-  const handleFieldsChange = (_fields: FieldConfig[]) => {
-    // Placeholder for side-effects (e.g., analytics) – intentionally left blank
-  };
-
   const handleStartBuilding = () => {
     setShowFormBuilder(true);
   };
@@ -41,11 +29,5 @@ export default function FormBuilderPage() {
     return <FormCaptureLanding onStartBuilding={handleStartBuilding} />;
   }
 
-  return (
-    <ModernFormBuilderLayout
-      editingForm={editingForm}
-      onSubmit={handleSubmit}
-      onFieldsChange={handleFieldsChange}
-    />
-  );
+  return <ModernFormBuilderLayout editingForm={editingForm} />;
 }
