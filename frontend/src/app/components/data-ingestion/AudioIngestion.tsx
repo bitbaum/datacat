@@ -1,6 +1,20 @@
 'use client';
 
-import React, { useState, useRef, useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { ICON, OutlineIcon } from './icons';
+import {
+  DropZone,
+  ErrorBanner,
+  INGEST_API_URL,
+  IngestionCard,
+  MetaTile,
+  ProgressBar,
+  ResultCard,
+  SubmitButton,
+  authHeaders,
+  readIngestionResponse,
+  useIngestionUpload,
+} from './shared';
 
 interface AudioIngestionProps {
   onUploadComplete?: (result: AudioResult) => void;
@@ -30,13 +44,12 @@ interface AudioResult {
 }
 
 type RecordingState = 'idle' | 'recording' | 'paused' | 'stopped';
-type UploadState = 'idle' | 'uploading' | 'processing' | 'complete' | 'error';
 
 export default function AudioIngestion({
   onUploadComplete,
   onError,
   formId,
-  apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001',
+  apiUrl = INGEST_API_URL,
   token,
 }: AudioIngestionProps) {
   // Recording state
@@ -46,10 +59,21 @@ export default function AudioIngestion({
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
 
   // Upload state
-  const [uploadState, setUploadState] = useState<UploadState>('idle');
-  const [uploadProgress, setUploadProgress] = useState(0);
-  const [result, setResult] = useState<AudioResult | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const upload = useIngestionUpload<AudioResult>({ onUploadComplete, onError });
+  const {
+    uploadState,
+    setUploadState,
+    uploadProgress,
+    setUploadProgress,
+    result,
+    error,
+    setError,
+    busy,
+    start,
+    succeed,
+    fail,
+    reset,
+  } = upload;
 
   // Refs
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -108,7 +132,7 @@ export default function AudioIngestion({
       setError(errorMsg);
       onError?.(errorMsg);
     }
-  }, [onError]);
+  }, [onError, setError]);
 
   // Stop recording
   const stopRecording = useCallback(() => {
@@ -157,18 +181,14 @@ export default function AudioIngestion({
     setAudioUrl(null);
     setRecordingState('idle');
     setRecordingTime(0);
-    setResult(null);
-    setError(null);
-    setUploadState('idle');
-  }, [audioUrl]);
+    reset();
+  }, [audioUrl, reset]);
 
   // Upload recorded audio
   const uploadRecording = useCallback(async () => {
     if (!audioBlob) return;
 
-    setUploadState('uploading');
-    setUploadProgress(0);
-    setError(null);
+    start();
 
     try {
       // Convert to base64
@@ -188,7 +208,7 @@ export default function AudioIngestion({
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          ...authHeaders(token),
         },
         body: JSON.stringify({
           audioData: base64Data,
@@ -197,31 +217,16 @@ export default function AudioIngestion({
         }),
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Upload failed');
-      }
-
-      const data = await response.json();
-
-      setUploadProgress(100);
-      setUploadState('complete');
-      setResult(data.data);
-      onUploadComplete?.(data.data);
+      succeed(await readIngestionResponse<AudioResult>(response));
     } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : 'Upload failed';
-      setError(errorMsg);
-      setUploadState('error');
-      onError?.(errorMsg);
+      fail(err);
     }
-  }, [audioBlob, apiUrl, formId, token, onUploadComplete, onError]);
+  }, [audioBlob, apiUrl, formId, token, start, setUploadState, setUploadProgress, succeed, fail]);
 
   // Handle file upload
   const handleFileUpload = useCallback(
     async (file: File) => {
-      setUploadState('uploading');
-      setUploadProgress(0);
-      setError(null);
+      start();
 
       try {
         const formData = new FormData();
@@ -233,32 +238,19 @@ export default function AudioIngestion({
 
         const response = await fetch(`${apiUrl}/api/v1/audio/upload`, {
           method: 'POST',
-          headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+          headers: authHeaders(token),
           body: formData,
         });
 
         setUploadState('processing');
         setUploadProgress(50);
 
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || 'Upload failed');
-        }
-
-        const data = await response.json();
-
-        setUploadProgress(100);
-        setUploadState('complete');
-        setResult(data.data);
-        onUploadComplete?.(data.data);
+        succeed(await readIngestionResponse<AudioResult>(response));
       } catch (err) {
-        const errorMsg = err instanceof Error ? err.message : 'Upload failed';
-        setError(errorMsg);
-        setUploadState('error');
-        onError?.(errorMsg);
+        fail(err);
       }
     },
-    [apiUrl, formId, token, onUploadComplete, onError],
+    [apiUrl, formId, token, start, setUploadState, setUploadProgress, succeed, fail],
   );
 
   // Handle file input change
@@ -283,7 +275,7 @@ export default function AudioIngestion({
         setError('Please drop an audio file');
       }
     },
-    [handleFileUpload],
+    [handleFileUpload, setError],
   );
 
   // Format time display
@@ -293,41 +285,22 @@ export default function AudioIngestion({
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  return (
-    <div className="w-full max-w-2xl mx-auto p-6 bg-white rounded-xl shadow-lg">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-        <svg
-          className="w-6 h-6 text-indigo-600"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"
-          />
-        </svg>
-        Voice / Audio Ingestion
-      </h2>
+  // Shown while recording and while paused.
+  const stopButton = (
+    <button
+      onClick={stopRecording}
+      className="flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-800 text-white rounded-lg transition-colors"
+    >
+      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+        <rect x="6" y="6" width="12" height="12" />
+      </svg>
+      Stop
+    </button>
+  );
 
-      {/* Error Display */}
-      {error && (
-        <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
-          <p className="flex items-center gap-2">
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            {error}
-          </p>
-        </div>
-      )}
+  return (
+    <IngestionCard title="Voice / Audio Ingestion" icon={ICON.microphone}>
+      {error && <ErrorBanner message={error} />}
 
       {/* Recording Section */}
       <div className="mb-6">
@@ -360,15 +333,7 @@ export default function AudioIngestion({
                   </svg>
                   Pause
                 </button>
-                <button
-                  onClick={stopRecording}
-                  className="flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-800 text-white rounded-lg transition-colors"
-                >
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                    <rect x="6" y="6" width="12" height="12" />
-                  </svg>
-                  Stop
-                </button>
+                {stopButton}
               </>
             )}
 
@@ -383,15 +348,7 @@ export default function AudioIngestion({
                   </svg>
                   Resume
                 </button>
-                <button
-                  onClick={stopRecording}
-                  className="flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-800 text-white rounded-lg transition-colors"
-                >
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                    <rect x="6" y="6" width="12" height="12" />
-                  </svg>
-                  Stop
-                </button>
+                {stopButton}
               </>
             )}
 
@@ -400,14 +357,7 @@ export default function AudioIngestion({
                 onClick={clearRecording}
                 className="flex items-center gap-2 px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition-colors"
               >
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
+                <OutlineIcon d={ICON.close} className="w-5 h-5" />
                 Clear
               </button>
             )}
@@ -440,44 +390,14 @@ export default function AudioIngestion({
             </p>
             <audio src={audioUrl} controls className="w-full" />
 
-            <button
+            <SubmitButton
+              busy={busy}
+              busyLabel={uploadState === 'uploading' ? 'Uploading...' : 'Transcribing...'}
+              label="Transcribe Recording"
+              icon={ICON.cloudUpload}
               onClick={uploadRecording}
-              disabled={uploadState === 'uploading' || uploadState === 'processing'}
               className="mt-3 w-full flex items-center justify-center gap-2 px-4 py-3 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white rounded-lg transition-colors"
-            >
-              {uploadState === 'uploading' || uploadState === 'processing' ? (
-                <>
-                  <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    />
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    />
-                  </svg>
-                  {uploadState === 'uploading' ? 'Uploading...' : 'Transcribing...'}
-                </>
-              ) : (
-                <>
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                    />
-                  </svg>
-                  Transcribe Recording
-                </>
-              )}
-            </button>
+            />
           </div>
         )}
       </div>
@@ -493,12 +413,7 @@ export default function AudioIngestion({
       <div className="mb-6">
         <h3 className="text-lg font-semibold text-gray-700 mb-3">Upload Audio File</h3>
 
-        <div
-          onDragOver={(e) => e.preventDefault()}
-          onDrop={handleDrop}
-          onClick={() => fileInputRef.current?.click()}
-          className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-indigo-400 hover:bg-indigo-50 transition-colors"
-        >
+        <DropZone onDrop={handleDrop} onOpen={() => fileInputRef.current?.click()}>
           <input
             ref={fileInputRef}
             type="file"
@@ -507,81 +422,35 @@ export default function AudioIngestion({
             className="hidden"
           />
 
-          <svg
-            className="w-12 h-12 mx-auto text-gray-400 mb-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-            />
-          </svg>
+          <OutlineIcon d={ICON.cloudUpload} className="w-12 h-12 mx-auto text-gray-400 mb-4" />
 
           <p className="text-gray-600 mb-2">
             <span className="font-semibold text-indigo-600">Click to upload</span> or drag and drop
           </p>
           <p className="text-sm text-gray-500">MP3, WAV, M4A, WEBM, OGG, FLAC up to 25MB</p>
-        </div>
+        </DropZone>
       </div>
 
-      {/* Progress Bar */}
-      {(uploadState === 'uploading' || uploadState === 'processing') && (
-        <div className="mb-6">
-          <div className="flex justify-between text-sm text-gray-600 mb-2">
-            <span>
-              {uploadState === 'uploading' ? 'Uploading...' : 'Transcribing with Whisper AI...'}
-            </span>
-            <span>{uploadProgress}%</span>
-          </div>
-          <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-indigo-600 transition-all duration-300"
-              style={{ width: `${uploadProgress}%` }}
-            />
-          </div>
-        </div>
+      {busy && (
+        <ProgressBar
+          label={uploadState === 'uploading' ? 'Uploading...' : 'Transcribing with Whisper AI...'}
+          progress={uploadProgress}
+        />
       )}
 
       {/* Results Section */}
       {result && uploadState === 'complete' && (
-        <div className="border border-green-200 bg-green-50 rounded-lg p-6">
-          <h3 className="text-lg font-semibold text-green-800 mb-4 flex items-center gap-2">
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            Transcription Complete
-          </h3>
-
+        <ResultCard title="Transcription Complete">
           {/* Metadata */}
           <div className="grid grid-cols-3 gap-4 mb-4 text-sm">
             {result.language && (
-              <div className="bg-white p-3 rounded-lg">
-                <p className="text-gray-500">Language</p>
-                <p className="font-semibold text-gray-800">{result.language.toUpperCase()}</p>
-              </div>
+              <MetaTile label="Language">{result.language.toUpperCase()}</MetaTile>
             )}
             {result.duration && (
-              <div className="bg-white p-3 rounded-lg">
-                <p className="text-gray-500">Duration</p>
-                <p className="font-semibold text-gray-800">{Math.round(result.duration)}s</p>
-              </div>
+              <MetaTile label="Duration">{Math.round(result.duration)}s</MetaTile>
             )}
             {result.confidence && (
-              <div className="bg-white p-3 rounded-lg">
-                <p className="text-gray-500">Confidence</p>
-                <p className="font-semibold text-gray-800">
-                  {Math.round(result.confidence * 100)}%
-                </p>
-              </div>
+              <MetaTile label="Confidence">{Math.round(result.confidence * 100)}%</MetaTile>
             )}
           </div>
 
@@ -665,8 +534,8 @@ export default function AudioIngestion({
           <div className="mt-4 pt-4 border-t border-green-200 text-sm text-gray-500">
             Processed in {result.processingTime}ms
           </div>
-        </div>
+        </ResultCard>
       )}
-    </div>
+    </IngestionCard>
   );
 }
