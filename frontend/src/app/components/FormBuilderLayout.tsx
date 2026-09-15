@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { FormBuilderSidebar } from './FormBuilderSidebar';
-import { FieldConfig, FormData } from '../types/form';
+import { FieldConfig } from '../types/form';
 
 interface FormBuilderLayoutProps {
   children: React.ReactNode;

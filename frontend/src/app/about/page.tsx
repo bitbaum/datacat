@@ -11,7 +11,6 @@ import {
   ChevronDownIcon,
   ChevronRightIcon,
   RocketLaunchIcon,
-  LightBulbIcon,
   CheckCircleIcon,
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';

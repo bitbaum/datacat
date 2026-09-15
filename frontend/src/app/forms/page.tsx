@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-// @ts-ignore – Typings for react-hot-toast available in dev deps
 import { toast, Toaster } from 'react-hot-toast';
 import { SavedFormsLibrary } from '../components/SavedFormsLibrary';
 import type { SavedForm } from '../components/SavedFormsLibrary';

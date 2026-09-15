@@ -1,14 +1,13 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { FieldConfig, FormStep } from '../types/form';
 import { FilterControls, Filter, FilterOption } from './FilterControls';
 import { useAuth } from '../context/AuthContext';
 import { LoginModal } from './LoginModal';
 import { Menu, Transition } from '@headlessui/react';
-import { useApiRequest } from '../hooks/useApiRequest';
 import { useModal } from '../hooks/useModal';
-import { MenuIcons, ActionIcons, CommonIcons } from './shared/IconProvider';
+import type { FormListRow } from '../types/saved-form';
 
 export interface SavedForm {
   id: string;
@@ -57,18 +56,9 @@ export function SavedFormsLibrary({
   );
   const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
 
-  // Check if user is logged in, show login modal if not
-  useEffect(() => {
-    if (!token) {
-      loginModal.open();
-      setLoading(false);
-      return;
-    }
+  const { open: openLoginModal } = loginModal;
 
-    fetchForms();
-  }, [token]);
-
-  const fetchForms = async () => {
+  const fetchForms = useCallback(async () => {
     if (!token) return;
 
     try {
@@ -77,10 +67,10 @@ export function SavedFormsLibrary({
       const res = await fetch('/api/v1/forms', { headers: { 'x-auth-token': token } });
       if (!res.ok) throw new Error('Failed to fetch forms');
       const data = await res.json();
-      const parsedData = data.map((form: any): SavedForm => ({
+      const parsedData = (data as FormListRow[]).map((form): SavedForm => ({
         id: form.id,
         title: form.title,
-        description: form.description,
+        description: form.description ?? undefined,
         fields: form.structure.fields || [],
         steps: form.structure.steps || [],
         isMultiStep: form.structure.isMultiStep || false,
@@ -98,12 +88,18 @@ export function SavedFormsLibrary({
     } finally {
       setLoading(false);
     }
-  };
+  }, [token]);
 
-  const handleLoginSuccess = () => {
-    loginModal.close();
-    // fetchForms will be called by the useEffect when token changes
-  };
+  // Check if user is logged in, show login modal if not
+  useEffect(() => {
+    if (!token) {
+      openLoginModal();
+      setLoading(false);
+      return;
+    }
+
+    fetchForms();
+  }, [token, fetchForms, openLoginModal]);
 
   // If not logged in, show login prompt
   if (!token) {

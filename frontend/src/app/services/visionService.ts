@@ -287,14 +287,3 @@ class VisionService {
 
 // Singleton instance
 export const visionService = new VisionService();
-
-// Helper function to replace with real API later
-export const configureVisionAPI = (config: {
-  apiKey?: string;
-  endpoint?: string;
-  model?: string;
-}) => {
-  // TODO: Replace mock service with real API configuration
-  console.log('Vision API configured:', config);
-  // This is where you'd initialize the real OpenAI Vision API or similar
-};

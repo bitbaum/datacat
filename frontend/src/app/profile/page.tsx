@@ -13,7 +13,7 @@ interface ProfileUser {
 }
 
 export default function ProfilePage() {
-  const { token, user, loading, logout } = useAuth();
+  const { token, loading, logout } = useAuth();
   const [profile, setProfile] = useState<ProfileUser | null>(null);
   const [name, setName] = useState('');
   const [saving, setSaving] = useState(false);

@@ -8,7 +8,6 @@ import {
   PencilIcon,
   TrashIcon,
   DocumentDuplicateIcon,
-  EllipsisVerticalIcon,
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { ROUTES } from '@/lib/routes';
@@ -91,7 +90,6 @@ const getStatusText = (status: string) => {
 export default function TablePage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
-  const [editingProduct, setEditingProduct] = useState<string | null>(null);
   const [products, setProducts] = useState(demoProducts);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
 
@@ -137,11 +135,9 @@ export default function TablePage() {
     }
   };
 
-  const handleEditProduct = (productId: string) => {
-    setEditingProduct(productId);
-    // In real implementation, this would open an edit modal or navigate to edit page
-    console.log('Edit product:', productId);
-  };
+  // Editing is not implemented yet: the button is wired so the row layout is
+  // final, but there is no edit modal or route to open for a product.
+  const handleEditProduct = () => {};
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -320,7 +316,7 @@ export default function TablePage() {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center space-x-2">
                         <button
-                          onClick={() => handleEditProduct(product.id)}
+                          onClick={handleEditProduct}
                           className="p-1 text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
                           title="Bearbeiten"
                         >

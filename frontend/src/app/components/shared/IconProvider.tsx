@@ -141,8 +141,12 @@ const sizeClasses = {
   xl: 'h-8 w-8',
 };
 
-export function createIconComponent(IconComponent: React.ComponentType<{ className?: string }>) {
-  return function Icon({ className = '', size = 'md', color, ...props }: IconProps & any) {
+type IconSvgProps = Omit<React.SVGProps<SVGSVGElement>, 'ref' | keyof IconProps>;
+
+export function createIconComponent(
+  IconComponent: React.ComponentType<IconSvgProps & { className?: string }>,
+) {
+  return function Icon({ className = '', size = 'md', color, ...props }: IconProps & IconSvgProps) {
     const sizeClass = sizeClasses[size as keyof typeof sizeClasses];
     const combinedClassName = `${sizeClass} ${className}`;
     const style = color ? { color } : undefined;

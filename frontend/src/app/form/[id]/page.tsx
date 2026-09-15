@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { FormField } from '../../components/FormField';
 import { Button } from '../../components/Button';
 import { FieldConfig } from '../../types/form';
@@ -18,7 +18,9 @@ interface PublicForm {
 
 const PublicFormPage = () => {
   const [form, setForm] = useState<PublicForm | null>(null);
-  const [formData, setFormData] = useState<Record<string, any>>({});
+  // Every value is a string: FormField normalises checkboxes to 'true' / 'false' before
+  // calling onChange (see the checkbox case in components/FormField.tsx).
+  const [formData, setFormData] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -53,11 +55,8 @@ const PublicFormPage = () => {
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
   ) => {
-    const { name, value, type } = e.target;
-    const isCheckbox = type === 'checkbox';
-    // @ts-ignore
-    const inputValue = isCheckbox ? e.target.checked : value;
-    setFormData((prev) => ({ ...prev, [name]: inputValue }));
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {

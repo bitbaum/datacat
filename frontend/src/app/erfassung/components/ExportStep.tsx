@@ -2,12 +2,11 @@
 
 import { useState } from 'react';
 import { DocumentArrowDownIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
-import { WorkflowProduct } from './ErfassungWorkflow';
+import type { WorkflowProduct, ReviewedProductData } from './ErfassungWorkflow';
 
 interface ExportStepProps {
-  productData: any;
+  productData: ReviewedProductData;
   onExportComplete: (exportData: WorkflowProduct['exportData']) => void;
-  product: WorkflowProduct;
 }
 
 const exportFormats = [
@@ -62,7 +61,7 @@ const exportFormats = [
   },
 ];
 
-export function ExportStep({ productData, onExportComplete, product }: ExportStepProps) {
+export function ExportStep({ productData, onExportComplete }: ExportStepProps) {
   const [selectedFormats, setSelectedFormats] = useState<string[]>(['csv_kivitendo']);
   const [isExporting, setIsExporting] = useState(false);
   const [exportComplete, setExportComplete] = useState(false);

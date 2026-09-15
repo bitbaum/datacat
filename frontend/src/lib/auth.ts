@@ -11,7 +11,11 @@ export async function getAuthUserFromRequest(req: Request): Promise<AuthUser | n
   if (!raw) return null;
   try {
     const { payload } = await jwtVerify(raw, secret);
-    return { id: String(payload.sub || ''), email: (payload as any).email };
+    // `email` is a private claim (signed in src/server/auth/options.ts), so jose types it as unknown.
+    return {
+      id: String(payload.sub || ''),
+      email: typeof payload.email === 'string' ? payload.email : null,
+    };
   } catch {
     return null;
   }

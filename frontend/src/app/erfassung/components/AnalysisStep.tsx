@@ -7,7 +7,6 @@ import { WorkflowProduct } from './ErfassungWorkflow';
 interface AnalysisStepProps {
   photos: File[];
   onAnalysisComplete: (result: WorkflowProduct['analysisResult']) => void;
-  product: WorkflowProduct;
 }
 
 // Mock analysis results - in real implementation this would come from AI API
@@ -98,23 +97,22 @@ const mockAnalysisResults = [
   },
 ];
 
-export function AnalysisStep({ photos, onAnalysisComplete, product }: AnalysisStepProps) {
+const analysisSteps = [
+  { name: 'Bildverarbeitung', description: 'Optimierung und Vorbereitung der Fotos' },
+  { name: 'OCR-Erkennung', description: 'Texterkennung von Labels und Typenschildern' },
+  { name: 'Objekterkennung', description: 'Produktidentifikation und Klassifizierung' },
+  { name: 'Datenextraktion', description: 'Extrahierung von Produktinformationen' },
+  { name: 'Datenbankabgleich', description: 'Vergleich mit bekannten Produktdaten' },
+  { name: 'Finalisierung', description: 'Aufbereitung der Ergebnisse' },
+];
+
+export function AnalysisStep({ photos, onAnalysisComplete }: AnalysisStepProps) {
   const [isAnalyzing, setIsAnalyzing] = useState(true);
   const [currentStep, setCurrentStep] = useState(0);
   const [analysisResult, setAnalysisResult] = useState<WorkflowProduct['analysisResult']>();
 
-  const analysisSteps = [
-    { name: 'Bildverarbeitung', description: 'Optimierung und Vorbereitung der Fotos' },
-    { name: 'OCR-Erkennung', description: 'Texterkennung von Labels und Typenschildern' },
-    { name: 'Objekterkennung', description: 'Produktidentifikation und Klassifizierung' },
-    { name: 'Datenextraktion', description: 'Extrahierung von Produktinformationen' },
-    { name: 'Datenbankabgleich', description: 'Vergleich mit bekannten Produktdaten' },
-    { name: 'Finalisierung', description: 'Aufbereitung der Ergebnisse' },
-  ];
-
+  // Runs once on mount: the (mocked) analysis starts as soon as the step is shown.
   useEffect(() => {
-    if (!isAnalyzing) return;
-
     const analyzePhotos = async () => {
       // Simulate analysis progress
       for (let i = 0; i < analysisSteps.length; i++) {

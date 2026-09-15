@@ -1,3 +1,4 @@
+const { logger } = require('../lib/logger');
 const { analysisQueue, emailQueue, exportQueue } = require('./queue');
 const LLMAnalysisService = require('../services/llm-analysis');
 
@@ -18,7 +19,7 @@ const path = require('path');
 analysisQueue.process('analyze-submission', async (job) => {
   const { submissionId, analysisTypes } = job.data;
 
-  console.log(`Processing LLM analysis for submission ${submissionId}`);
+  logger.info(`Processing LLM analysis for submission ${submissionId}`);
 
   try {
     // Update job progress
@@ -54,14 +55,14 @@ analysisQueue.process('analyze-submission', async (job) => {
     // Notify connected clients via WebSocket
     webSocketService.notifyAnalysisComplete(submission.form.id, submissionId, results);
 
-    console.log(`LLM analysis completed for submission ${submissionId}`);
+    logger.info(`LLM analysis completed for submission ${submissionId}`);
     return {
       submissionId,
       analysisCount: results.length,
       completedAt: new Date(),
     };
   } catch (error) {
-    console.error(`LLM analysis failed for submission ${submissionId}:`, error);
+    logger.error({ err: error }, `LLM analysis failed for submission ${submissionId}`);
 
     // Update submission status to failed
     await prisma.submission.update({
@@ -77,7 +78,7 @@ analysisQueue.process('analyze-submission', async (job) => {
 emailQueue.process('send-notification', async (job) => {
   const { type, recipient, data } = job.data;
 
-  console.log(`Processing email notification: ${type} to ${recipient}`);
+  logger.info(`Processing email notification: ${type} to ${recipient}`);
 
   try {
     await job.progress(10);
@@ -93,10 +94,13 @@ emailQueue.process('send-notification', async (job) => {
     await job.progress(90);
 
     // Log the email (in production, replace with actual email service)
-    console.log(`Email sent: ${type} to ${recipient}`, {
-      subject: data.subject,
-      preview: data.content?.substring(0, 100) + '...',
-    });
+    logger.info(
+      {
+        subject: data.subject,
+        preview: data.content?.substring(0, 100) + '...',
+      },
+      `Email sent: ${type} to ${recipient}`,
+    );
 
     await job.progress(100);
 
@@ -107,7 +111,7 @@ emailQueue.process('send-notification', async (job) => {
       status: 'sent',
     };
   } catch (error) {
-    console.error(`Email sending failed for ${type} to ${recipient}:`, error);
+    logger.error({ err: error }, `Email sending failed for ${type} to ${recipient}`);
     throw error;
   }
 });
@@ -116,7 +120,7 @@ emailQueue.process('send-notification', async (job) => {
 exportQueue.process('export-data', async (job) => {
   const { formId, format, userId, dateFrom, dateTo } = job.data;
 
-  console.log(`Processing data export for form ${formId} in ${format} format`);
+  logger.info(`Processing data export for form ${formId} in ${format} format`);
 
   try {
     await job.progress(10);
@@ -235,7 +239,7 @@ exportQueue.process('export-data', async (job) => {
 
     await job.progress(100);
 
-    console.log(`Data export completed: ${filename}`);
+    logger.info(`Data export completed: ${filename}`);
     return {
       formId,
       filename,
@@ -243,7 +247,7 @@ exportQueue.process('export-data', async (job) => {
       completedAt: new Date(),
     };
   } catch (error) {
-    console.error(`Data export failed for form ${formId}:`, error);
+    logger.error({ err: error }, `Data export failed for form ${formId}`);
 
     // Update job status
     await prisma.backgroundJob.updateMany({
@@ -327,39 +331,39 @@ async function convertToCSV(submissions) {
 
 // Queue event handlers for monitoring
 analysisQueue.on('completed', (job, result) => {
-  console.log(`Analysis job ${job.id} completed:`, result);
+  logger.info({ result }, `Analysis job ${job.id} completed`);
 });
 
 analysisQueue.on('failed', (job, err) => {
-  console.error(`Analysis job ${job.id} failed:`, err.message);
+  logger.error({ err }, `Analysis job ${job.id} failed`);
 });
 
 emailQueue.on('completed', (job, result) => {
-  console.log(`Email job ${job.id} completed:`, result);
+  logger.info({ result }, `Email job ${job.id} completed`);
 });
 
 emailQueue.on('failed', (job, err) => {
-  console.error(`Email job ${job.id} failed:`, err.message);
+  logger.error({ err }, `Email job ${job.id} failed`);
 });
 
 exportQueue.on('completed', (job, result) => {
-  console.log(`Export job ${job.id} completed:`, result);
+  logger.info({ result }, `Export job ${job.id} completed`);
 });
 
 exportQueue.on('failed', (job, err) => {
-  console.error(`Export job ${job.id} failed:`, err.message);
+  logger.error({ err }, `Export job ${job.id} failed`);
 });
 
 // Graceful shutdown handling
 process.on('SIGTERM', async () => {
-  console.log('Received SIGTERM, shutting down job processors...');
+  logger.info('Received SIGTERM, shutting down job processors...');
   await analysisQueue.close();
   await emailQueue.close();
   await exportQueue.close();
   process.exit(0);
 });
 
-console.log('Job processors initialized and ready');
+logger.info('Job processors initialized and ready');
 
 module.exports = {
   analysisQueue,

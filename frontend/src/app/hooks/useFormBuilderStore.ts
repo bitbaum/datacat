@@ -44,7 +44,7 @@ interface FormBuilderState {
   }) => void;
 }
 
-export const useFormBuilderStore = create<FormBuilderState>((set, get) => ({
+export const useFormBuilderStore = create<FormBuilderState>((set) => ({
   fields: [],
   steps: [],
   formData: {},

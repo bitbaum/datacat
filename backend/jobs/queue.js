@@ -1,5 +1,6 @@
 const Bull = require('bull');
 const Redis = require('ioredis');
+const { logger } = require('../lib/logger');
 
 // Configure Redis connection
 const redis = new Redis({
@@ -153,7 +154,7 @@ class QueueManager {
       exportQueue.clean(olderThan, 'failed'),
     ]);
 
-    console.log('Queue cleanup completed');
+    logger.info('Queue cleanup completed');
   }
 
   // Pause/Resume queues
@@ -161,7 +162,7 @@ class QueueManager {
     const queue = this.getQueueByName(queueName);
     if (queue) {
       await queue.pause();
-      console.log(`Queue ${queueName} paused`);
+      logger.info(`Queue ${queueName} paused`);
     }
   }
 
@@ -169,7 +170,7 @@ class QueueManager {
     const queue = this.getQueueByName(queueName);
     if (queue) {
       await queue.resume();
-      console.log(`Queue ${queueName} resumed`);
+      logger.info(`Queue ${queueName} resumed`);
     }
   }
 
@@ -188,12 +189,12 @@ class QueueManager {
 
   // Graceful shutdown
   static async shutdown() {
-    console.log('Shutting down queues gracefully...');
+    logger.info('Shutting down queues gracefully...');
 
     await Promise.all([analysisQueue.close(), emailQueue.close(), exportQueue.close()]);
 
     await redis.disconnect();
-    console.log('All queues shut down successfully');
+    logger.info('All queues shut down successfully');
   }
 }
 

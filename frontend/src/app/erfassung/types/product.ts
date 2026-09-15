@@ -76,7 +76,7 @@ export interface ProductAnalysis {
   analysisType: ProductAnalysisType;
   model: string; // AI model used (gpt-4-vision, claude-3, etc.)
   prompt: string; // Analysis prompt used
-  result: Record<string, any>; // Structured analysis results
+  result: Record<string, unknown>; // Structured analysis results (model-defined JSON)
   confidence?: number; // Overall confidence score
   processingTime?: number; // Processing time in milliseconds
 
@@ -97,7 +97,7 @@ export interface ProductExport {
   format: ExportFormat; // CSV, XLSX, JSON, XML, TSV
   template?: string; // Export template used
   productIds: string[]; // Array of product IDs included
-  customMapping?: Record<string, any>; // Custom field mapping configuration
+  customMapping?: Record<string, unknown>; // Custom field mapping configuration
 
   // Export Data
   filePath?: string; // Generated file path
@@ -109,7 +109,7 @@ export interface ProductExport {
   // E-commerce Integration
   targetPlatform?: string; // medusa-js, shopware, generic
   syncStatus?: SyncStatus; // Integration sync status
-  platformData?: Record<string, any>; // Platform-specific data
+  platformData?: Record<string, unknown>; // Platform-specific data
 
   // Metadata
   userId: string;
@@ -135,8 +135,8 @@ export interface StorePublication {
   lastSyncAt?: Date;
 
   // Sync Data
-  syncData: Record<string, any>;
-  integrationData?: Record<string, any>; // Platform-specific integration data
+  syncData: Record<string, unknown>;
+  integrationData?: Record<string, unknown>; // Platform-specific integration data
   workflowId?: string; // Medusa JS workflow ID
   catalogId?: string; // Shopware catalog ID
   error?: string;

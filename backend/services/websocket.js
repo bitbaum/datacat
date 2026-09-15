@@ -1,3 +1,4 @@
+const { logger } = require('../lib/logger');
 const { Server } = require('socket.io');
 const jwt = require('jsonwebtoken');
 const prisma = require('../lib/prisma');
@@ -20,12 +21,12 @@ class WebSocketService {
     });
 
     this.setupEventHandlers();
-    console.log('WebSocket service initialized');
+    logger.info('WebSocket service initialized');
   }
 
   setupEventHandlers() {
     this.io.on('connection', (socket) => {
-      console.log(`Socket connected: ${socket.id}`);
+      logger.info(`Socket connected: ${socket.id}`);
 
       // Handle authentication
       socket.on('authenticate', async (data) => {
@@ -80,9 +81,9 @@ class WebSocketService {
             },
           });
 
-          console.log(`User ${user.email} authenticated on socket ${socket.id}`);
+          logger.info(`User ${user.email} authenticated on socket ${socket.id}`);
         } catch (error) {
-          console.error('Authentication error:', error);
+          logger.error({ err: error }, 'Authentication error');
           socket.emit('auth-error', { message: 'Authentication failed' });
         }
       });
@@ -115,9 +116,9 @@ class WebSocketService {
           socket.join(`form:${formId}`);
           socket.emit('subscribed', { formId });
 
-          console.log(`User ${user.email} subscribed to form ${formId}`);
+          logger.info(`User ${user.email} subscribed to form ${formId}`);
         } catch (error) {
-          console.error('Form subscription error:', error);
+          logger.error({ err: error }, 'Form subscription error');
           socket.emit('error', { message: 'Subscription failed' });
         }
       });
@@ -143,9 +144,9 @@ class WebSocketService {
           }
 
           this.authenticatedSockets.delete(socket.id);
-          console.log(`User ${user.email} disconnected from socket ${socket.id}`);
+          logger.info(`User ${user.email} disconnected from socket ${socket.id}`);
         } else {
-          console.log(`Unauthenticated socket disconnected: ${socket.id}`);
+          logger.info(`Unauthenticated socket disconnected: ${socket.id}`);
         }
       });
     });

@@ -1,10 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { FormBuilderLayout } from './FormBuilderLayout';
 import { FormFieldBuilder } from './FormFieldBuilder';
 import { FieldEditor } from './FieldEditor';
-import { FieldGroup } from './FieldGroup';
 import { GroupManager } from './GroupManager';
 import { SaveTemplateModal } from './SaveTemplateModal';
 import { Button } from './Button';
@@ -19,6 +18,8 @@ interface DynamicFormProps {
   onFieldsChange?: (fields: FieldConfig[]) => void;
 }
 
+const DEFAULT_GROUP = 'Allgemeine Felder';
+
 export function DynamicForm({ initialFields, onSubmit, onFieldsChange }: DynamicFormProps) {
   const [fields, setFields] = useState<FieldConfig[]>(initialFields);
   const [formData, setFormData] = useState<FormData>(() => {
@@ -29,8 +30,7 @@ export function DynamicForm({ initialFields, onSubmit, onFieldsChange }: Dynamic
     return data;
   });
 
-  const { validateForm, validateSingleField, getFieldError, hasErrors, clearErrors } =
-    useFormValidation(fields);
+  const { validateForm, validateSingleField, getFieldError, hasErrors } = useFormValidation(fields);
   const { savedData, saveNow, clearSavedData, getLastSaveTime, hasSavedData } = useAutoSave(
     formData,
     fields,
@@ -40,17 +40,28 @@ export function DynamicForm({ initialFields, onSubmit, onFieldsChange }: Dynamic
   const [showGroupManager, setShowGroupManager] = useState(false);
   const [editingField, setEditingField] = useState<FieldConfig | null>(null);
 
-  // Load saved data on component mount
+  // The draft effect below must react to `savedData` only: re-running it on
+  // every keystroke would be wrong, but it still needs the *current* form to
+  // decide whether it is empty. A ref synced after each render gives it that
+  // without making the form a dependency.
+  const latest = useRef({ formData, fields, onFieldsChange });
   useEffect(() => {
-    if (savedData && Object.keys(formData).every((key) => !formData[key])) {
-      // Only load if current form is empty
+    latest.current = { formData, fields, onFieldsChange };
+  });
+
+  // Load the autosaved draft when one appears — only into an empty form, so a
+  // draft never overwrites what the user is typing.
+  useEffect(() => {
+    if (!savedData) return;
+    const { formData, fields, onFieldsChange } = latest.current;
+    if (Object.keys(formData).every((key) => !formData[key])) {
       setFormData(savedData.formData);
       if (savedData.fields.length !== fields.length) {
         setFields(savedData.fields);
         onFieldsChange?.(savedData.fields);
       }
     }
-  }, [savedData]); // Only run when savedData changes, not on every render
+  }, [savedData]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
@@ -85,7 +96,7 @@ export function DynamicForm({ initialFields, onSubmit, onFieldsChange }: Dynamic
     await saveTemplate(name, description, fields);
   };
 
-  const handleCreateGroup = (groupName: string) => {
+  const handleCreateGroup = () => {
     // Group creation side-effects can be handled here if necessary
   };
 
@@ -116,44 +127,6 @@ export function DynamicForm({ initialFields, onSubmit, onFieldsChange }: Dynamic
       [fieldConfig.name]: '',
     }));
     onFieldsChange?.(newFields);
-  };
-
-  const addQuickField = (type: FieldConfig['type']) => {
-    const fieldNames: Record<FieldConfig['type'], string> = {
-      text: 'Textfeld',
-      email: 'E-Mail',
-      tel: 'Telefon',
-      date: 'Datum',
-      select: 'Auswahl',
-      textarea: 'Textbereich',
-      checkbox: 'Checkbox',
-      radio: 'Radio',
-      number: 'Zahl',
-      range: 'Bereich',
-      file: 'Datei',
-      url: 'URL',
-      password: 'Passwort',
-    };
-
-    const fieldConfig: FieldConfig = {
-      id: `quick-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      type,
-      name: `${fieldNames[type]?.toLowerCase().replace(/[^a-z]/g, '_') || type}_${Date.now()}`,
-      label: fieldNames[type] || type,
-      required: false,
-      placeholder: type === 'select' ? undefined : `${fieldNames[type]} eingeben...`,
-      options:
-        type === 'select'
-          ? [
-              { value: '', label: 'Auswahl treffen' },
-              { value: 'option1', label: 'Option 1' },
-              { value: 'option2', label: 'Option 2' },
-            ]
-          : undefined,
-      rows: type === 'textarea' ? 3 : undefined,
-    };
-
-    addField(fieldConfig);
   };
 
   const removeField = (fieldId: string) => {
@@ -189,10 +162,36 @@ export function DynamicForm({ initialFields, onSubmit, onFieldsChange }: Dynamic
     }
   };
 
-  const handleDeleteField = (fieldId: string) => {
-    removeField(fieldId);
-    setEditingField(null);
-  };
+  // Group fields by their group property
+  const groupedFields = fields.reduce(
+    (groups, field) => {
+      const groupName = field.group || DEFAULT_GROUP;
+      if (!groups[groupName]) {
+        groups[groupName] = [];
+      }
+      groups[groupName].push(field);
+      return groups;
+    },
+    {} as Record<string, FieldConfig[]>,
+  );
+
+  const renderFieldGrid = (key: string | undefined, groupFields: FieldConfig[], gap: string) => (
+    <div key={key} className={`grid grid-cols-1 md:grid-cols-2 ${gap}`}>
+      {groupFields.map((field) => (
+        <FormFieldBuilder
+          key={field.id}
+          field={field}
+          value={formData[field.name] || ''}
+          onChange={handleInputChange}
+          onBlur={() => handleFieldBlur(field.name)}
+          onRemove={() => removeField(field.id)}
+          onEdit={() => handleEditField(field)}
+          error={getFieldError(field.name)}
+          isEditing={editingField?.id === field.id}
+        />
+      ))}
+    </div>
+  );
 
   return (
     <FormBuilderLayout
@@ -261,82 +260,32 @@ export function DynamicForm({ initialFields, onSubmit, onFieldsChange }: Dynamic
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Group fields by their group property */}
-          {(() => {
-            const groupedFields = fields.reduce(
-              (groups, field) => {
-                const groupName = field.group || 'Allgemeine Felder';
-                if (!groups[groupName]) {
-                  groups[groupName] = [];
-                }
-                groups[groupName].push(field);
-                return groups;
-              },
-              {} as Record<string, FieldConfig[]>,
-            );
+          <div className="space-y-6">
+            {Object.entries(groupedFields).map(([groupName, groupFields]) => {
+              if (groupName === DEFAULT_GROUP && Object.keys(groupedFields).length === 1) {
+                // If there's only one group and it's the default, render fields directly
+                return renderFieldGrid(groupName, groupFields, 'gap-8');
+              }
 
-            return (
-              <div className="space-y-6">
-                {Object.entries(groupedFields).map(([groupName, groupFields]) => {
-                  if (
-                    groupName === 'Allgemeine Felder' &&
-                    Object.keys(groupedFields).length === 1
-                  ) {
-                    // If there's only one group and it's the default, render fields directly
-                    return (
-                      <div key={groupName} className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        {groupFields.map((field) => (
-                          <FormFieldBuilder
-                            key={field.id}
-                            field={field}
-                            value={formData[field.name] || ''}
-                            onChange={handleInputChange}
-                            onBlur={() => handleFieldBlur(field.name)}
-                            onRemove={() => removeField(field.id)}
-                            onEdit={() => handleEditField(field)}
-                            error={getFieldError(field.name)}
-                            isEditing={editingField?.id === field.id}
-                          />
-                        ))}
-                      </div>
-                    );
-                  }
-
-                  // Render as field groups
-                  return (
-                    <div
-                      key={groupName}
-                      className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6"
-                    >
-                      <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                          {groupName}
-                        </h3>
-                        <div className="text-sm text-gray-500 dark:text-gray-400">
-                          {groupFields.length} Feld{groupFields.length !== 1 ? 'er' : ''}
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {groupFields.map((field) => (
-                          <FormFieldBuilder
-                            key={field.id}
-                            field={field}
-                            value={formData[field.name] || ''}
-                            onChange={handleInputChange}
-                            onBlur={() => handleFieldBlur(field.name)}
-                            onRemove={() => removeField(field.id)}
-                            onEdit={() => handleEditField(field)}
-                            error={getFieldError(field.name)}
-                            isEditing={editingField?.id === field.id}
-                          />
-                        ))}
-                      </div>
+              // Render as field groups
+              return (
+                <div
+                  key={groupName}
+                  className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6"
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                      {groupName}
+                    </h3>
+                    <div className="text-sm text-gray-500 dark:text-gray-400">
+                      {groupFields.length} Feld{groupFields.length !== 1 ? 'er' : ''}
                     </div>
-                  );
-                })}
-              </div>
-            );
-          })()}
+                  </div>
+                  {renderFieldGrid(undefined, groupFields, 'gap-6')}
+                </div>
+              );
+            })}
+          </div>
 
           {/* Validation Errors */}
           {hasErrors && (

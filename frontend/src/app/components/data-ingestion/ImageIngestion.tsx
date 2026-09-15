@@ -1,6 +1,24 @@
 'use client';
 
-import React, { useState, useRef, useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { formatFileSize } from '@/lib/format';
+import { ICON, OutlineIcon } from './icons';
+import {
+  DropZone,
+  ErrorBanner,
+  INGEST_API_URL,
+  IngestionCard,
+  MetaTile,
+  ProgressBar,
+  RemoveButton,
+  ResultCard,
+  SelectedFileRow,
+  SubmitButton,
+  authHeaders,
+  readIngestionResponse,
+  useFilePreview,
+  useIngestionUpload,
+} from './shared';
 
 interface ImageIngestionProps {
   onUploadComplete?: (result: ImageResult) => void;
@@ -20,8 +38,6 @@ interface ImageResult {
   confidence?: number;
 }
 
-type UploadState = 'idle' | 'uploading' | 'processing' | 'complete' | 'error';
-
 const DOCUMENT_TYPES = [
   { id: 'auto', name: 'Auto-detect', icon: '🔍' },
   { id: 'receipt', name: 'Receipt', icon: '🧾' },
@@ -33,20 +49,37 @@ const DOCUMENT_TYPES = [
   { id: 'photo', name: 'Photo', icon: '📷' },
 ];
 
+const isImageOrPdf = (file: File) =>
+  file.type.startsWith('image/') || file.type === 'application/pdf';
+
 export default function ImageIngestion({
   onUploadComplete,
   onError,
   formId,
-  apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001',
+  apiUrl = INGEST_API_URL,
   token,
 }: ImageIngestionProps) {
-  // State
-  const [uploadState, setUploadState] = useState<UploadState>('idle');
-  const [uploadProgress, setUploadProgress] = useState(0);
-  const [result, setResult] = useState<ImageResult | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const upload = useIngestionUpload<ImageResult>({ onUploadComplete, onError });
+  const {
+    uploadState,
+    setUploadState,
+    uploadProgress,
+    setUploadProgress,
+    result,
+    error,
+    setError,
+    busy,
+    start,
+    succeed,
+    fail,
+    reset,
+  } = upload;
+  const { selectedFile, previewUrl, select, clear, handleFileChange, handleDrop } = useFilePreview({
+    accept: isImageOrPdf,
+    rejectMessage: 'Please drop an image or PDF file',
+    onChange: reset,
+    onReject: setError,
+  });
   const [documentType, setDocumentType] = useState('auto');
   const [customPrompt, setCustomPrompt] = useState('');
   const [showCamera, setShowCamera] = useState(false);
@@ -57,67 +90,20 @@ export default function ImageIngestion({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
 
-  // Cleanup on unmount
+  // Release the camera on unmount
   useEffect(() => {
     return () => {
-      if (previewUrl) {
-        URL.revokeObjectURL(previewUrl);
-      }
       if (streamRef.current) {
         streamRef.current.getTracks().forEach((track) => track.stop());
       }
     };
-  }, [previewUrl]);
-
-  // Handle file selection
-  const handleFileSelect = useCallback(
-    (file: File) => {
-      setSelectedFile(file);
-      setError(null);
-      setResult(null);
-      setUploadState('idle');
-
-      // Create preview URL
-      if (previewUrl) {
-        URL.revokeObjectURL(previewUrl);
-      }
-      setPreviewUrl(URL.createObjectURL(file));
-    },
-    [previewUrl],
-  );
-
-  // Handle file input change
-  const handleFileChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0];
-      if (file) {
-        handleFileSelect(file);
-      }
-    },
-    [handleFileSelect],
-  );
-
-  // Handle drag and drop
-  const handleDrop = useCallback(
-    (e: React.DragEvent) => {
-      e.preventDefault();
-      const file = e.dataTransfer.files[0];
-      if (file && (file.type.startsWith('image/') || file.type === 'application/pdf')) {
-        handleFileSelect(file);
-      } else {
-        setError('Please drop an image or PDF file');
-      }
-    },
-    [handleFileSelect],
-  );
+  }, []);
 
   // Upload and process image
   const uploadImage = useCallback(async () => {
     if (!selectedFile) return;
 
-    setUploadState('uploading');
-    setUploadProgress(0);
-    setError(null);
+    start();
 
     try {
       const formData = new FormData();
@@ -135,31 +121,30 @@ export default function ImageIngestion({
 
       const response = await fetch(`${apiUrl}/api/v1/images/upload`, {
         method: 'POST',
-        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+        headers: authHeaders(token),
         body: formData,
       });
 
       setUploadState('processing');
       setUploadProgress(60);
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Upload failed');
-      }
-
-      const data = await response.json();
-
-      setUploadProgress(100);
-      setUploadState('complete');
-      setResult(data.data);
-      onUploadComplete?.(data.data);
+      succeed(await readIngestionResponse<ImageResult>(response));
     } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : 'Upload failed';
-      setError(errorMsg);
-      setUploadState('error');
-      onError?.(errorMsg);
+      fail(err);
     }
-  }, [selectedFile, documentType, customPrompt, apiUrl, formId, token, onUploadComplete, onError]);
+  }, [
+    selectedFile,
+    documentType,
+    customPrompt,
+    apiUrl,
+    formId,
+    token,
+    start,
+    setUploadProgress,
+    setUploadState,
+    succeed,
+    fail,
+  ]);
 
   // Camera functions
   const startCamera = useCallback(async () => {
@@ -172,10 +157,10 @@ export default function ImageIngestion({
         videoRef.current.srcObject = stream;
       }
       setShowCamera(true);
-    } catch (err) {
+    } catch {
       setError('Could not access camera');
     }
-  }, []);
+  }, [setError]);
 
   const stopCamera = useCallback(() => {
     if (streamRef.current) {
@@ -199,7 +184,7 @@ export default function ImageIngestion({
           (blob) => {
             if (blob) {
               const file = new File([blob], `capture_${Date.now()}.jpg`, { type: 'image/jpeg' });
-              handleFileSelect(file);
+              select(file);
               stopCamera();
             }
           },
@@ -208,62 +193,11 @@ export default function ImageIngestion({
         );
       }
     }
-  }, [handleFileSelect, stopCamera]);
-
-  // Clear selection
-  const clearSelection = useCallback(() => {
-    if (previewUrl) {
-      URL.revokeObjectURL(previewUrl);
-    }
-    setSelectedFile(null);
-    setPreviewUrl(null);
-    setResult(null);
-    setError(null);
-    setUploadState('idle');
-  }, [previewUrl]);
-
-  // Format file size
-  const formatFileSize = (bytes: number) => {
-    if (bytes < 1024) return `${bytes} B`;
-    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-  };
+  }, [select, stopCamera]);
 
   return (
-    <div className="w-full max-w-2xl mx-auto p-6 bg-white rounded-xl shadow-lg">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-        <svg
-          className="w-6 h-6 text-indigo-600"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-          />
-        </svg>
-        Image / Document Ingestion
-      </h2>
-
-      {/* Error Display */}
-      {error && (
-        <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
-          <p className="flex items-center gap-2">
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            {error}
-          </p>
-        </div>
-      )}
+    <IngestionCard title="Image / Document Ingestion" icon={ICON.image}>
+      {error && <ErrorBanner message={error} />}
 
       {/* Camera View */}
       {showCamera && (
@@ -339,14 +273,7 @@ export default function ImageIngestion({
               onClick={() => fileInputRef.current?.click()}
               className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
             >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
-                />
-              </svg>
+              <OutlineIcon d={ICON.upload} className="w-5 h-5" />
               Upload File
             </button>
             <button
@@ -358,7 +285,7 @@ export default function ImageIngestion({
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth={2}
-                  d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
+                  d={ICON.camera}
                 />
                 <path
                   strokeLinecap="round"
@@ -379,32 +306,14 @@ export default function ImageIngestion({
             className="hidden"
           />
 
-          {/* Drop Zone */}
-          <div
-            onDragOver={(e) => e.preventDefault()}
-            onDrop={handleDrop}
-            className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-indigo-400 hover:bg-indigo-50 transition-colors"
-            onClick={() => fileInputRef.current?.click()}
-          >
-            <svg
-              className="w-12 h-12 mx-auto text-gray-400 mb-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-              />
-            </svg>
+          <DropZone onDrop={handleDrop} onOpen={() => fileInputRef.current?.click()}>
+            <OutlineIcon d={ICON.image} className="w-12 h-12 mx-auto text-gray-400 mb-4" />
             <p className="text-gray-600 mb-2">
               <span className="font-semibold text-indigo-600">Drop image here</span> or click to
               browse
             </p>
             <p className="text-sm text-gray-500">JPG, PNG, GIF, WebP, PDF up to 20MB</p>
-          </div>
+          </DropZone>
         </div>
       )}
 
@@ -428,125 +337,46 @@ export default function ImageIngestion({
                 </div>
               </div>
             ) : (
+              // eslint-disable-next-line @next/next/no-img-element -- blob: URL of the file just picked; next/image cannot optimise it
               <img
                 src={previewUrl}
                 alt="Preview"
                 className="w-full max-h-96 object-contain rounded-lg bg-gray-100"
               />
             )}
-            <button
-              onClick={clearSelection}
-              className="absolute top-2 right-2 p-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
-            >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
+            <RemoveButton onClick={clear} />
           </div>
 
-          <div className="mt-4 flex items-center justify-between">
-            <div className="text-sm text-gray-600">
-              <p className="font-medium">{selectedFile?.name}</p>
-              <p>{formatFileSize(selectedFile?.size || 0)}</p>
-            </div>
-
-            <button
+          <SelectedFileRow file={selectedFile}>
+            <SubmitButton
+              busy={busy}
+              busyLabel={uploadState === 'uploading' ? 'Uploading...' : 'Analyzing...'}
+              label="Analyze Image"
+              icon={ICON.lightbulb}
               onClick={uploadImage}
-              disabled={uploadState === 'uploading' || uploadState === 'processing'}
-              className="flex items-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white rounded-lg transition-colors"
-            >
-              {uploadState === 'uploading' || uploadState === 'processing' ? (
-                <>
-                  <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    />
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    />
-                  </svg>
-                  {uploadState === 'uploading' ? 'Uploading...' : 'Analyzing...'}
-                </>
-              ) : (
-                <>
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
-                    />
-                  </svg>
-                  Analyze Image
-                </>
-              )}
-            </button>
-          </div>
+            />
+          </SelectedFileRow>
         </div>
       )}
 
-      {/* Progress Bar */}
-      {(uploadState === 'uploading' || uploadState === 'processing') && (
-        <div className="mb-6">
-          <div className="flex justify-between text-sm text-gray-600 mb-2">
-            <span>
-              {uploadState === 'uploading' ? 'Uploading...' : 'Analyzing with Vision AI...'}
-            </span>
-            <span>{uploadProgress}%</span>
-          </div>
-          <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-indigo-600 transition-all duration-300"
-              style={{ width: `${uploadProgress}%` }}
-            />
-          </div>
-        </div>
+      {busy && (
+        <ProgressBar
+          label={uploadState === 'uploading' ? 'Uploading...' : 'Analyzing with Vision AI...'}
+          progress={uploadProgress}
+        />
       )}
 
       {/* Results Section */}
       {result && uploadState === 'complete' && (
-        <div className="border border-green-200 bg-green-50 rounded-lg p-6">
-          <h3 className="text-lg font-semibold text-green-800 mb-4 flex items-center gap-2">
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            Analysis Complete
-          </h3>
-
+        <ResultCard title="Analysis Complete">
           {/* Metadata */}
           <div className="grid grid-cols-3 gap-4 mb-4 text-sm">
-            <div className="bg-white p-3 rounded-lg">
-              <p className="text-gray-500">Document Type</p>
-              <p className="font-semibold text-gray-800 capitalize">{result.documentType}</p>
-            </div>
-            <div className="bg-white p-3 rounded-lg">
-              <p className="text-gray-500">Processing Time</p>
-              <p className="font-semibold text-gray-800">{result.processingTime}ms</p>
-            </div>
+            <MetaTile label="Document Type" valueClassName="capitalize">
+              {result.documentType}
+            </MetaTile>
+            <MetaTile label="Processing Time">{result.processingTime}ms</MetaTile>
             {result.confidence && (
-              <div className="bg-white p-3 rounded-lg">
-                <p className="text-gray-500">Confidence</p>
-                <p className="font-semibold text-gray-800">
-                  {Math.round(result.confidence * 100)}%
-                </p>
-              </div>
+              <MetaTile label="Confidence">{Math.round(result.confidence * 100)}%</MetaTile>
             )}
           </div>
 
@@ -597,8 +427,8 @@ export default function ImageIngestion({
               </div>
             </div>
           )}
-        </div>
+        </ResultCard>
       )}
-    </div>
+    </IngestionCard>
   );
 }

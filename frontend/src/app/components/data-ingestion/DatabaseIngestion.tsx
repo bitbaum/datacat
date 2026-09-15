@@ -84,6 +84,34 @@ export default function DatabaseIngestion({
     sampleData: Record<string, unknown>[];
   } | null>(null);
 
+  const fetchTables = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${apiUrl}/api/v1/db-ingestion/tables`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify(connection),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setTables(result.tables);
+        setStep('tables');
+      } else {
+        setError(result.message || 'Failed to fetch tables');
+      }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to fetch tables';
+      setError(message);
+    } finally {
+      setLoading(false);
+    }
+  }, [connection, apiUrl, token]);
+
   const testConnection = useCallback(async () => {
     setConnectionStatus('testing');
     setError(null);
@@ -114,35 +142,7 @@ export default function DatabaseIngestion({
       setError(message);
       onError?.(message);
     }
-  }, [connection, apiUrl, token, onError]);
-
-  const fetchTables = useCallback(async () => {
-    setLoading(true);
-    try {
-      const response = await fetch(`${apiUrl}/api/v1/db-ingestion/tables`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        body: JSON.stringify(connection),
-      });
-
-      const result = await response.json();
-
-      if (result.success) {
-        setTables(result.tables);
-        setStep('tables');
-      } else {
-        setError(result.message || 'Failed to fetch tables');
-      }
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to fetch tables';
-      setError(message);
-    } finally {
-      setLoading(false);
-    }
-  }, [connection, apiUrl, token]);
+  }, [connection, apiUrl, token, onError, fetchTables]);
 
   const fetchTableSchema = useCallback(
     async (tableName: string) => {

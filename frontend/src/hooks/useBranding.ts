@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { branding, getBrandingConfig, BrandingConfig } from '../config/branding';
+import { branding, BrandingConfig } from '../config/branding';
 import { getBrandingPreset } from '../config/branding-presets';
 
 export const useBranding = (): BrandingConfig => {
