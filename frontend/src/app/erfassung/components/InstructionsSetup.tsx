@@ -36,7 +36,7 @@ export interface FieldDefinition {
   required: boolean;
   description?: string;
   validationPattern?: string;
-  defaultValue?: any;
+  defaultValue?: string | number | boolean;
   options?: string[]; // For category/select fields
 }
 
@@ -53,7 +53,7 @@ export interface KnowledgeBaseFile {
 export interface ValidationRule {
   field: string;
   rule: 'required' | 'min' | 'max' | 'pattern' | 'custom';
-  value?: any;
+  value?: string | number; // min/max bound, or the pattern source
   message: string;
 }
 

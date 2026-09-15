@@ -86,14 +86,7 @@ const CameraIcon = (props: { className?: string }) => (
   </svg>
 );
 
-interface User {
-  id: number;
-  username: string;
-  email: string;
-}
-
 interface TopNavigationProps {
-  currentView: 'builder' | 'templates' | 'saved-forms' | 'about';
   onViewChange?: (view: 'builder' | 'templates' | 'saved-forms' | 'about') => void;
 }
 
@@ -105,16 +98,12 @@ const navigation = [
   { name: 'Blog', href: ROUTES.blog },
 ];
 
-export function TopNavigation({ currentView, onViewChange = () => {} }: TopNavigationProps) {
+export function TopNavigation({ onViewChange = () => {} }: TopNavigationProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  // GlobalNavigation computes `currentView` from the path and passes it down,
-  // but nothing here ever read it — the whole "highlight the current page"
-  // feature was wired end to end and then dropped on the floor, so neither a
-  // sighted user nor a screen reader could tell which top-level page they were
-  // on. `currentView`'s own mapping (mapPathToView) is coarser than the nav
-  // items — 'Forms' maps to the view key 'saved-forms', 'Blog' isn't mapped at
-  // all — so comparing against the live path directly, the way every other nav
-  // in the fleet does, is more robust than threading that mapping through.
+  // The current page is read from the live path. GlobalNavigation used to pass a
+  // `currentView` prop computed from a mapping coarser than the nav items
+  // ('Forms' → 'saved-forms', 'Blog' unmapped) and nothing ever read it, so the
+  // path comparison is the one source of truth for the highlight.
   const pathname = usePathname();
   const { token, user, logout, loading } = useAuth(); // Use the auth context
   const displayName = (user?.name && user.name.trim()) || user?.email || '';

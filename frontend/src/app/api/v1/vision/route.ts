@@ -7,7 +7,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'OPENAI_API_KEY not configured' }, { status: 500 });
     }
 
-    const { file, prompt, isPDF } = await req.json();
+    const { file, prompt } = await req.json();
     if (!file?.base64 || !file?.mimeType || !prompt) {
       return NextResponse.json({ error: 'Invalid payload' }, { status: 400 });
     }
@@ -38,11 +38,12 @@ export async function POST(req: NextRequest) {
 
     const content = completion.choices?.[0]?.message?.content || '';
     return NextResponse.json({ content });
-  } catch (error: any) {
+  } catch (error) {
     console.error('OpenAI Vision API Error:', error);
 
     // Handle specific OpenAI errors
-    if (error.status === 429) {
+    const status = error instanceof OpenAI.APIError ? error.status : undefined;
+    if (status === 429) {
       return NextResponse.json(
         {
           error:
@@ -52,7 +53,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (error.status === 401) {
+    if (status === 401) {
       return NextResponse.json(
         {
           error: 'Invalid OpenAI API key. Please check your configuration.',
@@ -63,7 +64,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(
       {
-        error: error?.message || 'OpenAI Vision API error',
+        error: error instanceof Error && error.message ? error.message : 'OpenAI Vision API error',
       },
       { status: 500 },
     );

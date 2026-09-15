@@ -17,16 +17,19 @@ interface UseModalReturn {
 
 export function useModal(options: UseModalOptions = {}): UseModalReturn {
   const [isOpen, setIsOpen] = useState(options.defaultOpen || false);
+  // Depend on the callbacks, not the options object: the `{}` default is a fresh
+  // object every render, which made `open`/`close` new functions every render.
+  const { onOpen, onClose } = options;
 
   const open = useCallback(() => {
     setIsOpen(true);
-    options.onOpen?.();
-  }, [options]);
+    onOpen?.();
+  }, [onOpen]);
 
   const close = useCallback(() => {
     setIsOpen(false);
-    options.onClose?.();
-  }, [options]);
+    onClose?.();
+  }, [onClose]);
 
   const toggle = useCallback(() => {
     if (isOpen) {
@@ -61,7 +64,7 @@ export function useModals<T extends string>(modalNames: T[]): Record<T, UseModal
 }
 
 // Hook for modal with data
-export function useModalWithData<T = any>(options: UseModalOptions = {}) {
+export function useModalWithData<T = unknown>(options: UseModalOptions = {}) {
   const modal = useModal(options);
   const [data, setData] = useState<T | null>(null);
 

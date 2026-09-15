@@ -11,13 +11,14 @@ import {
 } from '@heroicons/react/24/outline';
 import { useAuth } from '../context/AuthContext';
 import { ROUTES } from '@/lib/routes';
+import type { TableSchemaField } from '../types/common';
 
 interface Database {
   id: string;
   name: string;
   description?: string;
   recordCount: number;
-  tableSchema: Record<string, any>;
+  tableSchema: Record<string, TableSchemaField>;
   createdAt: string;
   updatedAt: string;
 }
@@ -31,7 +32,7 @@ interface SearchResult {
     databaseName: string;
     matches: Array<{
       id: string;
-      data: Record<string, any>;
+      data: Record<string, unknown>;
       submittedAt: string;
       relevanceScore: number;
     }>;
@@ -47,7 +48,6 @@ export default function DatabasesPage() {
   const [searchResults, setSearchResults] = useState<SearchResult | null>(null);
   const [searchLoading, setSearchLoading] = useState(false);
   const [searchError, setSearchError] = useState<string | null>(null);
-  const [selectedDatabases, setSelectedDatabases] = useState<string[]>([]);
 
   useEffect(() => {
     if (token) fetchDatabases();
@@ -88,7 +88,8 @@ export default function DatabasesPage() {
         },
         body: JSON.stringify({
           query: searchQuery,
-          databases: selectedDatabases,
+          // There is no database picker yet, so every search runs across all of them.
+          databases: [],
           limit: 50,
         }),
       });

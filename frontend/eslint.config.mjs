@@ -21,14 +21,15 @@ const eslintConfig = [
   ...compat.extends('next/core-web-vitals', 'next/typescript'),
   {
     rules: {
-      // Temporarily disable unused vars for build success
-      '@typescript-eslint/no-unused-vars': 'warn',
-      '@typescript-eslint/no-explicit-any': 'warn',
-      '@typescript-eslint/ban-ts-comment': 'warn',
-      'react-hooks/exhaustive-deps': 'warn',
-      'react/no-unescaped-entities': 'warn',
-      '@next/next/no-img-element': 'warn',
+      // The next/core-web-vitals + next/typescript defaults apply unchanged.
+      // Several of them (no-unused-vars, exhaustive-deps, no-img-element) are
+      // "warn" upstream; `lint` runs with --max-warnings 0, so a warning fails
+      // the gate exactly like an error. The 2026-09 cleanup took the tree from
+      // 147 warnings to 0 — a downgrade block here would let them creep back.
       'react/jsx-no-undef': 'error',
+      // console.log is a debugging leftover; warn/error are what a browser
+      // console is for. Operator scripts are exempted below.
+      'no-console': ['error', { allow: ['warn', 'error'] }],
       // Route params are a Promise in Next 15+. A dev server hides that behind
       // a proxy that still answers sync reads, so `ctx.params.id` works
       // locally and is `undefined` in production — where Prisma reads it as
@@ -49,6 +50,11 @@ const eslintConfig = [
         },
       ],
     },
+  },
+  {
+    // Node scripts that print their findings for a human — that is their output.
+    files: ['scripts/**'],
+    rules: { 'no-console': 'off' },
   },
 ];
 

@@ -2,15 +2,14 @@
 
 import { useState } from 'react';
 import { PencilIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
-import { WorkflowProduct } from './ErfassungWorkflow';
+import type { WorkflowProduct, ReviewedProductData } from './ErfassungWorkflow';
 
 interface DataReviewStepProps {
   analysisResult: NonNullable<WorkflowProduct['analysisResult']>;
-  onReviewComplete: (reviewedData: any) => void;
-  product: WorkflowProduct;
+  onReviewComplete: (reviewedData: ReviewedProductData) => void;
 }
 
-export function DataReviewStep({ analysisResult, onReviewComplete, product }: DataReviewStepProps) {
+export function DataReviewStep({ analysisResult, onReviewComplete }: DataReviewStepProps) {
   const [formData, setFormData] = useState({
     title: analysisResult.title,
     manufacturer: analysisResult.manufacturer,
@@ -42,13 +41,6 @@ export function DataReviewStep({ analysisResult, onReviewComplete, product }: Da
 
   const handleContinue = () => {
     onReviewComplete(formData);
-  };
-
-  const getConfidenceColor = (field: string) => {
-    const confidence = analysisResult.confidence[field] || 0;
-    if (confidence >= 0.9) return 'text-green-600 dark:text-green-400';
-    if (confidence >= 0.7) return 'text-yellow-600 dark:text-yellow-400';
-    return 'text-red-600 dark:text-red-400';
   };
 
   const getConfidenceIcon = (field: string) => {

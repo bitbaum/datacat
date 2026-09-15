@@ -3,9 +3,9 @@
 import React, { useState } from 'react';
 import { FieldConfig, FormStep, FieldTemplate } from '../types/form';
 import { DndContext, closestCenter } from '@dnd-kit/core';
+import type { DragEndEvent } from '@dnd-kit/core';
 import { SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { fieldTemplates } from '../data/fieldTemplates';
 import { useFormBuilderStore } from '../hooks/useFormBuilderStore';
 import { FieldEditor } from './FieldEditor';
 import {
@@ -17,7 +17,7 @@ import {
   DocumentArrowUpIcon,
 } from '@heroicons/react/24/outline';
 import { ConfirmDialog } from './ConfirmDialog';
-import { microTemplates, formTemplates, allTemplates } from '../data/templates';
+import { microTemplates } from '../data/templates';
 import { visionService, VisionAnalysisProgress } from '../services/visionService';
 import { useAuth } from '../context/AuthContext';
 
@@ -177,7 +177,6 @@ export function ModernSidebar({
   // Vision upload state
   const [isProcessing, setIsProcessing] = useState(false);
   const [analysisProgress, setAnalysisProgress] = useState<VisionAnalysisProgress | null>(null);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
 
   const allFields = isMultiStep ? steps.flatMap((s) => s.fields) : fields;
 
@@ -254,18 +253,11 @@ export function ModernSidebar({
       } else {
         alert(`Analyse fehlgeschlagen: ${result.error}`);
       }
-    } catch (error) {
+    } catch {
       alert('Fehler beim Analysieren der Datei');
     } finally {
       setIsProcessing(false);
       setAnalysisProgress(null);
-    }
-  };
-
-  const handleCameraCapture = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      handleVisionUpload(file);
     }
   };
 
@@ -276,7 +268,7 @@ export function ModernSidebar({
     }
   };
 
-  const handleDragEnd = (event: any) => {
+  const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
 
@@ -345,7 +337,8 @@ export function ModernSidebar({
             Ersten Schritt hinzufügen
           </button>
           <p className="text-xs text-gray-400 dark:text-gray-500">
-            Oder wechseln Sie zum Tab "Vorlagen", um eine vorgefertigte Sektion einzufügen.
+            Oder wechseln Sie zum Tab &quot;Vorlagen&quot;, um eine vorgefertigte Sektion
+            einzufügen.
           </p>
         </div>
       );
@@ -755,91 +748,6 @@ export function ModernSidebar({
     );
   };
 
-  const renderUploadTab = () => (
-    <div className="space-y-4">
-      <div className="text-center">
-        <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6">
-          <CameraIcon className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-          <div className="mb-4">
-            <h3 className="text-sm font-medium text-gray-900 dark:text-white">
-              Formular aus Bild erstellen
-            </h3>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-              Foto, Screenshot oder PDF hochladen
-            </p>
-          </div>
-
-          <div className="space-y-2">
-            <button
-              onClick={() => document.getElementById('camera-input')?.click()}
-              disabled={isProcessing}
-              className="w-full flex items-center justify-center px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              <CameraIcon className="w-4 h-4 mr-2" />
-              Foto aufnehmen
-            </button>
-
-            <button
-              onClick={() => document.getElementById('file-input')?.click()}
-              disabled={isProcessing}
-              className="w-full flex items-center justify-center px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              <DocumentArrowUpIcon className="w-4 h-4 mr-2" />
-              Datei hochladen
-            </button>
-          </div>
-
-          <input
-            id="camera-input"
-            type="file"
-            accept="image/*"
-            capture="environment"
-            className="hidden"
-            onChange={handleCameraCapture}
-          />
-
-          <input
-            id="file-input"
-            type="file"
-            accept="image/*,.pdf"
-            className="hidden"
-            onChange={handleFileUpload}
-          />
-        </div>
-      </div>
-
-      {/* AI Processing Status */}
-      {isProcessing && analysisProgress && (
-        <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
-          <div className="flex items-center mb-2">
-            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2"></div>
-            <span className="text-sm text-blue-900 dark:text-blue-100 font-medium">
-              {analysisProgress.message}
-            </span>
-          </div>
-          <div className="w-full bg-blue-200 dark:bg-blue-800 rounded-full h-2">
-            <div
-              className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-              style={{ width: `${analysisProgress.progress}%` }}
-            ></div>
-          </div>
-          <div className="text-xs text-blue-600 dark:text-blue-300 mt-1">
-            {analysisProgress.progress}% abgeschlossen
-          </div>
-        </div>
-      )}
-
-      {/* Help Text */}
-      <div className="text-xs text-gray-500 dark:text-gray-400 space-y-1">
-        <p>
-          💡 <strong>Tipp:</strong> Fotografieren Sie bestehende Formulare für schnelle
-          Digitalisierung
-        </p>
-        <p>📋 Unterstützte Formate: JPG, PNG, GIF, WebP, PDF (max. 10MB)</p>
-      </div>
-    </div>
-  );
-
   return (
     <aside
       className={`${sidebarWidthClass} bg-gray-50 dark:bg-gray-800/50 border-r border-gray-200 dark:border-gray-700 flex flex-col h-full`}
@@ -1034,12 +942,6 @@ function SortableStepItem({
   };
 
   const isEditing = editingStepId === step.id;
-
-  const handleTitleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      onSaveStepTitle();
-    }
-  };
 
   React.useEffect(() => {
     if (isEditing) {

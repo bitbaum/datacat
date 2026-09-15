@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '../../context/AuthContext';
+import type { TableSchemaField } from '../../types/common';
 import {
   ArrowLeftIcon,
   ChartBarIcon,
@@ -13,9 +14,11 @@ import {
   SparklesIcon,
 } from '@heroicons/react/24/outline';
 
-interface DatabaseRecord {
+/** A submitted field value: what the public form posts (src/app/form/[id]/page.tsx) or a number. */
+type RecordFieldValue = string | number | boolean | null | undefined;
+
+type DatabaseRecord = {
   id: string;
-  [key: string]: any;
   _metadata: {
     submittedAt: string;
     updatedAt: string;
@@ -25,19 +28,11 @@ interface DatabaseRecord {
       email?: string;
     };
   };
-}
+} & Record<string, RecordFieldValue>;
 
 interface DatabaseInfo {
   databaseName: string;
-  schema: Record<
-    string,
-    {
-      type: string;
-      label: string;
-      required: boolean;
-      options?: Array<{ label: string; value: string }>;
-    }
-  >;
+  schema: Record<string, TableSchemaField>;
   records: DatabaseRecord[];
   pagination: {
     page: number;
@@ -52,7 +47,7 @@ interface AIAnalysis {
   query: string;
   result: {
     content: string;
-    usage: any;
+    usage: unknown; // vendor token-usage object passed through by the backend, never read here
     model: string;
   };
   processingTime: number;

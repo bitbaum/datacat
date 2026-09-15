@@ -8,11 +8,10 @@ import {
   FolderIcon,
   DocumentArrowUpIcon,
 } from '@heroicons/react/24/outline';
-import { useModal } from '../hooks/useModal';
 import { visionService, VisionAnalysisProgress } from '../services/visionService';
 import { useFormBuilderStore } from '../hooks/useFormBuilderStore';
 import { useAuth } from '../context/AuthContext';
-import { FieldTemplate } from '../types/form';
+import type { FieldConfig, FieldTemplate } from '../types/form';
 import { microTemplates } from '../data/templates';
 
 interface UnifiedFormCreationHubProps {
@@ -30,14 +29,18 @@ export function UnifiedFormCreationHub({
 }: UnifiedFormCreationHubProps) {
   const { addField, addTemplateFields, steps, isMultiStep, currentStep } = useFormBuilderStore();
   const { token } = useAuth();
-  const processingModal = useModal();
   const [analysisProgress, setAnalysisProgress] = useState<VisionAnalysisProgress | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
 
   const isLoggedIn = !!token;
 
   // Individual field types for quick adding - reuse same logic as sidebar
-  const fieldTypes = [
+  const fieldTypes: {
+    type: FieldConfig['type'];
+    label: string;
+    icon: string;
+    description: string;
+  }[] = [
     { type: 'text', label: 'Text', icon: '📝', description: 'Einfaches Textfeld' },
     { type: 'email', label: 'E-Mail', icon: '📧', description: 'E-Mail-Adresse' },
     { type: 'tel', label: 'Telefon', icon: '📞', description: 'Telefonnummer' },
@@ -50,7 +53,7 @@ export function UnifiedFormCreationHub({
   const popularSections = microTemplates.slice(0, 6);
 
   // Use exactly the same logic as sidebar - just call addField directly
-  const handleQuickAddField = (type: string) => {
+  const handleQuickAddField = (type: FieldConfig['type']) => {
     const stepId = isMultiStep ? steps[currentStep]?.id : undefined;
     if (isMultiStep && !stepId) {
       console.error('Cannot add field, no step selected.');
@@ -58,7 +61,7 @@ export function UnifiedFormCreationHub({
     }
 
     // Call store function directly - same as sidebar
-    addField(type as any, stepId);
+    addField(type, stepId);
 
     // Navigate to builder immediately to see the result
     onMethodSelect('fields');
@@ -100,10 +103,12 @@ export function UnifiedFormCreationHub({
         const stepId = isMultiStep ? steps[currentStep]?.id : undefined;
         addTemplateFields(
           {
-            fields: result.fields,
+            id: 'vision-analysis',
             name: 'Vision Analysis',
             description: 'AI-generated fields from image analysis',
-          } as any,
+            icon: '📷',
+            fields: result.fields,
+          },
           stepId,
         );
       } else {
@@ -339,7 +344,7 @@ export function UnifiedFormCreationHub({
       {/* Usage Tips */}
       <div className="bg-gradient-to-r from-blue-50 to-green-50 dark:from-blue-900/20 dark:to-green-900/20 rounded-xl p-6 animate-in slide-in-from-bottom duration-700 delay-700">
         <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 text-center">
-          💡 So einfach geht's
+          💡 So einfach geht&apos;s
         </h4>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700 dark:text-gray-300">
           <div className="flex items-start space-x-2 animate-in slide-in-from-left duration-500 delay-800">
@@ -352,8 +357,8 @@ export function UnifiedFormCreationHub({
           <div className="flex items-start space-x-2 animate-in slide-in-from-right duration-500 delay-900">
             <span className="text-green-500">⚡</span>
             <span>
-              <strong>Sofort sichtbar:</strong> Klicken Sie auf "Struktur" links, um Ihre Felder zu
-              sehen
+              <strong>Sofort sichtbar:</strong> Klicken Sie auf &quot;Struktur&quot; links, um Ihre
+              Felder zu sehen
             </span>
           </div>
         </div>

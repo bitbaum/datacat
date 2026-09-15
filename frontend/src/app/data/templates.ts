@@ -1,18 +1,5 @@
 import { FieldTemplate, FormTemplate } from '../types/form';
 
-// Unified template system with categories
-export interface Template {
-  id: string;
-  name: string;
-  description: string;
-  icon: string;
-  category: 'micro' | 'form' | 'saved';
-  type: 'field-group' | 'full-form';
-  fields: any[]; // Will be properly typed based on usage
-  isMultiStep?: boolean;
-  steps?: any[];
-}
-
 // Micro-templates (field sections) - greatly expanded
 export const microTemplates: FieldTemplate[] = [
   // Basic Contact & Personal

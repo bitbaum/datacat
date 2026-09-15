@@ -32,7 +32,7 @@ export interface WorkflowProduct {
     unit: string;
     confidence: Record<string, number>;
   };
-  reviewedData?: any;
+  reviewedData?: ReviewedProductData;
   exportData?: {
     format: string;
     downloadUrl: string;
@@ -40,6 +40,19 @@ export interface WorkflowProduct {
   };
   status: ProductStatus;
 }
+
+/**
+ * The analysis fields after DataReviewStep: either edited by hand (no confidence,
+ * no flags) or quick-approved as-is, which keeps the confidence map and stamps it.
+ */
+export type ReviewedProductData = Omit<
+  NonNullable<WorkflowProduct['analysisResult']>,
+  'confidence'
+> & {
+  confidence?: Record<string, number>;
+  approved?: boolean;
+  reviewedAt?: Date;
+};
 
 type WorkflowStep = 'upload' | 'analysis' | 'review' | 'export' | 'table';
 
@@ -79,7 +92,7 @@ export function ErfassungWorkflow({ onComplete }: ErfassungWorkflowProps) {
     [],
   );
 
-  const handleReviewComplete = useCallback((reviewedData: any) => {
+  const handleReviewComplete = useCallback((reviewedData: ReviewedProductData) => {
     setProduct((prev) => ({
       ...prev,
       reviewedData,
@@ -101,10 +114,6 @@ export function ErfassungWorkflow({ onComplete }: ErfassungWorkflowProps) {
     },
     [product, onComplete],
   );
-
-  const handleBackToTable = useCallback(() => {
-    setCurrentStep('table');
-  }, []);
 
   const canNavigateToStep = useCallback(
     (step: WorkflowStep): boolean => {
@@ -128,7 +137,7 @@ export function ErfassungWorkflow({ onComplete }: ErfassungWorkflowProps) {
           return false;
       }
     },
-    [currentStep, product, steps],
+    [currentStep, product],
   );
 
   const navigateToStep = useCallback(
@@ -243,32 +252,21 @@ export function ErfassungWorkflow({ onComplete }: ErfassungWorkflowProps) {
 
       {/* Step Content */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {currentStep === 'upload' && (
-          <PhotoUploadStep onPhotosUploaded={handlePhotosUploaded} product={product} />
-        )}
+        {currentStep === 'upload' && <PhotoUploadStep onPhotosUploaded={handlePhotosUploaded} />}
 
         {currentStep === 'analysis' && (
-          <AnalysisStep
-            photos={product.photos}
-            onAnalysisComplete={handleAnalysisComplete}
-            product={product}
-          />
+          <AnalysisStep photos={product.photos} onAnalysisComplete={handleAnalysisComplete} />
         )}
 
         {currentStep === 'review' && product.analysisResult && (
           <DataReviewStep
             analysisResult={product.analysisResult}
             onReviewComplete={handleReviewComplete}
-            product={product}
           />
         )}
 
         {currentStep === 'export' && product.reviewedData && (
-          <ExportStep
-            productData={product.reviewedData}
-            onExportComplete={handleExportComplete}
-            product={product}
-          />
+          <ExportStep productData={product.reviewedData} onExportComplete={handleExportComplete} />
         )}
 
         {currentStep === 'table' && (

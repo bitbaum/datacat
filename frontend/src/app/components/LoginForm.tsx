@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '../context/AuthContext';
-import { http, ApiSuccess } from '../services/http';
 import { ROUTES } from '@/lib/routes';
 
 interface LoginFormProps {

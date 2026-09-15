@@ -98,12 +98,9 @@ setSteps(array)   // bulk replace
 
 ### Component Changes
 
-| Old Component | New Wrapper | Purpose |
-|---------------|------------|---------|
-| `ModernSidebar` | `ModernSidebarStore` | Injects store values/actions |
-| `MultiStepFormBuilder` | `MultiStepFormBuilderStore` | Same, for steps |
-
-Existing props still work, so gradual migration is possible.
+`ModernSidebar` and `MultiStepFormBuilder` read the store directly via
+`useFormBuilderStore()`. (The `*Store` wrapper components that once injected
+store values as props were never rendered anywhere and have been removed.)
 
 ### Migration Guide for Your Own Components
 

@@ -2,14 +2,12 @@
 
 import { useState, useCallback } from 'react';
 import { CloudArrowUpIcon, XMarkIcon, PhotoIcon } from '@heroicons/react/24/outline';
-import { WorkflowProduct } from './ErfassungWorkflow';
 
 interface PhotoUploadStepProps {
   onPhotosUploaded: (photos: File[]) => void;
-  product: WorkflowProduct;
 }
 
-export function PhotoUploadStep({ onPhotosUploaded, product }: PhotoUploadStepProps) {
+export function PhotoUploadStep({ onPhotosUploaded }: PhotoUploadStepProps) {
   const [photos, setPhotos] = useState<File[]>([]);
   const [isDragging, setIsDragging] = useState(false);
 
@@ -99,6 +97,7 @@ export function PhotoUploadStep({ onPhotosUploaded, product }: PhotoUploadStepPr
             {photos.map((photo, index) => (
               <div key={index} className="relative group">
                 <div className="aspect-square bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden">
+                  {/* eslint-disable-next-line @next/next/no-img-element -- blob: preview of a not-yet-uploaded File; next/image cannot optimise object URLs */}
                   <img
                     src={URL.createObjectURL(photo)}
                     alt={`Product photo ${index + 1}`}

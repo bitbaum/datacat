@@ -68,8 +68,8 @@ export interface ButtonProps extends BaseComponentProps {
   size?: ButtonSize;
   disabled?: boolean;
   loading?: boolean;
-  leftIcon?: React.ComponentType<any>;
-  rightIcon?: React.ComponentType<any>;
+  leftIcon?: React.ComponentType<{ className?: string }>;
+  rightIcon?: React.ComponentType<{ className?: string }>;
   fullWidth?: boolean;
   type?: 'button' | 'submit' | 'reset';
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
@@ -80,7 +80,7 @@ export interface NavigationItem {
   id: string;
   label: string;
   href?: string;
-  icon?: React.ComponentType<any>;
+  icon?: React.ComponentType<{ className?: string }>;
   badge?: string | number;
   children?: NavigationItem[];
   disabled?: boolean;
@@ -94,16 +94,16 @@ export interface BreadcrumbItem {
 }
 
 // Data display types
-export interface TableColumn<T = any> {
+export interface TableColumn<T = Record<string, unknown>> {
   key: keyof T | string;
   label: string;
   width?: string | number;
   sortable?: boolean;
-  render?: (value: any, item: T, index: number) => React.ReactNode;
+  render?: (value: unknown, item: T, index: number) => React.ReactNode;
   className?: string;
 }
 
-export interface TableProps<T = any> extends BaseComponentProps {
+export interface TableProps<T = Record<string, unknown>> extends BaseComponentProps {
   data: T[];
   columns: TableColumn<T>[];
   loading?: boolean;
@@ -159,8 +159,16 @@ export interface PaginationProps extends BaseComponentProps {
   limitOptions?: number[];
 }
 
+// One field of a database's `tableSchema` (GET /api/v1/databases, /api/v1/databases/[id]).
+export interface TableSchemaField {
+  type: string;
+  label: string;
+  required: boolean;
+  options?: Array<{ label: string; value: string }>;
+}
+
 // API response types
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   success: boolean;
   message?: string;
   data?: T;
@@ -178,7 +186,7 @@ export interface ApiError {
 export interface FormBuilderAction {
   id: string;
   label: string;
-  icon?: React.ComponentType<any>;
+  icon?: React.ComponentType<{ className?: string }>;
   shortcut?: string;
   disabled?: boolean;
   variant?: ButtonVariant;
@@ -237,7 +245,7 @@ export type Optional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 export type RequiredFields<T, K extends keyof T> = T & Required<Pick<T, K>>;
 
 // Event handler types
-export type ChangeHandler<T = any> = (value: T) => void;
+export type ChangeHandler<T = unknown> = (value: T) => void;
 export type ClickHandler = (event: React.MouseEvent) => void;
 export type KeyboardHandler = (event: React.KeyboardEvent) => void;
 export type FocusHandler = (event: React.FocusEvent) => void;
