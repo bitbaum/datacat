@@ -159,7 +159,7 @@ export function TopNavigation({ onViewChange = () => {} }: TopNavigationProps) {
   return (
     <header className="relative isolate z-10 bg-white dark:bg-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="flex justify-between items-center py-4 md:justify-start md:space-x-10">
+        <div className="flex justify-between items-center py-3 md:justify-start md:space-x-10">
           {/* Logo */}
           <div className="flex justify-start lg:w-0 lg:flex-1">
             <Link
@@ -175,7 +175,7 @@ export function TopNavigation({ onViewChange = () => {} }: TopNavigationProps) {
           <div className="-mr-2 -my-2 md:hidden">
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="bg-white dark:bg-gray-800 rounded-md p-2 inline-flex items-center justify-center text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
+              className="bg-white dark:bg-gray-800 rounded-md min-h-11 min-w-11 inline-flex items-center justify-center text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
             >
               <span className="sr-only">Menü öffnen</span>
               <svg
@@ -201,7 +201,7 @@ export function TopNavigation({ onViewChange = () => {} }: TopNavigationProps) {
             <div className="relative">
               <button
                 onClick={() => setMegaMenuOpen(!isMegaMenuOpen)}
-                className="text-gray-500 group bg-white dark:bg-gray-800 rounded-md inline-flex items-center text-base font-medium hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                className="text-gray-500 group bg-white dark:bg-gray-800 rounded-md inline-flex min-h-11 items-center text-base font-medium hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
                 <span>Lösungen</span>
                 <svg
@@ -358,21 +358,21 @@ export function TopNavigation({ onViewChange = () => {} }: TopNavigationProps) {
             <Link
               href={ROUTES.about}
               onClick={() => onViewChange('about')}
-              className="text-base font-medium text-gray-500 hover:text-gray-900"
+              className="inline-flex min-h-11 min-w-11 items-center justify-center text-base font-medium text-gray-500 hover:text-gray-900"
             >
               Über uns
             </Link>
             <Link
               href={ROUTES.aboutFaq}
               onClick={() => onViewChange('about')}
-              className="text-base font-medium text-gray-500 hover:text-gray-900"
+              className="inline-flex min-h-11 min-w-11 items-center justify-center text-base font-medium text-gray-500 hover:text-gray-900"
             >
               FAQ
             </Link>
             <Link
               href={ROUTES.blog}
               onClick={() => onViewChange('about')}
-              className="text-base font-medium text-gray-500 hover:text-gray-900"
+              className="inline-flex min-h-11 min-w-11 items-center justify-center text-base font-medium text-gray-500 hover:text-gray-900"
             >
               Blog
             </Link>
@@ -427,13 +427,13 @@ export function TopNavigation({ onViewChange = () => {} }: TopNavigationProps) {
                 <>
                   <Link
                     href={ROUTES.login}
-                    className="text-base font-medium text-gray-500 hover:text-gray-900"
+                    className="inline-flex min-h-11 min-w-11 items-center justify-center text-base font-medium text-gray-500 hover:text-gray-900"
                   >
                     Anmelden
                   </Link>
                   <Link
                     href={ROUTES.register}
-                    className="inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700"
+                    className="inline-flex min-h-11 items-center justify-center px-4 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700"
                   >
                     Registrieren
                   </Link>
