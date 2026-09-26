@@ -50,14 +50,26 @@ export default function RootLayout({
               <p className="mb-4 sm:mb-0">
                 &copy; {new Date().getFullYear()} DataCat. All rights reserved.
               </p>
-              <nav className="flex space-x-4">
-                <a href="/privacy" className="hover:text-gray-300" aria-label="Datenschutz">
+              <nav className="flex items-center gap-4">
+                <a
+                  href="/privacy"
+                  className="inline-flex min-h-11 min-w-11 items-center justify-center hover:text-gray-300"
+                  aria-label="Datenschutz"
+                >
                   Privacy
                 </a>
-                <a href="/terms" className="hover:text-gray-300" aria-label="Nutzungsbedingungen">
+                <a
+                  href="/terms"
+                  className="inline-flex min-h-11 min-w-11 items-center justify-center hover:text-gray-300"
+                  aria-label="Nutzungsbedingungen"
+                >
                   Terms
                 </a>
-                <a href="/contact" className="hover:text-gray-300" aria-label="Kontakt">
+                <a
+                  href="/contact"
+                  className="inline-flex min-h-11 min-w-11 items-center justify-center hover:text-gray-300"
+                  aria-label="Kontakt"
+                >
                   Contact
                 </a>
               </nav>
