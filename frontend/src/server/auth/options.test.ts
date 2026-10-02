@@ -94,3 +94,19 @@ describe('the inner access token', () => {
     expect(payload.sub).toBe('user-1');
   });
 });
+
+describe('the OrangeCat provider', () => {
+  it('is absent — not broken — while the box has no client credentials', async () => {
+    const authOptions = await loadAuthOptions({ JWT_SECRET: 's' });
+    expect(authOptions.providers.map((p) => p.id)).not.toContain('orangecat');
+  });
+
+  it('is offered, before the password form, once the client credentials exist', async () => {
+    const authOptions = await loadAuthOptions({
+      JWT_SECRET: 's',
+      ORANGECAT_OAUTH_CLIENT_ID: 'datacat',
+      ORANGECAT_OAUTH_CLIENT_SECRET: 'shh',
+    });
+    expect(authOptions.providers[0]?.id).toBe('orangecat');
+  });
+});

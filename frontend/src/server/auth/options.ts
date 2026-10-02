@@ -4,11 +4,16 @@ import { prisma } from '@/lib/db';
 import { compare } from 'bcryptjs';
 import { SignJWT } from 'jose';
 import { resolveApiTokenSecret, resolveAuthSecret } from './secret';
+import { ORANGECAT_PROVIDER_ID, orangecatProviderFromEnv } from './orangecat';
+import { resolveOrangecatUser } from './orangecat-user';
 
 // Signs the inner access token only. Stays JWT_SECRET-specific on purpose:
 // frontend/src/lib/auth.ts and the Express backend both verify with that exact
 // env var, so this key may not follow next-auth's NEXTAUTH_SECRET preference.
 const apiTokenKey = new TextEncoder().encode(resolveApiTokenSecret() ?? '');
+
+// Absent (not broken) until the box holds ORANGECAT_OAUTH_CLIENT_ID/_SECRET.
+const orangecat = orangecatProviderFromEnv();
 
 export const authOptions: NextAuthOptions = {
   // next-auth v4 refuses to run in production without this, and it was absent:
@@ -19,6 +24,7 @@ export const authOptions: NextAuthOptions = {
   secret: resolveAuthSecret(),
   session: { strategy: 'jwt' },
   providers: [
+    ...(orangecat ? [orangecat] : []),
     Credentials({
       name: 'Credentials',
       credentials: {
@@ -36,9 +42,22 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, account }) {
       if (user) {
-        const authUser = user as { id: string; email?: string | null; role?: string };
+        let authUser = user as { id: string; email?: string | null; role?: string };
+        if (account?.provider === ORANGECAT_PROVIDER_ID) {
+          // `user.id` is OrangeCat's sub here; swap it for the datacat user it
+          // keys. Identity only — OrangeCat's tokens are not kept or refreshed.
+          const dbUser = await resolveOrangecatUser(prisma, {
+            sub: account.providerAccountId,
+            email: user.email,
+            name: user.name,
+            image: user.image,
+          });
+          authUser = { id: dbUser.id, email: dbUser.email, role: dbUser.role };
+          token.sub = dbUser.id;
+          token.email = dbUser.email;
+        }
         token.id = authUser.id;
         // Payload carries both `sub` (read by the local jose-verified /api/v1/* routes,
         // see frontend/src/lib/auth.ts) and a nested `user` claim (read by the real
