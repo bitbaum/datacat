@@ -34,21 +34,21 @@ The pipeline is domain-agnostic by design. Each stage is independently replaceab
 
 **1. Data Ingestion** — Custom forms, multi-modal capture (photos, documents, audio), external APIs, and purpose-built interfaces. The system doesn't care where data comes from; it normalizes everything into a unified schema.
 
-**2. AI Analysis** — Domain-specific engines with multi-modal processing. GPT-4 Vision handles primary analysis, Google Vision API and AWS Textract serve as fallbacks, Tesseract.js provides offline OCR. Every provider can fail; the system chains them with automatic failover.
+**2. AI Analysis** — Text analysis (sentiment, classification, extraction, summaries) runs on a multi-vendor chain from [`@bitbaum/ai-kit`](https://www.npmjs.com/package/@bitbaum/ai-kit) — Groq, then OpenRouter — with automatic failover (`backend/lib/aiChain.js`). Image and video-frame analysis use OpenAI vision models and audio uses Whisper; those have no second vendor yet.
 
 **3. Action Delivery** — Humans get dashboards and reports. Machines get direct commands. The same analysis pipeline feeds both without translation layers.
 
 ### Form Builder
 
-Drag-and-drop form construction built on `@dnd-kit/core`. Multi-step forms with per-step validation. Field types: text, textarea, number, date, select, checkbox, radio.
+Drag-and-drop form construction built on `@dnd-kit/core`. Multi-step forms with per-step validation. 13 field types, from text, email and date to file upload and range (`FieldConfig['type']` in `frontend/src/app/types/form.ts`).
 
-A template library provides starting points. Schema versioning (`FormVersions` table) ensures backward compatibility — old submissions remain valid when forms evolve. AI-powered schema generation produces Zod validation rules from natural language descriptions.
+A template library provides starting points. When a form's fields change, the previous schema is kept in the `form_versions` table.
 
 ### Multi-Modal Ingestion (Erfassung)
 
-A hybrid service abstraction manages provider failover transparently. Each analyzed field carries a confidence score: title, manufacturer, dimensions, weight, categories, OCR text.
+Each analyzed field carries a confidence score: title, manufacturer, dimensions, weight, categories, OCR text.
 
-Bull queues handle async processing backed by Redis. WebSocket connections push real-time updates when analysis completes. A 24-hour TTL cache prevents redundant processing of identical photos.
+Bull queues handle async processing backed by Redis. WebSocket connections push real-time updates when analysis completes.
 
 ### White-Label System
 
@@ -62,15 +62,13 @@ One command rebrands the entire platform:
 
 Environment variables control all branding. Zero code changes required. Presets ship for: default, HR, medical, legal, government, and generic verticals.
 
-### 5-Layer Data Integrity
+### Data Integrity
 
 Each layer catches what the previous one missed:
 
-1. **Client-side Zod validation** — Immediate UX feedback
-2. **Server route validation** — Schema enforcement at the boundary
+1. **Client-side validation** — Immediate UX feedback
+2. **Server validation** — Zod schemas on tRPC inputs and the auth routes
 3. **Prisma constraints** — Database-level guarantees
-4. **Property-based tests** — Playwright and Vitest verify invariants
-5. **Post-ingest checks** — Background jobs catch drift
 
 ### API Architecture
 
@@ -90,7 +88,7 @@ Bull job queues manage async processing. Socket.io handles real-time updates. Re
 | State | Zustand, @dnd-kit (drag-and-drop) |
 | Backend | Express.js 5.1, tRPC 11.4 |
 | Database | PostgreSQL 14+ (Prisma 6), Redis |
-| AI | OpenAI GPT-4 Vision, Google Vision API, Tesseract.js |
+| AI | `@bitbaum/ai-kit` chain (Groq, OpenRouter) for text; OpenAI for vision and Whisper audio |
 | Jobs | Bull 4.16 (Redis-backed queues) |
 | Real-time | Socket.io 4.8 |
 | Testing | Vitest (unit), Playwright (E2E) |
@@ -159,13 +157,11 @@ datacat/
 
 ## Design Principles
 
-**Single source of truth.** Prisma schema defines the data model. Zod schemas derive from it. Types flow from schemas. Nothing is defined twice.
-
-**Fail gracefully, fail loudly.** Every AI provider will go down. The failover chain handles it without user intervention. When all providers fail, the system tells you exactly what happened — no silent data loss.
+**Fail gracefully, fail loudly.** Every AI provider will go down. For text analysis the failover chain handles it without user intervention. When all providers fail, the system tells you exactly what happened — no silent data loss.
 
 **Configuration over code.** Adding a new white-label vertical is a config file, not a fork. Adding a new form field type is a registry entry, not a component rewrite.
 
-**Validate at every boundary.** User input is hostile. API input is hostile. Even internal service communication validates. Five layers exist because no single layer is sufficient.
+**Validate at every boundary.** User input is hostile. API input is hostile. Several layers exist because no single layer is sufficient.
 
 ---
 

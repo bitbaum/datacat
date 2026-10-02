@@ -1,7 +1,7 @@
 ---
 created_date: 2025-07-10
-last_modified_date: 2026-09-10
-last_modified_summary: 'Removed the coverImage and the inline pipeline figure: neither asset was ever committed, so both rendered as broken-image boxes. The figure caption only restated the ordered list below it, which carries the same content.'
+last_modified_date: 2026-10-02
+last_modified_summary: 'Cut claims the code does not back: an unsourced 37 % statistic, a 200k events/s stream layer, Kafka/Protobuf/Iceberg, few-shot examples and a feedback loop. The roadmap table became the status the /ingest page shows.'
 title: 'Vom Rohdatenfluss zur smarten Entscheidung – unsere Data-Intake-Journey'
 date: '2025-07-10'
 summary: 'Warum Datenaufnahme der Grundstein jeder Analyse ist – und wie wir sie mit Formularen, Streams und AI meistern.'
@@ -13,13 +13,10 @@ tags: ['data-ingestion', 'form-builder', 'llm']
 Daten sind das Öl des 21. Jahrhunderts – ein abgedroschener Satz, doch ohne Frage wahr.
 Rohdaten _alleine_ bringen jedoch keinen Motor zum Laufen. Erst wenn Informationen **bequem erfasst**, **intelligent analysiert** und schliesslich in **wirkungsvollen Aktionen** münden, entsteht echter Mehrwert.
 
-> [!TIP]
-> Wussten Sie, dass bereits **37 %** aller Datenprojekte am fehlenden Input scheitern? _Garbage in, garbage out_ gilt heute mehr denn je.
-
 ## Unser Intake-Stack auf einen Blick
 
 1. **Formulare** – schnell per Drag-and-Drop gebaut, perfekt für menschlichen Input.
-2. **Sensor- & API-Streams** – alles, was sich sekündlich ändert, landet in unserem Event-Bus.
+2. **Medien & Quellen** – Audio, Video, Bilder, Websites und Datenbanken werden direkt eingelesen.
 3. **Contextual Prompts** – jede Datenspur erhält Zusatzwissen, bevor sie zum LLM geht.
 4. **AI-Insights** – konkrete Empfehlungen, automatisch generiert.
 
@@ -33,7 +30,7 @@ Ein kleiner, sauberer Datensatz bringt mehr als eine Big-Data-Müllhalde. Durch 
 
 ### 2. Geschwindigkeit entscheidet
 
-Echtzeit-Ingestion ermöglicht es, Trends sofort zu erkennen und zu reagieren. Unser Stream-Layer verarbeitet > 200 k Events ⁄ Sekunde.
+Je früher Daten strukturiert vorliegen, desto früher lassen sich Trends erkennen und Entscheidungen treffen.
 
 ### 3. Kontext macht Daten wertvoll
 
@@ -49,27 +46,17 @@ Ohne Metadaten weiss auch das beste Modell nichts anzufangen. Deshalb reichern w
 - **Edge-Validation**: Client- & Server-Checks verhindern Inkonsistenzen.
 - **Zustand Store**: Ein zentrales `useFormBuilderStore` hält Felder & Steps synchron (Drag-and-Drop inklusive!).
 
-### Stream-Ingestion
-
-- **Kafka-Bus** für hohe Durchsätze, Back-Pressure Handling via Quotas.
-- **Protobuf Schemas** für versionierte Payloads.
-- **Exactly-Once writes** ins Lakehouse (Iceberg).
-
 ### Prompt Engineering Layer
 
-- Dynamische System-Prompts, basierend auf Datenquelle & Benutzerrolle.
-- **Few-Shot Examples** aus historischen Entscheidungen.
-- Feedback-Loop speichert Modell-Antworten zur weiteren Optimierung.
+- Dynamische System-Prompts, basierend auf Analyseart und Formular-Schema.
+- Analysearten: Sentiment, Klassifikation, Extraktion, Zusammenfassung oder eigene Fragen.
 
 ---
 
-## Roadmap
+## Stand heute
 
-| Phase    | Ziel                                   | Status       |
-| -------- | -------------------------------------- | ------------ |
-| **MVP**  | Formular-Builder mit statischem Intake | ✅ live      |
-| **v1.1** | Sensor-Streams + Auto-Mapping          | 🔄 in Arbeit |
-| **v1.2** | AI-Insights Dashboard                  | ⏳ geplant   |
+- **Live:** Formular-Builder, Produkt-Scan per Foto und Ingestion von Audio, Video, Bildern, Websites und Datenbanken.
+- **Als Nächstes:** Cloud-Speicher, Nachrichten und IoT-Sensoren – auf der [Ingestion-Seite](/ingest) als «Coming soon» markiert.
 
 ---
 

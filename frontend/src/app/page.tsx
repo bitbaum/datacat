@@ -82,7 +82,7 @@ export default function Home() {
                   Data Ingestion
                 </h3>
                 <p className="text-gray-600 dark:text-gray-400">
-                  Erfassen Sie Daten aus jeder Quelle - Audio, Video, Bilder, Websites. KI
+                  Erfassen Sie Daten aus Audio, Video, Bildern, Websites und Datenbanken. KI
                   analysiert und strukturiert automatisch.
                 </p>
               </div>
@@ -160,11 +160,11 @@ export default function Home() {
                 </div>
                 <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
                   <CheckCircleIcon className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
-                  Automatische Webshop-Integration (Medusa JS, Shopware)
+                  Export als CSV (Kivitendo), JSON oder XML
                 </div>
                 <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
                   <CheckCircleIcon className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
-                  Inventarverwaltung und Export-Automatisierung
+                  Produkttabelle mit Suche und Status
                 </div>
               </div>
               <div className="mt-6">

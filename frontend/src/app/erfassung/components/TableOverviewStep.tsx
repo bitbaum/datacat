@@ -33,7 +33,7 @@ export function TableOverviewStep({ product, onBackToWorkflow }: TableOverviewSt
             <div className="text-sm text-green-800 dark:text-green-200">Fotos analysiert</div>
           </div>
           <div>
-            <div className="text-2xl font-bold text-green-600 dark:text-green-400">21</div>
+            <div className="text-2xl font-bold text-green-600 dark:text-green-400">17</div>
             <div className="text-sm text-green-800 dark:text-green-200">Datenfelder erfasst</div>
           </div>
           <div>

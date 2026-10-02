@@ -159,14 +159,6 @@ const AboutPage = () => {
               Augen und Ohren, die alles erfassen, und einem Gehirn, das alles versteht und
               intelligent handelt.
             </p>
-            <div className="mt-8 max-w-3xl mx-auto text-left text-gray-700 dark:text-gray-300 space-y-2">
-              <p className="font-semibold">AI‑getriebene FormSchemas</p>
-              <ul className="list-disc pl-6 space-y-1">
-                <li>AI erzeugt typisierte FormSchemas (Zod) statt Freitext</li>
-                <li>Jedes Schema wird validiert, normalisiert und versioniert</li>
-                <li>Submissions referenzieren immer die verwendete Schema‑Version</li>
-              </ul>
-            </div>
           </div>
 
           {/* Progressive Disclosure Sections */}
@@ -266,7 +258,7 @@ const AboutPage = () => {
                         Sensoren sind die Augen des Systems
                       </h3>
                       <p className="text-lg text-gray-600 dark:text-gray-400">
-                        Automatische Erfassung durch Kameras, IoT und digitale Eingänge
+                        Fotos, Video, Audio und Websites werden automatisch erfasst
                       </p>
                     </div>
                   </div>
@@ -289,15 +281,15 @@ const AboutPage = () => {
                         <ul className="space-y-3 text-gray-600 dark:text-gray-400">
                           <li className="flex items-start space-x-3">
                             <CheckCircleIcon className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                            <span>Computer Vision für Objekterkennung</span>
+                            <span>Computer Vision für Produktfotos</span>
                           </li>
                           <li className="flex items-start space-x-3">
                             <CheckCircleIcon className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                            <span>IoT-Sensoren für Umgebungsdaten</span>
+                            <span>Frame-Analyse für Videos</span>
                           </li>
                           <li className="flex items-start space-x-3">
                             <CheckCircleIcon className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                            <span>Audio-Verarbeitung für Spracheingabe</span>
+                            <span>Transkription von Sprachaufnahmen</span>
                           </li>
                         </ul>
                       </div>
@@ -313,12 +305,12 @@ const AboutPage = () => {
                           </div>
                           <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
                             <span className="text-blue-800 dark:text-blue-300 font-medium">
-                              Umgebungssensoren
+                              Sprachaufnahmen
                             </span>
                           </div>
                           <div className="bg-orange-50 dark:bg-orange-900/20 p-4 rounded-lg">
                             <span className="text-orange-800 dark:text-orange-300 font-medium">
-                              Bewegung & Verhalten
+                              Websites
                             </span>
                           </div>
                         </div>

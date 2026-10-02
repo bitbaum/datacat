@@ -228,7 +228,7 @@ export enum PublicationStatus {
 export interface ProductTableRow {
   id: string;
 
-  // Kivitendo-compatible fields (21 standardized fields)
+  // Kivitendo-compatible fields (17 standardized fields)
   title: string;
   manufacturer: string;
   articleNumber: string;

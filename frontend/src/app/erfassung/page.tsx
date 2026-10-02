@@ -18,8 +18,7 @@ export default function ErfassungPage() {
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">Produkt-Scan</h1>
           <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto mb-8">
             Transformieren Sie Produktfotos in strukturierte Produktkataloge mit KI-gestützter
-            Analyse. Automatisieren Sie den kompletten Workflow von der Fotografie bis zur
-            E-Commerce-Integration.
+            Analyse – vom Foto bis zum Export.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
@@ -97,8 +96,8 @@ export default function ErfassungPage() {
               Strukturierte Tabellen
             </h3>
             <p className="text-gray-600 dark:text-gray-400">
-              21 standardisierte Datenfelder für ERP-Kompatibilität mit erweiterten Export- und
-              Bearbeitungsfunktionen.
+              17 standardisierte Datenfelder, kompatibel mit dem Kivitendo-ERP, zum Prüfen und
+              Bearbeiten.
             </p>
           </div>
 
@@ -122,33 +121,7 @@ export default function ErfassungPage() {
               Multi-Format Export
             </h3>
             <p className="text-gray-600 dark:text-gray-400">
-              CSV, XLSX, JSON, XML und TSV Export für nahtlose Integration in ERP-Systeme und
-              E-Commerce-Plattformen.
-            </p>
-          </div>
-
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-            <div className="flex items-center justify-center w-12 h-12 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg mb-4">
-              <svg
-                className="h-6 w-6 text-indigo-600 dark:text-indigo-400"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
-                />
-              </svg>
-            </div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-              E-Commerce Integration
-            </h3>
-            <p className="text-gray-600 dark:text-gray-400">
-              Direkte Integration mit Medusa JS, Shopware und anderen Plattformen für automatisierte
-              Shop-Veröffentlichung.
+              Download als CSV (Kivitendo), JSON oder XML.
             </p>
           </div>
 

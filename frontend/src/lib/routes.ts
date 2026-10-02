@@ -17,7 +17,6 @@ export const ROUTES = {
   erfassungNew: '/erfassung/new',
   erfassungTable: '/erfassung/table',
   about: '/about',
-  aboutFaq: '/about/faq',
   blog: '/blog',
   profile: '/profile',
   login: '/login',
