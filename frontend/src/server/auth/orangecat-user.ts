@@ -1,59 +1,57 @@
 /**
- * OrangeCat identity -> datacat user. Keyed on the OIDC `sub` and nothing else.
+ * OrangeCat identity -> datacat user, keyed on the OIDC `sub` and nothing else.
  *
- * A known sub returns its user. An unknown sub ALWAYS creates a new user — it is
- * never linked to an existing account by email. OrangeCat's `email_verified` is
- * not trustworthy while its GoTrue auto-confirms addresses, so "same email"
- * would let anyone who registers someone's address on OrangeCat walk into that
- * person's datacat account. Email is profile data: copied when free, left null
- * when another account already holds it (users.email is unique).
+ * The rule is @bitbaum/accountkit/orangecat's `resolveOrangecatUser`, shared by
+ * every bitbaum app: a known sub returns its user; an unknown sub ALWAYS
+ * creates a new one and is never linked to an existing account by email
+ * (OrangeCat's GoTrue auto-confirms addresses, so "same email" would let anyone
+ * who registers someone's address on OrangeCat walk into their datacat
+ * account). It also survives the insert race: a concurrent sign-in of the same
+ * sub returns that row, an address claimed mid-insert falls back.
+ *
+ * What is datacat's own is this store. users.email is nullable, so where the
+ * shared rule would store a `.invalid` placeholder, datacat stores null — no
+ * made-up address ever reaches the UI or the API token.
  */
-import { Prisma, type PrismaClient } from '@prisma/client';
+import type { PrismaClient, User } from '@prisma/client';
+import {
+  isPlaceholderEmail,
+  resolveOrangecatUser as resolveBySub,
+  type OrangecatUserStore,
+} from '@bitbaum/accountkit/orangecat';
+
+type UserStore = Pick<PrismaClient, 'user'>;
+
+export function prismaOrangecatStore(db: UserStore): OrangecatUserStore<User> {
+  return {
+    findBySub: (sub) => db.user.findUnique({ where: { orangecatSub: sub } }),
+    emailTaken: async (email) => Boolean(await db.user.findUnique({ where: { email } })),
+    insert: ({ orangecatSub, email, name, image }) =>
+      db.user.create({
+        data: {
+          orangecatSub,
+          email: isPlaceholderEmail(email) ? null : email,
+          name,
+          avatar: image,
+        },
+      }),
+    attachSub: async (userId, sub) => {
+      const { count } = await db.user.updateMany({
+        where: { id: userId, OR: [{ orangecatSub: null }, { orangecatSub: sub }] },
+        data: { orangecatSub: sub },
+      });
+      return count > 0;
+    },
+  };
+}
 
 export interface OrangecatIdentity {
   sub: string;
-  email?: string | null;
+  contactEmail?: string | null;
   name?: string | null;
   image?: string | null;
 }
 
-type UserStore = Pick<PrismaClient, 'user'>;
-
-const isUniqueViolation = (err: unknown) =>
-  err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2002';
-
-export async function resolveOrangecatUser(db: UserStore, identity: OrangecatIdentity) {
-  const sub = identity.sub?.trim();
-  if (!sub) throw new Error('OrangeCat identity has no sub');
-
-  const existing = await db.user.findUnique({ where: { orangecatSub: sub } });
-  if (existing) return existing;
-
-  const email = identity.email?.trim().toLowerCase() || null;
-  const emailTaken = email ? Boolean(await db.user.findUnique({ where: { email } })) : false;
-
-  try {
-    return await db.user.create({
-      data: {
-        orangecatSub: sub,
-        email: emailTaken ? null : email,
-        name: identity.name ?? null,
-        avatar: identity.image ?? null,
-      },
-    });
-  } catch (err) {
-    if (!isUniqueViolation(err)) throw err;
-    // Lost a race: either the same sub was created concurrently (return it),
-    // or the email was claimed between the check and the insert (retry without it).
-    const raced = await db.user.findUnique({ where: { orangecatSub: sub } });
-    if (raced) return raced;
-    return db.user.create({
-      data: {
-        orangecatSub: sub,
-        email: null,
-        name: identity.name ?? null,
-        avatar: identity.image ?? null,
-      },
-    });
-  }
+export function resolveOrangecatUser(db: UserStore, identity: OrangecatIdentity) {
+  return resolveBySub(prismaOrangecatStore(db), identity);
 }

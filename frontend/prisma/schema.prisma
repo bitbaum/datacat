@@ -12,7 +12,8 @@ model User {
   id              String    @id @default(cuid())
   // Profile data only, never an identity key. Null when an OrangeCat user's
   // email is already held by another datacat account: a new OrangeCat `sub`
-  // never links to an existing user by email (src/server/auth/orangecat-user.ts).
+  // never links to an existing user by email (@bitbaum/accountkit/orangecat,
+  // stored by src/server/auth/orangecat-user.ts).
   email           String?   @unique
   passwordHash    String?   // Optional for OAuth users
   // OrangeCat's OIDC `sub` (its actor_id) — THE identity key for "Sign in with OrangeCat".

@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { getProviders, signIn } from 'next-auth/react';
 import { Button } from './Button';
 
-// Mirrors ORANGECAT_PROVIDER_ID in src/server/auth/orangecat.ts — that module is
+// Mirrors ORANGECAT_PROVIDER_ID in @bitbaum/accountkit/orangecat — that module is
 // server-only (it reads the client secret), so the id is restated, not imported.
 const PROVIDER_ID = 'orangecat';
 
