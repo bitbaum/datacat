@@ -4,7 +4,11 @@ import { prisma } from '@/lib/db';
 import { compare } from 'bcryptjs';
 import { SignJWT } from 'jose';
 import { resolveApiTokenSecret, resolveAuthSecret } from './secret';
-import { ORANGECAT_PROVIDER_ID, orangecatProviderFromEnv } from './orangecat';
+import {
+  ORANGECAT_PROVIDER_ID,
+  orangecatClient,
+  orangecatProviderV4,
+} from '@bitbaum/accountkit/orangecat';
 import { resolveOrangecatUser } from './orangecat-user';
 
 // Signs the inner access token only. Stays JWT_SECRET-specific on purpose:
@@ -13,7 +17,8 @@ import { resolveOrangecatUser } from './orangecat-user';
 const apiTokenKey = new TextEncoder().encode(resolveApiTokenSecret() ?? '');
 
 // Absent (not broken) until the box holds ORANGECAT_OAUTH_CLIENT_ID/_SECRET.
-const orangecat = orangecatProviderFromEnv();
+const orangecatPair = orangecatClient();
+const orangecat = orangecatPair ? orangecatProviderV4(orangecatPair) : null;
 
 export const authOptions: NextAuthOptions = {
   // next-auth v4 refuses to run in production without this, and it was absent:
@@ -50,7 +55,9 @@ export const authOptions: NextAuthOptions = {
           // keys. Identity only — OrangeCat's tokens are not kept or refreshed.
           const dbUser = await resolveOrangecatUser(prisma, {
             sub: account.providerAccountId,
-            email: user.email,
+            // The provider's user carries no email (an unverified address is
+            // never an identity); the address rides along as contactEmail.
+            contactEmail: (user as { contactEmail?: string | null }).contactEmail,
             name: user.name,
             image: user.image,
           });

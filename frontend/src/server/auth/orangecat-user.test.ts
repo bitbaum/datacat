@@ -76,13 +76,17 @@ describe('resolveOrangecatUser', () => {
   it('never resolves a NEW sub to an existing user by email', async () => {
     const { db, rows } = fakeDb([{ email: 'victim@example.com', name: 'Victim' }]);
 
-    const user = await resolveOrangecatUser(db, { sub: 'actor-new', email: 'victim@example.com' });
+    const user = await resolveOrangecatUser(db, {
+      sub: 'actor-new',
+      contactEmail: 'victim@example.com',
+    });
 
     expect(user.id).not.toBe('u0');
     expect(user.orangecatSub).toBe('actor-new');
     // The existing account is untouched: no sub was attached to it.
     expect(rows[0]).toMatchObject({ id: 'u0', orangecatSub: null, email: 'victim@example.com' });
     // Email is profile data; it stays with the account that already held it.
+    // (accountkit would store a .invalid placeholder; datacat stores null.)
     expect(user.email).toBeNull();
   });
 
@@ -90,7 +94,7 @@ describe('resolveOrangecatUser', () => {
     const { db } = fakeDb();
     const user = await resolveOrangecatUser(db, {
       sub: 'actor-1',
-      email: 'New@Example.com',
+      contactEmail: 'New@Example.com',
       name: 'N',
     });
     expect(user).toMatchObject({ orangecatSub: 'actor-1', email: 'new@example.com', name: 'N' });
@@ -98,14 +102,20 @@ describe('resolveOrangecatUser', () => {
 
   it('returns the same user for a known sub, whatever email OrangeCat now reports', async () => {
     const { db, rows } = fakeDb([{ orangecatSub: 'actor-1', email: 'old@example.com' }]);
-    const user = await resolveOrangecatUser(db, { sub: 'actor-1', email: 'changed@example.com' });
+    const user = await resolveOrangecatUser(db, {
+      sub: 'actor-1',
+      contactEmail: 'changed@example.com',
+    });
     expect(user.id).toBe('u0');
     expect(rows).toHaveLength(1);
   });
 
   it('still creates a separate user when the email is claimed mid-insert', async () => {
     const { db, rows } = fakeDb([], { raceEmail: 'race@example.com' });
-    const user = await resolveOrangecatUser(db, { sub: 'actor-2', email: 'race@example.com' });
+    const user = await resolveOrangecatUser(db, {
+      sub: 'actor-2',
+      contactEmail: 'race@example.com',
+    });
     expect(user).toMatchObject({ orangecatSub: 'actor-2', email: null });
     expect(rows.filter((r) => r.email === 'race@example.com')).toHaveLength(1);
   });
