@@ -1,10 +1,10 @@
 ---
 created_date: 2025-07-10
 last_modified_date: 2026-10-02
-last_modified_summary: 'Cut claims the code does not back: an unsourced 37 % statistic, a 200k events/s stream layer, Kafka/Protobuf/Iceberg, few-shot examples and a feedback loop. The roadmap table became the status the /ingest page shows.'
+last_modified_summary: 'Cut claims the code does not back: an unsourced 37 % statistic, a 200k events/s stream layer, Kafka/Protobuf/Iceberg, few-shot examples and a feedback loop. The roadmap table became the status the /ingest page shows, and the photo product scan is named as a demo.'
 title: 'Vom Rohdatenfluss zur smarten Entscheidung – unsere Data-Intake-Journey'
 date: '2025-07-10'
-summary: 'Warum Datenaufnahme der Grundstein jeder Analyse ist – und wie wir sie mit Formularen, Streams und AI meistern.'
+summary: 'Warum Datenaufnahme der Grundstein jeder Analyse ist – und wie wir sie mit Formularen, Medien-Ingestion und AI angehen.'
 tags: ['data-ingestion', 'form-builder', 'llm']
 ---
 
@@ -55,7 +55,8 @@ Ohne Metadaten weiss auch das beste Modell nichts anzufangen. Deshalb reichern w
 
 ## Stand heute
 
-- **Live:** Formular-Builder, Produkt-Scan per Foto und Ingestion von Audio, Video, Bildern, Websites und Datenbanken.
+- **Live:** Formular-Builder und Ingestion von Audio, Video, Bildern, Websites und Datenbanken.
+- **Demo:** Der Produkt-Scan per Foto zeigt den Ablauf mit Beispieldaten – die Analyse ist noch nicht an die KI angebunden.
 - **Als Nächstes:** Cloud-Speicher, Nachrichten und IoT-Sensoren – auf der [Ingestion-Seite](/ingest) als «Coming soon» markiert.
 
 ---

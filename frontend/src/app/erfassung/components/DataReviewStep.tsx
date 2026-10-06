@@ -64,7 +64,7 @@ export function DataReviewStep({ analysisResult, onReviewComplete }: DataReviewS
     rows?: number;
   }) => {
     const confidence = analysisResult.confidence[field] || analysisResult.confidence.title || 0;
-    const source = 'KI-Analyse';
+    const source = 'Demo-Analyse';
     const isEditing = editingField === field;
     const isModified =
       formData[field as keyof typeof formData] !==
@@ -190,7 +190,7 @@ export function DataReviewStep({ analysisResult, onReviewComplete }: DataReviewS
           Produktdaten überprüfen und bearbeiten
         </h2>
         <p className="text-gray-600 dark:text-gray-400">
-          Überprüfen Sie die von der KI extrahierten Daten und korrigieren Sie sie bei Bedarf.
+          Überprüfen und korrigieren Sie die Daten. Im Demo-Modus sind es Beispielwerte.
         </p>
       </div>
 

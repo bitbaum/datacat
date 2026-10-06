@@ -40,13 +40,15 @@ The pipeline is domain-agnostic by design. Each stage is independently replaceab
 
 ### Form Builder
 
-Drag-and-drop form construction built on `@dnd-kit/core`. Multi-step forms with per-step validation. 13 field types, from text, email and date to file upload and range (`FieldConfig['type']` in `frontend/src/app/types/form.ts`).
+Drag-and-drop form construction built on `@dnd-kit/core`. Multi-step forms with per-step validation. The builder palette adds six field types: text, email, phone, date, select and textarea.
 
 A template library provides starting points. When a form's fields change, the previous schema is kept in the `form_versions` table.
 
-### Multi-Modal Ingestion (Erfassung)
+### Multi-Modal Ingestion
 
-Each analyzed field carries a confidence score: title, manufacturer, dimensions, weight, categories, OCR text.
+Audio (Whisper transcription), images and documents (vision), video frames and websites each have a backend service in `backend/services/*IngestionService.js`.
+
+The Produkt-Scan flow under `/erfassung` is a demo: its analysis step returns a hardcoded example product with fixed confidence values (`AnalysisStep.tsx`), and its product table shows example rows that are not stored.
 
 Bull queues handle async processing backed by Redis. WebSocket connections push real-time updates when analysis completes.
 

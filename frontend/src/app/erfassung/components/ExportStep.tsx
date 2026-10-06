@@ -12,17 +12,10 @@ interface ExportStepProps {
 const exportFormats = [
   {
     id: 'csv_kivitendo',
-    name: 'CSV (Kivitendo)',
-    description: 'Kivitendo-kompatibles CSV Format',
+    name: 'CSV',
+    description: 'Titel, Hersteller, Artikelnummer, Kurzbeschreibung, Preis, Gewicht',
     icon: '📄',
     recommended: true,
-  },
-  {
-    id: 'xlsx',
-    name: 'Excel (XLSX)',
-    description: 'Microsoft Excel Arbeitsmappe',
-    icon: '📊',
-    recommended: false,
   },
   {
     id: 'json',
@@ -36,27 +29,6 @@ const exportFormats = [
     name: 'XML',
     description: 'Extensible Markup Language',
     icon: '📋',
-    recommended: false,
-  },
-  {
-    id: 'medusa_json',
-    name: 'Medusa JS',
-    description: 'Medusa E-Commerce Format',
-    icon: '🛒',
-    recommended: false,
-  },
-  {
-    id: 'shopify_product_json',
-    name: 'Shopify Produkt (JSON)',
-    description: 'Importierbares Shopify JSON',
-    icon: '🛍️',
-    recommended: false,
-  },
-  {
-    id: 'shopware_product_json',
-    name: 'Shopware Produkt (JSON)',
-    description: 'Shopware 6 kompatibles JSON',
-    icon: '🧱',
     recommended: false,
   },
 ];
@@ -136,19 +108,14 @@ export function ExportStep({ productData, onExportComplete }: ExportStepProps) {
 
   const exportFileExtensions: Record<string, string> = {
     csv_kivitendo: 'csv',
-    xlsx: 'xlsx',
     json: 'json',
     xml: 'xml',
-    shopify_product_json: 'json',
-    shopware_product_json: 'json',
   };
 
   const exportMimeTypes: Record<string, string> = {
     csv_kivitendo: 'text/csv',
     json: 'application/json',
     xml: 'application/xml',
-    shopify_product_json: 'application/json',
-    shopware_product_json: 'application/json',
   };
 
   const handleDownload = () => {

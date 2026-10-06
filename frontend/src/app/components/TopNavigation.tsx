@@ -124,7 +124,7 @@ export function TopNavigation({ onViewChange = () => {} }: TopNavigationProps) {
     {
       name: 'Foto-Inventar',
       href: ROUTES.erfassung,
-      description: 'Inventar-Erfassung per Fotoscan mit KI.',
+      description: 'Demo: vom Produktfoto bis zum Export.',
       icon: CameraIcon,
     },
   ];

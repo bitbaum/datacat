@@ -206,7 +206,7 @@ const AboutPage = () => {
                           </li>
                           <li className="flex items-start space-x-3">
                             <CheckCircleIcon className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                            <span>Automatische Validierung und Fehlerkorrektur</span>
+                            <span>Validierung pro Formularschritt</span>
                           </li>
                           <li className="flex items-start space-x-3">
                             <CheckCircleIcon className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
@@ -258,7 +258,7 @@ const AboutPage = () => {
                         Sensoren sind die Augen des Systems
                       </h3>
                       <p className="text-lg text-gray-600 dark:text-gray-400">
-                        Fotos, Video, Audio und Websites werden automatisch erfasst
+                        Fotos, Video, Audio und Websites werden hochgeladen und per KI analysiert
                       </p>
                     </div>
                   </div>
@@ -281,7 +281,7 @@ const AboutPage = () => {
                         <ul className="space-y-3 text-gray-600 dark:text-gray-400">
                           <li className="flex items-start space-x-3">
                             <CheckCircleIcon className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                            <span>Computer Vision für Produktfotos</span>
+                            <span>Bildanalyse für hochgeladene Bilder und Dokumente</span>
                           </li>
                           <li className="flex items-start space-x-3">
                             <CheckCircleIcon className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
@@ -300,7 +300,7 @@ const AboutPage = () => {
                         <div className="space-y-3">
                           <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg">
                             <span className="text-green-800 dark:text-green-300 font-medium">
-                              Produktdaten per Foto
+                              Bildern & Dokumenten
                             </span>
                           </div>
                           <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
@@ -425,8 +425,7 @@ const AboutPage = () => {
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Erfassen</h3>
                 <p className="text-gray-600 dark:text-gray-400 text-lg">
-                  Formulare und Sensoren sammeln Daten aus der realen Welt – automatisch und
-                  kontinuierlich
+                  Formulare und Uploads sammeln Daten aus der realen Welt
                 </p>
               </div>
 
