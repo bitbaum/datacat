@@ -23,7 +23,7 @@ export default function Home() {
             </h1>
             <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-4xl mx-auto leading-relaxed">
               Erfassen Sie Daten auf zwei verschiedene Wege - strukturierte Formulare für Menschen,
-              KI-Analyse für Produkte.
+              Ingestion für Audio, Video, Bilder und Websites.
               <span className="font-semibold text-indigo-600">
                 {' '}
                 Ein intelligentes System für alle Ihre Datenerfassungs-Bedürfnisse.
@@ -63,7 +63,7 @@ export default function Home() {
                 </h3>
                 <p className="text-gray-600 dark:text-gray-400">
                   Erstellen Sie intelligente Formulare für Umfragen, Bewerbungen, Feedback. KI
-                  analysiert die Antworten automatisch.
+                  wertet die Antworten auf Abruf aus.
                 </p>
               </div>
               <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700">
@@ -72,8 +72,8 @@ export default function Home() {
                   Produkt-Scan
                 </h3>
                 <p className="text-gray-600 dark:text-gray-400">
-                  Fotografieren Sie Produkte - KI extrahiert alle relevanten Daten und erstellt
-                  strukturierte Produktkataloge.
+                  Demo: vom Produktfoto bis zum Export, mit einem Beispielprodukt statt echter
+                  Analyse.
                 </p>
               </div>
               <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700">
@@ -82,7 +82,7 @@ export default function Home() {
                   Data Ingestion
                 </h3>
                 <p className="text-gray-600 dark:text-gray-400">
-                  Erfassen Sie Daten aus jeder Quelle - Audio, Video, Bilder, Websites. KI
+                  Erfassen Sie Daten aus Audio, Video, Bildern, Websites und Datenbanken. KI
                   analysiert und strukturiert automatisch.
                 </p>
               </div>
@@ -100,7 +100,7 @@ export default function Home() {
             </h2>
             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
               Wählen Sie den passenden Weg für Ihre Bedürfnisse - strukturierte Formulare oder
-              KI-gestützter Produktscan.
+              Produktscan (Demo).
             </p>
           </div>
 
@@ -120,15 +120,15 @@ export default function Home() {
               <div className="space-y-3">
                 <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
                   <CheckCircleIcon className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
-                  KI-gestützte Sentiment-Analyse
+                  Sentiment-Analyse per KI
                 </div>
                 <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
                   <CheckCircleIcon className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
-                  Automatische Kategorisierung und Trend-Erkennung
+                  Klassifizierung und Zusammenfassungen
                 </div>
                 <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
                   <CheckCircleIcon className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
-                  Export für LLM-Analyse und Datenbanken
+                  Export als CSV oder JSON
                 </div>
               </div>
               <div className="mt-6">
@@ -150,21 +150,17 @@ export default function Home() {
                 Produkt-Scan
               </h3>
               <p className="text-gray-600 dark:text-gray-400 mb-6">
-                Fotografieren Sie Produkte - KI erkennt automatisch Artikelnummern, Beschreibungen,
-                Maße und Kategorien. Perfekt für E-Commerce und Inventar-Management.
+                Demo: der Ablauf vom Produktfoto über Prüfung und Bearbeitung bis zum Export. Die
+                Analyse liefert ein Beispielprodukt, sie ist noch nicht an die KI angebunden.
               </p>
               <div className="space-y-3">
                 <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
                   <CheckCircleIcon className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
-                  OCR und Objekterkennung mit Computer Vision
+                  Export als CSV, JSON oder XML
                 </div>
                 <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
                   <CheckCircleIcon className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
-                  Automatische Webshop-Integration (Medusa JS, Shopware)
-                </div>
-                <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
-                  <CheckCircleIcon className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
-                  Inventarverwaltung und Export-Automatisierung
+                  17 Datenfelder pro Produkt zum Prüfen und Bearbeiten
                 </div>
               </div>
               <div className="mt-6">
@@ -172,7 +168,7 @@ export default function Home() {
                   href={ROUTES.erfassung}
                   className="inline-flex items-center text-purple-600 dark:text-purple-400 font-medium hover:text-purple-500 transition-colors"
                 >
-                  Produkt-Scan starten →
+                  Demo ansehen →
                 </Link>
               </div>
             </div>

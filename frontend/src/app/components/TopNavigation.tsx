@@ -124,7 +124,7 @@ export function TopNavigation({ onViewChange = () => {} }: TopNavigationProps) {
     {
       name: 'Foto-Inventar',
       href: ROUTES.erfassung,
-      description: 'Inventar-Erfassung per Fotoscan mit KI.',
+      description: 'Demo: vom Produktfoto bis zum Export.',
       icon: CameraIcon,
     },
   ];
@@ -361,13 +361,6 @@ export function TopNavigation({ onViewChange = () => {} }: TopNavigationProps) {
               className="inline-flex min-h-11 min-w-11 items-center justify-center text-base font-medium text-gray-500 hover:text-gray-900"
             >
               Über uns
-            </Link>
-            <Link
-              href={ROUTES.aboutFaq}
-              onClick={() => onViewChange('about')}
-              className="inline-flex min-h-11 min-w-11 items-center justify-center text-base font-medium text-gray-500 hover:text-gray-900"
-            >
-              FAQ
             </Link>
             <Link
               href={ROUTES.blog}

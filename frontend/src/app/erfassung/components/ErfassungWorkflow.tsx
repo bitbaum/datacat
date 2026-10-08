@@ -183,7 +183,7 @@ export function ErfassungWorkflow({ onComplete }: ErfassungWorkflowProps) {
                 key: 'analysis',
                 label: 'Analyse',
                 icon: '🤖',
-                description: 'KI-Analyse der Bilder',
+                description: 'Demo mit Beispielprodukt',
               },
               {
                 key: 'review',

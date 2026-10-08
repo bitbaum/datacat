@@ -97,13 +97,9 @@ const mockAnalysisResults = [
   },
 ];
 
+// Demo only: one honest step, because no analysis runs (see mockAnalysisResults).
 const analysisSteps = [
-  { name: 'Bildverarbeitung', description: 'Optimierung und Vorbereitung der Fotos' },
-  { name: 'OCR-Erkennung', description: 'Texterkennung von Labels und Typenschildern' },
-  { name: 'Objekterkennung', description: 'Produktidentifikation und Klassifizierung' },
-  { name: 'Datenextraktion', description: 'Extrahierung von Produktinformationen' },
-  { name: 'Datenbankabgleich', description: 'Vergleich mit bekannten Produktdaten' },
-  { name: 'Finalisierung', description: 'Aufbereitung der Ergebnisse' },
+  { name: 'Beispielprodukt laden', description: 'Ihre Fotos werden nicht ausgewertet' },
 ];
 
 export function AnalysisStep({ photos, onAnalysisComplete }: AnalysisStepProps) {
@@ -139,11 +135,11 @@ export function AnalysisStep({ photos, onAnalysisComplete }: AnalysisStepProps) 
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-8">
       <div className="text-center mb-8">
         <CpuChipIcon className="h-12 w-12 text-indigo-600 dark:text-indigo-400 mx-auto mb-4" />
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">KI-Analyse läuft</h2>
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Demo-Analyse</h2>
         <p className="text-gray-600 dark:text-gray-400">
           {isAnalyzing
-            ? `Analysiere ${photos.length} Foto${photos.length !== 1 ? 's' : ''} mit modernsten AI-Modellen...`
-            : 'Analyse abgeschlossen! Überprüfen Sie die Ergebnisse unten.'}
+            ? `Demo: Ihre ${photos.length} Foto${photos.length !== 1 ? 's werden' : ' wird'} noch nicht ausgewertet – gleich erscheint ein Beispielprodukt.`
+            : 'Demo abgeschlossen. Das Ergebnis unten ist ein Beispielprodukt.'}
         </p>
       </div>
 
@@ -195,18 +191,19 @@ export function AnalysisStep({ photos, onAnalysisComplete }: AnalysisStepProps) 
             <div className="flex items-center mb-4">
               <CheckCircleIcon className="h-6 w-6 text-green-600 dark:text-green-400 mr-2" />
               <h3 className="text-lg font-semibold text-green-900 dark:text-green-100">
-                Analyse erfolgreich abgeschlossen
+                Beispielergebnis
               </h3>
             </div>
             <p className="text-green-800 dark:text-green-200">
-              Die KI hat Ihr Produkt erfolgreich analysiert und strukturierte Daten extrahiert.
+              Diese Werte stammen nicht aus Ihren Fotos: Die Produktanalyse ist noch nicht an die KI
+              angebunden.
             </p>
           </div>
 
           {/* Detailed Analysis Results */}
           <div className="space-y-6">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-              Analyseergebnisse mit Vertrauenswerten und Quellen
+              Beispielwerte mit Vertrauenswerten
             </h3>
 
             <div className="grid gap-4">
