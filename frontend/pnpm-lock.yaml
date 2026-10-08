@@ -16,6 +16,9 @@ importers:
       '@bitbaum/accountkit':
         specifier: github:bitbaum/accountkit#v0.2.1
         version: https://codeload.github.com/bitbaum/accountkit/tar.gz/ec5654270527757aa0e762f09b5aaabf272389a2(react@19.1.0)
+      '@bitbaum/whenkit':
+        specifier: github:bitbaum/whenkit#v0.3.2
+        version: https://codeload.github.com/bitbaum/whenkit/tar.gz/f5e0a24208187091c2ca792008cdd7695a19910f(react@19.1.0)
       '@dnd-kit/core':
         specifier: ^6.3.1
         version: 6.3.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -149,6 +152,13 @@ packages:
   '@bitbaum/accountkit@https://codeload.github.com/bitbaum/accountkit/tar.gz/ec5654270527757aa0e762f09b5aaabf272389a2':
     resolution: {gitHosted: true, tarball: https://codeload.github.com/bitbaum/accountkit/tar.gz/ec5654270527757aa0e762f09b5aaabf272389a2}
     version: 0.2.1
+    engines: {node: '>=20'}
+    peerDependencies:
+      react: '>=18'
+
+  '@bitbaum/whenkit@https://codeload.github.com/bitbaum/whenkit/tar.gz/f5e0a24208187091c2ca792008cdd7695a19910f':
+    resolution: {gitHosted: true, tarball: https://codeload.github.com/bitbaum/whenkit/tar.gz/f5e0a24208187091c2ca792008cdd7695a19910f}
+    version: 0.3.2
     engines: {node: '>=20'}
     peerDependencies:
       react: '>=18'
@@ -3400,6 +3410,10 @@ snapshots:
   '@babel/runtime@7.28.2': {}
 
   '@bitbaum/accountkit@https://codeload.github.com/bitbaum/accountkit/tar.gz/ec5654270527757aa0e762f09b5aaabf272389a2(react@19.1.0)':
+    dependencies:
+      react: 19.1.0
+
+  '@bitbaum/whenkit@https://codeload.github.com/bitbaum/whenkit/tar.gz/f5e0a24208187091c2ca792008cdd7695a19910f(react@19.1.0)':
     dependencies:
       react: 19.1.0
 

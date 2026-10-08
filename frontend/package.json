@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@bitbaum/accountkit": "github:bitbaum/accountkit#v0.2.1",
+    "@bitbaum/whenkit": "github:bitbaum/whenkit#v0.3.2",
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
