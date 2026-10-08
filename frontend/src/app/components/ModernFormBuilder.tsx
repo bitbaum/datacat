@@ -7,6 +7,7 @@ import { useFormBuilderStore } from '../hooks/useFormBuilderStore';
 import { SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { fieldTemplates } from '../data/fieldTemplates';
+import { DateInput } from './date-input';
 
 export interface ModernFieldBuilderProps {
   field: FieldConfig;
@@ -354,7 +355,7 @@ export function ModernFieldBuilder({
           )}
 
           {field.type === 'date' && (
-            <input
+            <DateInput
               type="date"
               value={value}
               onChange={onChange}
