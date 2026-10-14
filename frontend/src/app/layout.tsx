@@ -22,8 +22,8 @@ const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://datacat.orangecat.c
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: 'Form Builder | KI-gestützter DataCat-Editor',
-  description: 'Erstellen Sie schöne, intelligente DataCate für jede Branche – nicht nur HR.',
+  title: 'DataCat — KI-gestützter Formular-Editor',
+  description: 'Erstellen Sie schöne, intelligente Formulare für jede Branche – nicht nur HR.',
   openGraph: {
     title: 'DataCat — KI-gestützter Formular-Editor',
     description: 'Erstellen Sie schöne, intelligente Formulare für jede Branche – nicht nur HR.',
@@ -47,30 +47,19 @@ export default function RootLayout({
           <UsageMonitor />
           <footer className="bg-gray-800 text-white py-6 mt-auto dark:bg-gray-900">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center">
-              <p className="mb-4 sm:mb-0">
-                &copy; {new Date().getFullYear()} DataCat. All rights reserved.
-              </p>
+              <p className="mb-4 sm:mb-0">&copy; {new Date().getFullYear()} DataCat · MIT-Lizenz</p>
               <nav className="flex items-center gap-4">
                 <a
-                  href="/privacy"
+                  href="https://github.com/bitbaum/datacat"
                   className="inline-flex min-h-11 min-w-11 items-center justify-center hover:text-gray-300"
-                  aria-label="Datenschutz"
                 >
-                  Privacy
+                  Quellcode
                 </a>
                 <a
-                  href="/terms"
+                  href="mailto:cato@orangecat.ch"
                   className="inline-flex min-h-11 min-w-11 items-center justify-center hover:text-gray-300"
-                  aria-label="Nutzungsbedingungen"
                 >
-                  Terms
-                </a>
-                <a
-                  href="/contact"
-                  className="inline-flex min-h-11 min-w-11 items-center justify-center hover:text-gray-300"
-                  aria-label="Kontakt"
-                >
-                  Contact
+                  Kontakt
                 </a>
               </nav>
             </div>

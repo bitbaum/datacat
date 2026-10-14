@@ -47,8 +47,8 @@ export function PhotoUploadStep({ onPhotosUploaded }: PhotoUploadStepProps) {
           Produktfotos hochladen
         </h2>
         <p className="text-gray-600 dark:text-gray-400">
-          Laden Sie 1-10 Fotos Ihres Produkts hoch. Verschiedene Winkel und Details helfen der KI
-          bei der Analyse.
+          Laden Sie 1-10 Fotos Ihres Produkts hoch. Die Analyse ist eine Demo: Sie liefert ein
+          Beispielprodukt und wertet die Fotos noch nicht aus.
         </p>
       </div>
 
@@ -122,7 +122,7 @@ export function PhotoUploadStep({ onPhotosUploaded }: PhotoUploadStepProps) {
       {/* Photo Type Hints */}
       <div className="mt-8 bg-blue-50 dark:bg-blue-900/20 rounded-lg p-6">
         <h4 className="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-3">
-          💡 Tipps für bessere KI-Analyse
+          💡 Tipps für gute Produktfotos
         </h4>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-blue-800 dark:text-blue-200">
           <div>
@@ -155,7 +155,7 @@ export function PhotoUploadStep({ onPhotosUploaded }: PhotoUploadStepProps) {
               : 'bg-gray-300 text-gray-500 cursor-not-allowed'
           }`}
         >
-          KI-Analyse starten ({photos.length} Foto{photos.length !== 1 ? 's' : ''})
+          Demo-Analyse starten ({photos.length} Foto{photos.length !== 1 ? 's' : ''})
         </button>
       </div>
     </div>

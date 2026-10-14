@@ -17,9 +17,8 @@ export default function ErfassungPage() {
           </div>
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">Produkt-Scan</h1>
           <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto mb-8">
-            Transformieren Sie Produktfotos in strukturierte Produktkataloge mit KI-gestützter
-            Analyse. Automatisieren Sie den kompletten Workflow von der Fotografie bis zur
-            E-Commerce-Integration.
+            Der Ablauf vom Produktfoto bis zum Export, als Demo: Die Analyse liefert ein
+            Beispielprodukt, sie ist noch nicht an die KI angebunden.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
@@ -40,7 +39,7 @@ export default function ErfassungPage() {
         </div>
 
         {/* Feature Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
             <div className="flex items-center justify-center w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-lg mb-4">
               <CameraIcon className="h-6 w-6 text-blue-600 dark:text-blue-400" />
@@ -48,10 +47,7 @@ export default function ErfassungPage() {
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
               Foto-Erfassung
             </h3>
-            <p className="text-gray-600 dark:text-gray-400">
-              Laden Sie 1-10 Produktfotos hoch. Verschiedene Winkel und Details helfen der KI bei
-              der präzisen Analyse.
-            </p>
+            <p className="text-gray-600 dark:text-gray-400">Laden Sie 1-10 Produktfotos hoch.</p>
           </div>
 
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
@@ -70,10 +66,12 @@ export default function ErfassungPage() {
                 />
               </svg>
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">KI-Analyse</h3>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+              Demo-Analyse
+            </h3>
             <p className="text-gray-600 dark:text-gray-400">
-              Automatische Texterkennung, Kategorisierung und Datenextraktion mit modernsten
-              AI-Modellen und Konfidenzwerten.
+              Zeigt ein Beispielprodukt mit Konfidenzwerten. Ihre Fotos werden noch nicht
+              ausgewertet.
             </p>
           </div>
 
@@ -97,8 +95,7 @@ export default function ErfassungPage() {
               Strukturierte Tabellen
             </h3>
             <p className="text-gray-600 dark:text-gray-400">
-              21 standardisierte Datenfelder für ERP-Kompatibilität mit erweiterten Export- und
-              Bearbeitungsfunktionen.
+              17 Datenfelder pro Produkt zum Prüfen und Bearbeiten.
             </p>
           </div>
 
@@ -121,60 +118,7 @@ export default function ErfassungPage() {
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
               Multi-Format Export
             </h3>
-            <p className="text-gray-600 dark:text-gray-400">
-              CSV, XLSX, JSON, XML und TSV Export für nahtlose Integration in ERP-Systeme und
-              E-Commerce-Plattformen.
-            </p>
-          </div>
-
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-            <div className="flex items-center justify-center w-12 h-12 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg mb-4">
-              <svg
-                className="h-6 w-6 text-indigo-600 dark:text-indigo-400"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
-                />
-              </svg>
-            </div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-              E-Commerce Integration
-            </h3>
-            <p className="text-gray-600 dark:text-gray-400">
-              Direkte Integration mit Medusa JS, Shopware und anderen Plattformen für automatisierte
-              Shop-Veröffentlichung.
-            </p>
-          </div>
-
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-            <div className="flex items-center justify-center w-12 h-12 bg-red-100 dark:bg-red-900/30 rounded-lg mb-4">
-              <svg
-                className="h-6 w-6 text-red-600 dark:text-red-400"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-                />
-              </svg>
-            </div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-              Inventar-Management
-            </h3>
-            <p className="text-gray-600 dark:text-gray-400">
-              Zentrale Verwaltung aller erfassten Produkte mit Suchfunktion, Status-Tracking und
-              Bulk-Operationen.
-            </p>
+            <p className="text-gray-600 dark:text-gray-400">Download als CSV, JSON oder XML.</p>
           </div>
         </div>
 
@@ -186,10 +130,10 @@ export default function ErfassungPage() {
           <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
             {[
               { step: 1, title: 'Fotos hochladen', description: 'Mehrere Produktfotos aufnehmen' },
-              { step: 2, title: 'KI-Analyse', description: 'Automatische Datenextraktion' },
+              { step: 2, title: 'Demo-Analyse', description: 'Beispielprodukt statt KI' },
               { step: 3, title: 'Daten prüfen', description: 'Überprüfung und Korrektur' },
-              { step: 4, title: 'Export', description: 'Multi-Format Datenexport' },
-              { step: 5, title: 'Tabellen-Übersicht', description: 'Inventar-Management' },
+              { step: 4, title: 'Export', description: 'CSV, JSON oder XML' },
+              { step: 5, title: 'Übersicht', description: 'Zusammenfassung' },
             ].map((item, index) => (
               <div key={item.step} className="text-center">
                 <div className="flex items-center justify-center w-10 h-10 bg-indigo-600 text-white rounded-full mx-auto mb-3 text-sm font-semibold">
@@ -213,8 +157,7 @@ export default function ErfassungPage() {
             Bereit zum Starten?
           </h2>
           <p className="text-gray-600 dark:text-gray-400 mb-6">
-            Beginnen Sie mit der Erfassung Ihres ersten Produkts und erleben Sie die Kraft der
-            KI-gestützten Katalogisierung.
+            Probieren Sie den Ablauf mit einem Beispielprodukt aus.
           </p>
           <Link
             href={ROUTES.erfassungNew}

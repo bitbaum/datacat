@@ -8,7 +8,6 @@ import {
   ChartBarIcon,
   ArrowRightIcon,
   CheckCircleIcon,
-  ClockIcon,
   ServerIcon,
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
@@ -39,8 +38,7 @@ export function FormCaptureLanding({ onStartBuilding }: FormCaptureLandingProps)
               Erstellen Sie intelligente Formulare, die mehr als nur Daten sammeln.
               <span className="font-semibold text-indigo-600">
                 {' '}
-                Jede Antwort wird automatisch strukturiert, kategorisiert und für KI-Analyse
-                vorbereitet.
+                Jede Antwort wird strukturiert gespeichert und lässt sich per KI auswerten.
               </span>
             </p>
 
@@ -90,11 +88,11 @@ export function FormCaptureLanding({ onStartBuilding }: FormCaptureLandingProps)
                 <div className="space-y-2">
                   <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
                     <CheckCircleIcon className="h-4 w-4 text-green-500 mr-2" />
-                    Automatische Sentiment-Analyse der Antworten
+                    Sentiment-Analyse der Antworten
                   </div>
                   <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
                     <CheckCircleIcon className="h-4 w-4 text-green-500 mr-2" />
-                    Intelligente Kategorisierung und Trend-Erkennung
+                    Klassifizierung und Zusammenfassungen
                   </div>
                   <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
                     <CheckCircleIcon className="h-4 w-4 text-green-500 mr-2" />
@@ -109,21 +107,20 @@ export function FormCaptureLanding({ onStartBuilding }: FormCaptureLandingProps)
                   KI-gestützte Analyse
                 </h3>
                 <p className="text-gray-600 dark:text-gray-400 mb-4">
-                  Jede Antwort wird automatisch verarbeitet und für fortschrittliche Analysen
-                  vorbereitet.
+                  Antworten lassen sich auf Abruf per KI auswerten.
                 </p>
                 <div className="space-y-2">
                   <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
                     <CheckCircleIcon className="h-4 w-4 text-green-500 mr-2" />
-                    Automatische Datentyp-Erkennung
+                    Sentiment-Analyse
                   </div>
                   <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
                     <CheckCircleIcon className="h-4 w-4 text-green-500 mr-2" />
-                    Sentiment und Stimmungsanalyse
+                    Klassifizierung und Extraktion
                   </div>
                   <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
                     <CheckCircleIcon className="h-4 w-4 text-green-500 mr-2" />
-                    Pattern-Erkennung und Trend-Analyse
+                    Zusammenfassungen
                   </div>
                 </div>
               </div>
@@ -151,7 +148,7 @@ export function FormCaptureLanding({ onStartBuilding }: FormCaptureLandingProps)
                 </div>
                 <div className="text-center">
                   <div className="text-2xl mb-2">📈</div>
-                  <div className="font-medium text-gray-900 dark:text-white">Trend Analysis</div>
+                  <div className="font-medium text-gray-900 dark:text-white">Sentiment-Analyse</div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl mb-2">🔄</div>
@@ -203,7 +200,7 @@ export function FormCaptureLanding({ onStartBuilding }: FormCaptureLandingProps)
               {
                 step: 4,
                 title: 'KI-Analyse & Export',
-                description: 'Automatische Analyse und Export für BI, LLM oder bestehende Systeme',
+                description: 'KI-Analyse auf Abruf und Export als CSV oder JSON',
                 icon: '🤖',
                 color: 'purple',
               },
@@ -290,8 +287,7 @@ export function FormCaptureLanding({ onStartBuilding }: FormCaptureLandingProps)
                   KI-Analyse
                 </h4>
                 <p className="text-gray-600 dark:text-gray-400 text-sm">
-                  Automatische Sentiment-Analyse, Kategorisierung und Pattern-Erkennung für tiefere
-                  Insights.
+                  Sentiment-Analyse, Klassifizierung und Zusammenfassungen auf Abruf.
                 </p>
               </div>
 
@@ -303,7 +299,7 @@ export function FormCaptureLanding({ onStartBuilding }: FormCaptureLandingProps)
                   Multi-Format Export
                 </h4>
                 <p className="text-gray-600 dark:text-gray-400 text-sm">
-                  Exportieren Sie Daten in CSV, JSON, Excel oder direkt in Ihre bestehenden Systeme.
+                  Exportieren Sie Antworten als CSV oder JSON.
                 </p>
               </div>
             </div>
@@ -335,36 +331,31 @@ export function FormCaptureLanding({ onStartBuilding }: FormCaptureLandingProps)
               },
               {
                 title: 'Bewerbungsprozesse',
-                description:
-                  'Digitalisieren Sie Bewerbungsformulare mit automatischer Qualifikations-Analyse.',
+                description: 'Digitalisieren Sie Bewerbungsformulare.',
                 icon: '👥',
                 examples: ['Stellenbewerbungen', 'Talent-Pools', 'Mitarbeiter-Feedback'],
               },
               {
                 title: 'Marktforschung',
-                description:
-                  'Führen Sie strukturierte Umfragen durch mit automatischer Trend-Erkennung.',
+                description: 'Führen Sie strukturierte Umfragen durch.',
                 icon: '📊',
                 examples: ['Marktanalysen', 'Konsumenten-Studien', 'Trend-Monitoring'],
               },
               {
                 title: 'Medizin & Gesundheit',
-                description:
-                  'Patientenaufnahme und Symptom-Erfassung mit KI-gestützter Vor-Diagnose.',
+                description: 'Patientenaufnahme und Symptom-Erfassung.',
                 icon: '🏥',
                 examples: ['Patienten-Intake', 'Symptom-Tracking', 'Behandlungs-Evaluation'],
               },
               {
                 title: 'Bildung & Training',
-                description:
-                  'Kurs-Evaluationen und Lernfortschritt-Tracking mit automatischer Analyse.',
+                description: 'Kurs-Evaluationen und Lernfortschritt.',
                 icon: '🎓',
                 examples: ['Kurs-Bewertung', 'Lernfortschritt', 'Zertifizierungs-Tests'],
               },
               {
                 title: 'Event-Management',
-                description:
-                  'Teilnehmer-Registrierung und Event-Feedback mit automatischer Auswertung.',
+                description: 'Teilnehmer-Registrierung und Event-Feedback.',
                 icon: '🎉',
                 examples: ['Event-Anmeldung', 'Teilnehmer-Feedback', 'Follow-up-Umfragen'],
               },
@@ -414,13 +405,8 @@ export function FormCaptureLanding({ onStartBuilding }: FormCaptureLandingProps)
               href={ROUTES.erfassung}
               className="inline-flex items-center justify-center rounded-xl bg-white/10 border border-white/20 px-8 py-4 text-lg font-semibold text-white shadow-lg hover:bg-white/20 transition-colors"
             >
-              Produkt-Erfassung erkunden →
+              Produkt-Scan-Demo ansehen →
             </Link>
-          </div>
-
-          <div className="mt-8 text-indigo-100 text-sm">
-            <ClockIcon className="h-4 w-4 inline mr-1" />
-            Setup dauert nur 2 Minuten • KI-Analyse ist kostenlos • Export in alle Formate
           </div>
         </div>
       </div>

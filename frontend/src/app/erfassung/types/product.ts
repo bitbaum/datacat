@@ -228,7 +228,7 @@ export enum PublicationStatus {
 export interface ProductTableRow {
   id: string;
 
-  // Kivitendo-compatible fields (21 standardized fields)
+  // The 17 fields DataReviewStep lets a user check and edit
   title: string;
   manufacturer: string;
   articleNumber: string;

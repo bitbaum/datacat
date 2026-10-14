@@ -158,7 +158,7 @@ export default function TablePage() {
                   Produktdaten-Tabelle
                 </h1>
                 <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                  Verwalten Sie alle erfassten Produkte in strukturierten Datentabellen
+                  Demo mit Beispielprodukten – gescannte Produkte werden noch nicht gespeichert
                 </p>
               </div>
             </div>
@@ -187,18 +187,6 @@ export default function TablePage() {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
               />
-            </div>
-            <div className="flex gap-2">
-              {selectedProducts.length > 0 && (
-                <>
-                  <button className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors">
-                    Export ({selectedProducts.length})
-                  </button>
-                  <button className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors">
-                    Bulk-Bearbeitung
-                  </button>
-                </>
-              )}
             </div>
           </div>
         </div>
@@ -387,14 +375,6 @@ export default function TablePage() {
               <div>
                 Zeige {filteredProducts.length} von {products.length} Produkten
                 {selectedProducts.length > 0 && ` • ${selectedProducts.length} ausgewählt`}
-              </div>
-              <div className="flex gap-4">
-                <button className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transition-colors">
-                  Alle exportieren
-                </button>
-                <button className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transition-colors">
-                  E-Commerce sync
-                </button>
               </div>
             </div>
           </div>

@@ -19,32 +19,25 @@ export function TableOverviewStep({ product, onBackToWorkflow }: TableOverviewSt
           Workflow abgeschlossen!
         </h2>
         <p className="text-gray-600 dark:text-gray-400">
-          Ihr Produkt wurde erfolgreich erfasst und ist jetzt in der Tabellen-Übersicht verfügbar.
+          Demo abgeschlossen. Gescannte Produkte werden noch nicht gespeichert – die
+          Tabellen-Übersicht zeigt Beispielprodukte.
         </p>
       </div>
 
       {/* Success Summary */}
       <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-6 mb-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-center">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-center">
           <div>
             <div className="text-2xl font-bold text-green-600 dark:text-green-400">
               {product.photos.length}
             </div>
-            <div className="text-sm text-green-800 dark:text-green-200">Fotos analysiert</div>
-          </div>
-          <div>
-            <div className="text-2xl font-bold text-green-600 dark:text-green-400">21</div>
-            <div className="text-sm text-green-800 dark:text-green-200">Datenfelder erfasst</div>
+            <div className="text-sm text-green-800 dark:text-green-200">Fotos hochgeladen</div>
           </div>
           <div>
             <div className="text-2xl font-bold text-green-600 dark:text-green-400">
               {product.exportData?.format}
             </div>
             <div className="text-sm text-green-800 dark:text-green-200">Export erstellt</div>
-          </div>
-          <div>
-            <div className="text-2xl font-bold text-green-600 dark:text-green-400">✅</div>
-            <div className="text-sm text-green-800 dark:text-green-200">Bereit für E-Commerce</div>
           </div>
         </div>
       </div>
@@ -94,31 +87,6 @@ export function TableOverviewStep({ product, onBackToWorkflow }: TableOverviewSt
                 {new Date().toLocaleDateString('de-DE')}
               </span>
             </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Next Steps */}
-      <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-6 mb-8">
-        <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-4">
-          🚀 Nächste Schritte
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-blue-800 dark:text-blue-200">
-          <div>
-            <p className="font-medium mb-1">📊 Datenverwaltung</p>
-            <p>Verwalten Sie alle erfassten Produkte in der Tabellen-Übersicht</p>
-          </div>
-          <div>
-            <p className="font-medium mb-1">🛒 E-Commerce Integration</p>
-            <p>Veröffentlichen Sie Produkte direkt in Ihrem Online-Shop</p>
-          </div>
-          <div>
-            <p className="font-medium mb-1">📤 Weitere Exports</p>
-            <p>Exportieren Sie Daten in verschiedenen Formaten für ERP-Systeme</p>
-          </div>
-          <div>
-            <p className="font-medium mb-1">🔄 Bulk-Verarbeitung</p>
-            <p>Bearbeiten Sie mehrere Produkte gleichzeitig</p>
           </div>
         </div>
       </div>
