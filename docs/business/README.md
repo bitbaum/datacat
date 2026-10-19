@@ -23,14 +23,17 @@ Formular is a universal AI-powered form intelligence platform that transforms an
 ## Market Opportunity
 
 ### Target Market Size
-- **Form Builder Market**: $2.5B (growing at 15% CAGR)
-- **AI/ML Market**: $200B (growing at 37% CAGR)
-- **Business Intelligence**: $30B (growing at 12% CAGR)
+
+Rough estimates, unsourced; verify against a cited market report before using them anywhere public.
+
+- **Form Builder Market**: ~$2.5B, ~15% CAGR (estimate)
+- **AI/ML Market**: ~$200B, ~37% CAGR (estimate)
+- **Business Intelligence**: ~$30B, ~12% CAGR (estimate)
 
 ### Addressable Market
-- **SMBs**: 30M+ businesses worldwide
+- **SMBs**: 30M+ businesses worldwide (estimate)
 - **Enterprises**: Fortune 500 companies
-- **Developers**: 25M+ developers building form-based applications
+- **Developers**: 25M+ developers building form-based applications (estimate)
 
 ## Competitive Landscape
 
@@ -51,6 +54,9 @@ Formular is a universal AI-powered form intelligence platform that transforms an
 4. **Developer-Friendly**: Modern API and integration capabilities
 
 ## Business Model
+
+Planned tiers and prices.
+
 
 ### Free Tier: "Formular Basic"
 - **Forms**: Up to 5 active forms
@@ -79,19 +85,22 @@ Formular is a universal AI-powered form intelligence platform that transforms an
 
 ## Revenue Projections
 
+Targets, not results.
+
+
 ### Year 1
-- **Users**: 1,000 free, 100 pro, 10 enterprise
-- **Revenue**: $50K ARR
+- **Target users**: 1,000 free, 100 pro, 10 enterprise
+- **Target revenue**: $50K ARR (estimate)
 - **Focus**: Product-market fit, user acquisition
 
 ### Year 2
-- **Users**: 10,000 free, 1,000 pro, 100 enterprise
-- **Revenue**: $500K ARR
+- **Target users**: 10,000 free, 1,000 pro, 100 enterprise
+- **Target revenue**: $500K ARR (estimate)
 - **Focus**: Feature expansion, market penetration
 
 ### Year 3
-- **Users**: 100,000 free, 10,000 pro, 1,000 enterprise
-- **Revenue**: $5M ARR
+- **Target users**: 100,000 free, 10,000 pro, 1,000 enterprise
+- **Target revenue**: $5M ARR (estimate)
 - **Focus**: International expansion, enterprise sales
 
 ## Go-to-Market Strategy
@@ -136,7 +145,7 @@ Formular is a universal AI-powered form intelligence platform that transforms an
 ### Technical Risks
 - **AI Model Dependencies**: Mitigated by multi-provider support
 - **Scalability**: Addressed by modern architecture
-- **Data Privacy**: Compliant with GDPR, SOC2
+- **Data Privacy**: Target GDPR compliance; SOC 2 would need an audit that has not been done
 
 ### Market Risks
 - **Competition**: Differentiated by AI-first approach

@@ -21,7 +21,7 @@ Erfassung transforms Formular from a form-building platform into a comprehensive
 - **User Retention**: Provide additional value to existing customers beyond form building
 - **Market Expansion**: Target e-commerce, retail, and manufacturing segments
 
-### Success Metrics
+### Success Metrics (targets)
 - **Adoption Rate**: 25% of existing customers try Erfassung within 3 months
 - **Revenue Impact**: 15% increase in average revenue per user (ARPU)
 - **User Engagement**: 40% of Erfassung users become power users (>10 products/month)
@@ -55,9 +55,12 @@ Erfassung transforms Formular from a form-building platform into a comprehensive
    - Interested in efficiency improvements
 
 ### Market Size
-- **Total Addressable Market (TAM)**: €2.5B (EU product cataloging software market)
-- **Serviceable Addressable Market (SAM)**: €500M (SME e-commerce/retail segment)
-- **Serviceable Obtainable Market (SOM)**: €50M (German-speaking market, 3-year target)
+
+Rough estimates, unsourced.
+
+- **Total Addressable Market (TAM)**: ~€2.5B (EU product cataloging software market, estimate)
+- **Serviceable Addressable Market (SAM)**: ~€500M (SME e-commerce/retail segment, estimate)
+- **Serviceable Obtainable Market (SOM)**: ~€50M (German-speaking market, 3-year target, estimate)
 
 ## Product Vision & Strategy
 
@@ -320,19 +323,19 @@ The 5-step process must be intuitive and flexible:
 
 ## Business Model
 
-### Pricing Strategy
+### Pricing Strategy (planned)
 - **Starter Plan**: €29/month - 50 products, basic features
 - **Professional Plan**: €79/month - 500 products, all features  
 - **Enterprise Plan**: €199/month - Unlimited products, priority support
 - **Add-on to Existing Plans**: €19/month for current Formular customers
 
-### Revenue Projections (12 months)
+### Revenue Projections (12 months, estimates)
 - **Month 1-3**: Development and beta testing (€0 revenue)
 - **Month 4-6**: Launch and early adoption (€5,000/month)
 - **Month 7-9**: Growth phase (€15,000/month)
 - **Month 10-12**: Established feature (€30,000/month)
 
-### Cost Structure
+### Cost Structure (estimates)
 - **AI Services**: €0.50-2.00 per product analysis
 - **Storage**: €0.10 per GB per month
 - **Development**: €150,000 initial investment
@@ -371,7 +374,7 @@ The 5-step process must be intuitive and flexible:
 - **Integration Testing**: End-to-end workflow validation
 - **Security Testing**: Penetration testing and vulnerability assessment
 
-### Success Criteria
+### Success Criteria (targets)
 - **User Satisfaction**: >4.5/5 rating in user feedback
 - **Feature Adoption**: >70% of users complete full workflow
 - **Data Accuracy**: <5% error rate in AI extractions

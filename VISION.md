@@ -70,7 +70,7 @@ We're building the **most perfect data ingestion platform** that can be complete
 
 ---
 
-##  Success Metrics
+##  Success Metrics (targets)
 
 ### Phase 1 (Frontend MVP)
 - **Qualitative:** Overwhelmingly positive feedback from 5 internal testers on ease of use and aesthetics
