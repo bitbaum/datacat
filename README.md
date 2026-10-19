@@ -116,7 +116,7 @@ cd datacat
 cp backend/.env.example backend/.env      # Configure database, Redis, API keys
 cp frontend/env.example frontend/.env.local
 pnpm install                              # Also run in frontend/ and backend/
-cd backend && pnpm run migrate && cd ..   # Run Prisma migrations
+pnpm -C backend run migrate               # Run Prisma migrations
 pnpm run dev                              # Starts frontend (3000) + backend (5001)
 ```
 

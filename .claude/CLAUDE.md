@@ -98,7 +98,7 @@ The full-stack Playwright e2e is still not gated — it needs both servers plus 
 seeded DB, so run it manually until that is wired.
 
 > **Blog posts need no build step.** They are markdown under
-> `frontend/content/blog/`, read from disk and parsed by `src/lib/blog.ts`
+> `frontend/content/blog/`, read from disk and parsed by `frontend/src/lib/blog.ts`
 > (bip-kit), so there is no generated package to produce before `verify` and no
 > `postinstall` codegen. If you are following older instructions to run
 > `contentlayer build`: don't — contentlayer is gone, and the directory it
