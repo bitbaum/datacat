@@ -310,5 +310,5 @@ docker run --rm -v formular_postgres_data:/data -v $(pwd):/backup alpine tar xzf
 
 For more information, see:
 - [Development Setup](../getting-started/development-setup.md)
-- [Production Deployment](./production-deployment.md)
+- [Production Deployment](../../DEPLOYMENT.md)
 - [Architecture Overview](../architecture/README.md) 

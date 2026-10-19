@@ -378,8 +378,7 @@ const appRouter = router({
 
 ## Related Documentation
 
-- [Database Schema](database.md)
-- [AI Integration](ai-integration.md)
-- [API Documentation](../api/README.md)
-- [Deployment Guide](../deployment/README.md)
-- [Security Guidelines](../security/README.md)
+- [Backend Architecture](../../backend/ARCHITECTURE.md)
+- [Docker Setup](../deployment/docker-setup.md)
+- [Deployment Guide](../../DEPLOYMENT.md)
+- [Security Policy](../../SECURITY.md)

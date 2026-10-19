@@ -363,13 +363,6 @@ export function TopNavigation({ onViewChange = () => {} }: TopNavigationProps) {
               Über uns
             </Link>
             <Link
-              href={ROUTES.aboutFaq}
-              onClick={() => onViewChange('about')}
-              className="inline-flex min-h-11 min-w-11 items-center justify-center text-base font-medium text-gray-500 hover:text-gray-900"
-            >
-              FAQ
-            </Link>
-            <Link
               href={ROUTES.blog}
               onClick={() => onViewChange('about')}
               className="inline-flex min-h-11 min-w-11 items-center justify-center text-base font-medium text-gray-500 hover:text-gray-900"

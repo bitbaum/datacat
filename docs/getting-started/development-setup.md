@@ -78,7 +78,7 @@ pnpm run docker:migrate
    CREATE USER formbuilder WITH PASSWORD 'devpassword';
    GRANT ALL PRIVILEGES ON DATABASE formbuilder TO formbuilder;
    ```
-3. Apply the schema: `cd backend && pnpm run migrate` (runs `prisma migrate dev`)
+3. Apply the schema: `pnpm -C backend run migrate` (runs `prisma migrate dev`)
 
 ### 4. Environment Configuration
 
