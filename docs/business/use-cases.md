@@ -182,22 +182,24 @@ Form Collection → Context Integration → AI Analysis → Actionable Insights
 3. **Export Capabilities**: Multiple format support for downstream systems
 4. **Custom Models**: Support for proprietary AI models
 
-## Success Stories & Case Studies
+## Illustrative Scenarios
 
-### **Case Study 1: HR Department Transformation**
+Hypothetical examples of how the product could be used. They are not documented customer results; the outcomes are targets.
+
+### **Scenario 1: HR Department Transformation**
 - **Challenge**: Manual review of 500+ job applications per month
 - **Solution**: AI-powered candidate screening and ranking
-- **Result**: 80% reduction in review time, 40% improvement in candidate quality
+- **Target outcome**: much less time spent on first-pass review
 
-### **Case Study 2: Product Development Optimization**
+### **Scenario 2: Product Development Optimization**
 - **Challenge**: Overwhelming user feedback with no clear prioritization
 - **Solution**: Context-aware feature prioritization
-- **Result**: 60% faster feature development, 30% increase in user satisfaction
+- **Target outcome**: a clear, ranked list of what users ask for
 
-### **Case Study 3: Healthcare Resource Optimization**
+### **Scenario 3: Healthcare Resource Optimization**
 - **Challenge**: Inefficient patient triage and resource allocation
 - **Solution**: AI-powered patient prioritization and care planning
-- **Result**: 50% reduction in wait times, 25% improvement in patient outcomes
+- **Target outcome**: shorter waits through better triage
 
 ---
 
