@@ -70,7 +70,7 @@ importers:
         version: 5.1.16
       openai:
         specifier: ^5.10.2
-        version: 5.10.2(ws@8.21.2)(zod@4.0.10)
+        version: 5.10.2(ws@8.21.2)(zod@4.6.6)
       pg:
         specifier: ^8.16.3
         version: 8.16.3
@@ -87,8 +87,8 @@ importers:
         specifier: ^4.8.1
         version: 4.8.1(supports-color@5.5.0)
       zod:
-        specifier: ^4.0.10
-        version: 4.0.10
+        specifier: ^4.6.6
+        version: 4.6.6
     devDependencies:
       concurrently:
         specifier: ^9.2.0
@@ -2243,8 +2243,8 @@ packages:
   zod@3.25.76:
     resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
 
-  zod@4.0.10:
-    resolution: {integrity: sha512-3vB+UU3/VmLL2lvwcY/4RV2i9z/YU0DTV/tDuYjrwmx5WeJ7hwy+rGEEx8glHp6Yxw7ibRbKSaIFBgReRPe5KA==}
+  zod@4.6.6:
+    resolution: {integrity: sha512-4UmzQUF5fxvfcYHlbjBmejU+w+hbDnWFx4aS8kBx7nPBHcO2SqPbpAG8snbdg+Xse4pRefR98hgjFgIMCI/UhA==}
 
 snapshots:
 
@@ -3617,10 +3617,10 @@ snapshots:
     dependencies:
       wrappy: 1.0.2
 
-  openai@5.10.2(ws@8.21.2)(zod@4.0.10):
+  openai@5.10.2(ws@8.21.2)(zod@4.6.6):
     optionalDependencies:
       ws: 8.21.2
-      zod: 4.0.10
+      zod: 4.6.6
 
   optionator@0.9.4:
     dependencies:
@@ -4306,4 +4306,4 @@ snapshots:
 
   zod@3.25.76: {}
 
-  zod@4.0.10: {}
+  zod@4.6.6: {}
