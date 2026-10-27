@@ -18,10 +18,11 @@ overrides:
   # contentlayer gone, nothing in the tree depends on either package, so the
   # pins pinned nothing.
 
-# pnpm refuses packages published inside its minimum-release-age window — a
-# supply-chain guard against a compromised release being installed before
-# anyone notices. bip-kit is our own package (bitbaum/bip-kit), published
-# hours before this commit, so it needs an explicit exemption. Add lines only
-# for packages we publish ourselves — never to hurry a third-party release.
+  # pnpm refuses packages published inside its minimum-release-age window — a
+  # supply-chain guard against a compromised release being installed before
+  # anyone notices. bip-kit is our own package (bitbaum/bip-kit), published
+  # hours before this commit, so it needs an explicit exemption. Add lines only
+  # for packages we publish ourselves — never to hurry a third-party release.
 minimumReleaseAgeExclude:
   - 'bip-kit'
+  - '@bitbaum/accountkit@0.8.0'
