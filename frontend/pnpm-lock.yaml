@@ -14,11 +14,11 @@ importers:
   .:
     dependencies:
       '@bitbaum/accountkit':
-        specifier: github:bitbaum/accountkit#v0.2.1
-        version: https://codeload.github.com/bitbaum/accountkit/tar.gz/ec5654270527757aa0e762f09b5aaabf272389a2(react@19.1.0)
+        specifier: ^0.8.0
+        version: 0.8.0(next@16.3.8(@playwright/test@1.57.0)(@types/node@20.19.4)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)
       '@bitbaum/whenkit':
-        specifier: github:bitbaum/whenkit#v0.3.2
-        version: https://codeload.github.com/bitbaum/whenkit/tar.gz/f5e0a24208187091c2ca792008cdd7695a19910f(react@19.1.0)
+        specifier: ^0.3.2
+        version: 0.3.2(react@19.1.0)
       '@dnd-kit/core':
         specifier: ^6.3.1
         version: 6.3.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -47,8 +47,8 @@ importers:
         specifier: ^3.0.2
         version: 3.0.2
       bip-kit:
-        specifier: ^0.3.1
-        version: 0.3.1(katex@0.16.47)(mermaid@11.17.2)(react@19.1.0)(shiki@1.29.2)
+        specifier: ^0.6.1
+        version: 0.6.1(katex@0.16.47)(mermaid@11.17.2)(react@19.1.0)(shiki@1.29.2)
       geist:
         specifier: ^1.7.2
         version: 1.7.2(next@16.3.8(@playwright/test@1.57.0)(@types/node@20.19.4)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))
@@ -149,16 +149,30 @@ packages:
     resolution: {integrity: sha512-KHp2IflsnGywDjBWDkR9iEqiWSpc8GIi0lgTT3mOElT0PP1tG26P4tmFI2YvAdzgq9RGyoHZQEIEdZy6Ec5xCA==}
     engines: {node: '>=6.9.0'}
 
-  '@bitbaum/accountkit@https://codeload.github.com/bitbaum/accountkit/tar.gz/ec5654270527757aa0e762f09b5aaabf272389a2':
-    resolution: {gitHosted: true, tarball: https://codeload.github.com/bitbaum/accountkit/tar.gz/ec5654270527757aa0e762f09b5aaabf272389a2}
-    version: 0.2.1
+  '@bitbaum/accountkit@0.8.0':
+    resolution: {integrity: sha512-vHQBkiL86Tf2EwXUGsWmzu+1QSg3PtT2uWX4frmc3RbB1tm7EHjvptWORF77MQc6seyNNi39uO+brqgJcegtyA==}
     engines: {node: '>=20'}
     peerDependencies:
+      '@better-auth/passkey': ^1.7.10
+      '@bitbaum/mail-kit': ^0.2.0
+      better-auth: ^1.7.10
+      drizzle-orm: ^0.45.4
+      next: ^16.4.0
       react: '>=18'
+    peerDependenciesMeta:
+      '@better-auth/passkey':
+        optional: true
+      '@bitbaum/mail-kit':
+        optional: true
+      better-auth:
+        optional: true
+      drizzle-orm:
+        optional: true
+      next:
+        optional: true
 
-  '@bitbaum/whenkit@https://codeload.github.com/bitbaum/whenkit/tar.gz/f5e0a24208187091c2ca792008cdd7695a19910f':
-    resolution: {gitHosted: true, tarball: https://codeload.github.com/bitbaum/whenkit/tar.gz/f5e0a24208187091c2ca792008cdd7695a19910f}
-    version: 0.3.2
+  '@bitbaum/whenkit@0.3.2':
+    resolution: {integrity: sha512-5s4PFqGBxxlT0dx5LLLGC5ba35q532DSqAD6aMx9IV+hRtUpz4H8zPsuDVPPD3vST2KCCxla3ZFvBCdejS9H3g==}
     engines: {node: '>=20'}
     peerDependencies:
       react: '>=18'
@@ -1516,8 +1530,8 @@ packages:
     resolution: {integrity: sha512-k38b3XOZKv60C4E2hVsXTolJWfkGRMbILBIe2IBITXciy5bOsTKot5kDrf3ZfufQtQOUN5mXceUEpU1rTl9Uog==}
     hasBin: true
 
-  bip-kit@0.3.1:
-    resolution: {integrity: sha512-OnkaJiDCRz0UeMifgI8NHnHoaBWyvpYOgdDIfOcxMiIWDWliVyHU+jg5aYX6zccIH15G5uze1vaGJV1XdRDDJg==}
+  bip-kit@0.6.1:
+    resolution: {integrity: sha512-lwWnRDCuhrO5YzBeaASjQwVoyIcDwGqEH3cskqa2ylIgyPagtVE6+ppDze+rkEBzVmKkUXREW5ydXOr2Kw3Oow==}
     engines: {node: '>=20'}
     peerDependencies:
       katex: '>=0.16'
@@ -2542,6 +2556,10 @@ packages:
     resolution: {integrity: sha512-xi6IyHML+c9+Q3W0S4fCQJOym42pyurFiJUHEcEyHS0CeKzia4yZDEsLlqOFykxOdHpNy0NmvVO31vcSqAxJCg==}
     engines: {node: '>= 12.0.0'}
 
+  limitkit@0.2.0:
+    resolution: {integrity: sha512-x05857iOBGf04eRBAXWTtRTrGhRdBfW9fZa8rfJDx3rQNRBVQpwK2z9aiMYNWhRp71QoIjvA0rl4ZiL4+6O8rA==}
+    engines: {node: '>=20'}
+
   locate-path@6.0.0:
     resolution: {integrity: sha512-iPZK6eYjbxRu3uB4/WZ3EsEIMJFMqAoopl3R+zuq0UjcAm/MO6KCweDgPfP3elTztoKP3KtnVHxTn2NHBSDVUw==}
     engines: {node: '>=10'}
@@ -3409,11 +3427,14 @@ snapshots:
 
   '@babel/runtime@7.28.2': {}
 
-  '@bitbaum/accountkit@https://codeload.github.com/bitbaum/accountkit/tar.gz/ec5654270527757aa0e762f09b5aaabf272389a2(react@19.1.0)':
+  '@bitbaum/accountkit@0.8.0(next@16.3.8(@playwright/test@1.57.0)(@types/node@20.19.4)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)':
     dependencies:
+      limitkit: 0.2.0
       react: 19.1.0
+    optionalDependencies:
+      next: 16.3.8(@playwright/test@1.57.0)(@types/node@20.19.4)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
 
-  '@bitbaum/whenkit@https://codeload.github.com/bitbaum/whenkit/tar.gz/f5e0a24208187091c2ca792008cdd7695a19910f(react@19.1.0)':
+  '@bitbaum/whenkit@0.3.2(react@19.1.0)':
     dependencies:
       react: 19.1.0
 
@@ -4618,7 +4639,7 @@ snapshots:
 
   bcryptjs@3.0.2: {}
 
-  bip-kit@0.3.1(katex@0.16.47)(mermaid@11.17.2)(react@19.1.0)(shiki@1.29.2):
+  bip-kit@0.6.1(katex@0.16.47)(mermaid@11.17.2)(react@19.1.0)(shiki@1.29.2):
     dependencies:
       react: 19.1.0
     optionalDependencies:
@@ -5809,6 +5830,8 @@ snapshots:
       lightningcss-linux-x64-musl: 1.30.1
       lightningcss-win32-arm64-msvc: 1.30.1
       lightningcss-win32-x64-msvc: 1.30.1
+
+  limitkit@0.2.0: {}
 
   locate-path@6.0.0:
     dependencies:
