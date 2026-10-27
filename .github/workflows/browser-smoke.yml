@@ -1,0 +1,43 @@
+name: Browser smoke
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch: {}
+
+concurrency:
+  group: browser-smoke-${{ github.ref }}-${{ github.sha }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  shared-article:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: frontend
+    env:
+      # Synthetic local fixture values; no production account or model access.
+      NEXTAUTH_SECRET: datacat-browser-fixture-secret-32-characters
+      JWT_SECRET: datacat-browser-fixture-api-secret-32-characters
+      NEXTAUTH_URL: http://127.0.0.1:3918
+      NEXT_PUBLIC_APP_URL: http://127.0.0.1:3918
+      DATABASE_URL: postgresql://fixture:fixture@127.0.0.1:5432/fixture
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run prisma:generate
+      - run: pnpm exec playwright install --with-deps chromium
+      - name: Exercise the actual shared article at phone and desktop widths
+        run: pnpm exec playwright test --config=playwright.shared.config.ts

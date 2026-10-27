@@ -1,13 +1,9 @@
-# Golden CI floor — see dotfiles/templates/ci/README.md.
-# datacat: pnpm monorepo (frontend/ + backend/, separate installs). The only
-# tests are full-stack Playwright e2e that need both servers + a DB running —
-# NOT hermetic, so they are deferred to a future e2e job (lift revampit's
-# e2e-local pattern once a seeded DB service is wired). This floor gates the
-# frontend quality signals that currently never run: lint, typecheck, build
-# (contentlayer + prisma generate + next build). npm needed --legacy-peer-deps
-# here; pnpm treats peer conflicts as warnings, so no flag is required. The
-# production Docker deploy stays disabled — enabling a deploy is an
-# outward-facing decision, not part of the CI floor.
+# DataCat's root verify command gates frontend/backend unit tests, formatting,
+# lint, types and the production frontend build. browser-smoke.yml separately
+# exercises the real public article renderer at phone/desktop widths without
+# a backend or external model. Full-stack authenticated journeys still require
+# both services and a seeded database; this public renderer check does not
+# certify those account, data-capture or AI workflows.
 name: CI
 
 on:
@@ -83,6 +79,5 @@ jobs:
       - name: Verify
         run: pnpm run verify
 
-      # The full-stack Playwright e2e is still DEFERRED, not skipped silently:
-      # it needs both servers plus a seeded DB (lift revampit's e2e-local pattern
-      # from dotfiles/templates/ci/README.md once that is wired).
+      # Full-stack Playwright journeys still need both services and a seeded DB.
+      # Public shared-renderer coverage runs separately in browser-smoke.yml.
