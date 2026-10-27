@@ -16,7 +16,9 @@ permissions:
 
 jobs:
   shared-article:
-    runs-on: ubuntu-latest
+    # The locked Playwright browser supports this LTS image. Do not inherit
+    # an ubuntu-latest upgrade before the browser/runtime compatibility check.
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     defaults:
       run:
