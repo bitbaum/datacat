@@ -1,7 +1,7 @@
 import type { NextAuthOptions } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import { prisma } from '@/lib/db';
-import { compare } from 'bcryptjs';
+import { passwords } from './passwords';
 import { SignJWT } from 'jose';
 import { resolveApiTokenSecret, resolveAuthSecret } from './secret';
 import {
@@ -40,8 +40,17 @@ export const authOptions: NextAuthOptions = {
         if (!credentials?.email || !credentials.password) return null;
         const user = await prisma.user.findUnique({ where: { email: credentials.email } });
         if (!user || !user.passwordHash) return null;
-        const ok = await compare(credentials.password, user.passwordHash);
+        const { valid: ok, rehash } = await passwords.verify(
+          credentials.password,
+          user.passwordHash,
+        );
         if (!ok) return null;
+        if (rehash) {
+          await prisma.user.update({
+            where: { id: user.id },
+            data: { passwordHash: await passwords.hash(credentials.password) },
+          });
+        }
         return { id: user.id, email: user.email, name: user.name, role: user.role };
       },
     }),

@@ -5,6 +5,7 @@ const { z } = require('zod');
 const authController = require('../controllers/authController');
 const auth = require('../middleware/auth');
 const { authLimiter } = require('../middleware/rateLimit');
+const { passwordSchema } = require('../lib/passwords');
 
 // @route   POST api/auth/register
 // @desc    Register a new user
@@ -15,7 +16,7 @@ router.post(
   validate({
     body: z.object({
       email: z.string().email(),
-      password: z.string().min(8),
+      password: passwordSchema,
       name: z.string().optional(),
     }),
   }),

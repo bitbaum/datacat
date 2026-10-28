@@ -6,6 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import { http, ApiSuccess } from '../services/http';
 import { ROUTES } from '@/lib/routes';
 import { AuthChoices } from '../components/OrangecatSignIn';
+import { PasswordField } from '@bitbaum/accountkit/auth/password-field';
 
 const RegisterPage = () => {
   const [email, setEmail] = useState('');
@@ -63,16 +64,19 @@ const RegisterPage = () => {
               <label htmlFor="password" className="sr-only">
                 Password
               </label>
-              <input
+              <PasswordField
                 id="password"
                 name="password"
-                type="password"
-                autoComplete="current-password"
-                required
-                className="relative block w-full px-3 py-2 text-gray-900 placeholder-gray-500 border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                 placeholder="Passwort"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={setPassword}
+                classes={{
+                  inputWrap: 'relative',
+                  input:
+                    'relative block w-full px-3 py-2 pr-12 text-gray-900 placeholder-gray-500 border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white',
+                  reveal:
+                    'absolute inset-y-0 right-0 z-20 flex w-11 items-center justify-center text-gray-500 hover:text-gray-700 dark:text-gray-300',
+                }}
               />
             </div>
             {error && <p className="text-sm text-red-500">{error}</p>}
