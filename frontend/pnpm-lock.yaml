@@ -14,8 +14,8 @@ importers:
   .:
     dependencies:
       '@bitbaum/accountkit':
-        specifier: github:bitbaum/accountkit#4c2a680d7c2e5709c7b71224fee314752309a454
-        version: https://codeload.github.com/bitbaum/accountkit/tar.gz/4c2a680d7c2e5709c7b71224fee314752309a454(next@16.4.1(@playwright/test@1.57.0)(@types/node@20.19.4)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)
+        specifier: ^0.8.1
+        version: 0.8.1(next@16.4.1(@playwright/test@1.57.0)(@types/node@20.19.4)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)
       '@bitbaum/whenkit':
         specifier: ^0.3.2
         version: 0.3.2(react@19.1.0)
@@ -149,9 +149,8 @@ packages:
     resolution: {integrity: sha512-KHp2IflsnGywDjBWDkR9iEqiWSpc8GIi0lgTT3mOElT0PP1tG26P4tmFI2YvAdzgq9RGyoHZQEIEdZy6Ec5xCA==}
     engines: {node: '>=6.9.0'}
 
-  '@bitbaum/accountkit@https://codeload.github.com/bitbaum/accountkit/tar.gz/4c2a680d7c2e5709c7b71224fee314752309a454':
-    resolution: {gitHosted: true, integrity: sha512-6qNNnNw0rHYa9DBMy5e5FutS/ymA7hxVn739FcCOeR/MDMa9+94P4UnvQ70pjsG8h5DUIsw0N6MNBuC+8VW06A==, tarball: https://codeload.github.com/bitbaum/accountkit/tar.gz/4c2a680d7c2e5709c7b71224fee314752309a454}
-    version: 0.8.1
+  '@bitbaum/accountkit@0.8.1':
+    resolution: {integrity: sha512-OMgJ2d7ZJLRVirUZ4NyXzkgMUJJ+1XQkwdExfeveWorBzvceQGcd6Ddi255s2Ys54MoEToN+Misj5lFo0HkWeA==}
     engines: {node: '>=20'}
     peerDependencies:
       '@better-auth/passkey': ^1.7.10
@@ -3428,7 +3427,7 @@ snapshots:
 
   '@babel/runtime@7.28.2': {}
 
-  '@bitbaum/accountkit@https://codeload.github.com/bitbaum/accountkit/tar.gz/4c2a680d7c2e5709c7b71224fee314752309a454(next@16.4.1(@playwright/test@1.57.0)(@types/node@20.19.4)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)':
+  '@bitbaum/accountkit@0.8.1(next@16.4.1(@playwright/test@1.57.0)(@types/node@20.19.4)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)':
     dependencies:
       limitkit: 0.2.0
       react: 19.1.0
