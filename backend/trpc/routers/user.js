@@ -7,12 +7,12 @@ const {
   z,
   TRPCError,
 } = require('../../lib/trpc');
-const bcrypt = require('bcryptjs');
+const { passwords, passwordSchema } = require('../../lib/passwords');
 const jwt = require('jsonwebtoken');
 
 const UserCreateInput = z.object({
   email: z.string().email(),
-  password: z.string().min(8),
+  password: passwordSchema,
   name: z.string().optional(),
 });
 
@@ -64,7 +64,7 @@ const userRouter = router({
     }
 
     // Hash password
-    const passwordHash = await bcrypt.hash(input.password, 12);
+    const passwordHash = await passwords.hash(input.password);
 
     // Create user
     const user = await prisma.user.create({
@@ -111,7 +111,10 @@ const userRouter = router({
       }
 
       // Verify password
-      const isValidPassword = await bcrypt.compare(input.password, user.passwordHash);
+      const { valid: isValidPassword, rehash } = await passwords.verify(
+        input.password,
+        user.passwordHash,
+      );
 
       if (!isValidPassword) {
         throw new TRPCError({
@@ -125,6 +128,14 @@ const userRouter = router({
         throw new TRPCError({
           code: 'FORBIDDEN',
           message: 'Account is deactivated',
+        });
+      }
+
+      // An old plain bcrypt hash matched: store the new form now.
+      if (rehash) {
+        await prisma.user.update({
+          where: { id: user.id },
+          data: { passwordHash: await passwords.hash(input.password) },
         });
       }
 

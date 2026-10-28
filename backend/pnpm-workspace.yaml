@@ -7,6 +7,7 @@ allowBuilds:
   puppeteer: true
 minimumReleaseAgeExclude:
   - '@bitbaum/ai-kit@0.13.0 || 1.11.0'
+  - '@bitbaum/accountkit'
 overrides:
   '@trpc/server@>=11.0.0 <11.8.0': ^11.8.0
   jws@<3.2.3: ^3.2.3

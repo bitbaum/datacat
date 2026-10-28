@@ -1,5 +1,5 @@
 const prisma = require('../lib/prisma');
-const bcrypt = require('bcryptjs');
+const { passwords, passwordProblem } = require('../lib/passwords');
 const jwt = require('jsonwebtoken');
 const {
   success,
@@ -41,8 +41,7 @@ exports.register = async (req, res) => {
     }
 
     // Hash password
-    const salt = await bcrypt.genSalt(12);
-    const passwordHash = await bcrypt.hash(password, salt);
+    const passwordHash = await passwords.hash(password);
 
     // Create user
     const user = await prisma.user.create({
@@ -117,9 +116,16 @@ exports.login = async (req, res) => {
     }
 
     // Compare password
-    const isMatch = await bcrypt.compare(password, user.passwordHash);
+    const { valid: isMatch, rehash } = await passwords.verify(password, user.passwordHash);
     if (!isMatch) {
       return unauthorized(res, 'Invalid credentials');
+    }
+    // An old plain bcrypt hash matched: store the new form now.
+    if (rehash) {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { passwordHash: await passwords.hash(password) },
+      });
     }
 
     // Create and sign a JWT
@@ -249,14 +255,16 @@ exports.changePassword = async (req, res) => {
     }
 
     // Verify current password
-    const isMatch = await bcrypt.compare(currentPassword, user.passwordHash);
+    const { valid: isMatch } = await passwords.verify(currentPassword, user.passwordHash);
     if (!isMatch) {
       return validationError(res, 'Current password is incorrect');
     }
+    if (passwordProblem(newPassword)) {
+      return validationError(res, 'Enter a new password of at most 128 characters.');
+    }
 
     // Hash new password
-    const salt = await bcrypt.genSalt(12);
-    const newPasswordHash = await bcrypt.hash(newPassword, salt);
+    const newPasswordHash = await passwords.hash(newPassword);
 
     // Update password
     await prisma.user.update({

@@ -1,14 +1,18 @@
 import { prisma } from '@/lib/db';
-import { hash } from 'bcryptjs';
+import { passwordProblem } from '@bitbaum/accountkit/auth/password';
+import { passwords } from '@/server/auth/passwords';
 
 export async function POST(req: Request) {
   const { email, password, name } = await req.json();
   if (!email || !password) {
     return Response.json({ success: false, message: 'Missing credentials' }, { status: 400 });
   }
+  if (passwordProblem(password)) {
+    return Response.json({ success: false, message: 'Invalid password' }, { status: 400 });
+  }
   const exists = await prisma.user.findUnique({ where: { email } });
   if (exists) return Response.json({ success: false, message: 'User exists' }, { status: 409 });
-  const passwordHash = await hash(password, 10);
+  const passwordHash = await passwords.hash(password);
   const user = await prisma.user.create({ data: { email, passwordHash, name } });
   return Response.json({
     success: true,
