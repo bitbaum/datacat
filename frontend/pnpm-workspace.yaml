@@ -25,4 +25,4 @@ overrides:
   # for packages we publish ourselves — never to hurry a third-party release.
 minimumReleaseAgeExclude:
   - 'bip-kit'
-  - '@bitbaum/accountkit@0.8.0'
+  - '@bitbaum/accountkit@0.8.0 || 0.8.1'
