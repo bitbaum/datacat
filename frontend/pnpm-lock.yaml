@@ -14,8 +14,8 @@ importers:
   .:
     dependencies:
       '@bitbaum/accountkit':
-        specifier: github:bitbaum/accountkit#c9fb1e59e124638ca7a1c36e00a76fef8aba20c7
-        version: https://codeload.github.com/bitbaum/accountkit/tar.gz/c9fb1e59e124638ca7a1c36e00a76fef8aba20c7(next@16.4.1(@playwright/test@1.57.0)(@types/node@20.19.4)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)
+        specifier: github:bitbaum/accountkit#4d62ab8ebed295a9b0af8bda0838fb01bd336418
+        version: https://codeload.github.com/bitbaum/accountkit/tar.gz/4d62ab8ebed295a9b0af8bda0838fb01bd336418(next@16.4.1(@playwright/test@1.57.0)(@types/node@20.19.4)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)
       '@bitbaum/whenkit':
         specifier: ^0.3.3
         version: 0.3.3(react@19.1.0)
@@ -149,9 +149,9 @@ packages:
     resolution: {integrity: sha512-KHp2IflsnGywDjBWDkR9iEqiWSpc8GIi0lgTT3mOElT0PP1tG26P4tmFI2YvAdzgq9RGyoHZQEIEdZy6Ec5xCA==}
     engines: {node: '>=6.9.0'}
 
-  '@bitbaum/accountkit@https://codeload.github.com/bitbaum/accountkit/tar.gz/c9fb1e59e124638ca7a1c36e00a76fef8aba20c7':
-    resolution: {gitHosted: true, tarball: https://codeload.github.com/bitbaum/accountkit/tar.gz/c9fb1e59e124638ca7a1c36e00a76fef8aba20c7}
-    version: 0.9.2
+  '@bitbaum/accountkit@https://codeload.github.com/bitbaum/accountkit/tar.gz/4d62ab8ebed295a9b0af8bda0838fb01bd336418':
+    resolution: {gitHosted: true, tarball: https://codeload.github.com/bitbaum/accountkit/tar.gz/4d62ab8ebed295a9b0af8bda0838fb01bd336418}
+    version: 0.10.0
     engines: {node: '>=20'}
     peerDependencies:
       '@better-auth/passkey': ^1.7.10
@@ -3394,6 +3394,9 @@ packages:
   zod@3.25.76:
     resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
 
+  zod@4.6.7:
+    resolution: {integrity: sha512-g8W2D2kU6a8untc053fX1uVBKzM7yqAxW/3zwk83+6RyF2+SKOuV+c0wBDhUwzV1PaGapmZH+rmcUzPf+3CGwg==}
+
   zustand@4.5.7:
     resolution: {integrity: sha512-CHOUy7mu3lbD6o6LJLfllpjkzhHXSBlX8B9+qPddUsIfeF5S/UZ5q0kmCsnRqT1UHFQZchNFDDzMbQsuesHWlw==}
     engines: {node: '>=12.7.0'}
@@ -3428,10 +3431,11 @@ snapshots:
 
   '@babel/runtime@7.28.2': {}
 
-  '@bitbaum/accountkit@https://codeload.github.com/bitbaum/accountkit/tar.gz/c9fb1e59e124638ca7a1c36e00a76fef8aba20c7(next@16.4.1(@playwright/test@1.57.0)(@types/node@20.19.4)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)':
+  '@bitbaum/accountkit@https://codeload.github.com/bitbaum/accountkit/tar.gz/4d62ab8ebed295a9b0af8bda0838fb01bd336418(next@16.4.1(@playwright/test@1.57.0)(@types/node@20.19.4)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)':
     dependencies:
       limitkit: 0.2.1
       react: 19.1.0
+      zod: 4.6.7
     optionalDependencies:
       next: 16.4.1(@playwright/test@1.57.0)(@types/node@20.19.4)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
 
@@ -6794,6 +6798,8 @@ snapshots:
   yocto-queue@0.1.0: {}
 
   zod@3.25.76: {}
+
+  zod@4.6.7: {}
 
   zustand@4.5.7(@types/react@19.1.8)(react@19.1.0):
     dependencies:
