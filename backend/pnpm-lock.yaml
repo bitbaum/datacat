@@ -21,8 +21,8 @@ importers:
   .:
     dependencies:
       '@bitbaum/accountkit':
-        specifier: github:bitbaum/accountkit#c5752ca507f2a8a10986a5a740b96b36c4f3ad22
-        version: https://codeload.github.com/bitbaum/accountkit/tar.gz/c5752ca507f2a8a10986a5a740b96b36c4f3ad22(react@19.3.1)
+        specifier: ^0.11.0
+        version: 0.11.0(react@19.3.1)
       '@bitbaum/ai-kit':
         specifier: ^1.21.5
         version: 1.21.5(react@19.3.1)
@@ -119,9 +119,8 @@ packages:
     resolution: {integrity: sha512-qSs4ifwzKJSV39ucNjsvc6WVHs6b7S03sOh2OcHF9UHfVPqWWALUsNUVzhSBiItjRZoLHx7nIarVjqKVusUZ1Q==}
     engines: {node: '>=6.9.0'}
 
-  '@bitbaum/accountkit@https://codeload.github.com/bitbaum/accountkit/tar.gz/c5752ca507f2a8a10986a5a740b96b36c4f3ad22':
-    resolution: {gitHosted: true, integrity: sha512-EWAQBNpmwKVzg/ZtK0ZCF3arDWN/xLOaLSGypwyTQthLtrppZXpFXAkmG1lsXYABee8GlNZW0gJlIipio/u3DA==, tarball: https://codeload.github.com/bitbaum/accountkit/tar.gz/c5752ca507f2a8a10986a5a740b96b36c4f3ad22}
-    version: 0.11.0
+  '@bitbaum/accountkit@0.11.0':
+    resolution: {integrity: sha512-4fudrP5faeJ8gVTj79gPCogLjjUFJlwjbW5FF+AnCL+TueyHPmsTVhGKWtAHNHeJnAvor2XFBvqXILG6YrAuJw==}
     engines: {node: '>=20'}
     peerDependencies:
       '@better-auth/passkey': ^1.7.10
@@ -2295,7 +2294,7 @@ snapshots:
 
   '@babel/helper-validator-identifier@7.28.5': {}
 
-  '@bitbaum/accountkit@https://codeload.github.com/bitbaum/accountkit/tar.gz/c5752ca507f2a8a10986a5a740b96b36c4f3ad22(react@19.3.1)':
+  '@bitbaum/accountkit@0.11.0(react@19.3.1)':
     dependencies:
       limitkit: 0.2.1
       react: 19.3.1
