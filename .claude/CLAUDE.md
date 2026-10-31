@@ -41,7 +41,7 @@ datacat/
 │   ├── trpc/           # tRPC routers
 │   ├── prisma/         # Database schema
 │   ├── jobs/ middleware/ lib/ utils/ config/ db/
-│   └── (backend has ZERO tests — "test" script exits 1; change with care)
+│   └── (backend tests: vitest, `pnpm run test:backend`; thin coverage — change with care)
 └── docker-compose.yml   # Infrastructure
 ```
 
