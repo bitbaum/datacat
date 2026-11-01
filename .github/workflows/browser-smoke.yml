@@ -43,3 +43,102 @@ jobs:
       - run: pnpm exec playwright install --with-deps chromium
       - name: Exercise the actual shared article at phone and desktop widths
         run: pnpm exec playwright test --config=playwright.shared.config.ts
+
+  account:
+    # The account journey in real Chromium, against the production server and
+    # a PostgreSQL migrated the way the box is: every earlier migration, a
+    # person stored the NextAuth way, then the AccountKit import. The
+    # rehearsal applies the import twice (counts only) and checks Prisma sees
+    # no drift. The journey signs that person in with their old password,
+    # signs a new one up, out and in, refuses a wrong password, recovers a
+    # password and checks every way in at 320, 390 and 1280px. Synthetic
+    # people and keys only; the Resend key is fake, so no mail leaves and the
+    # reset link is read from the database.
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    defaults:
+      run:
+        working-directory: frontend
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: app
+          POSTGRES_PASSWORD: app
+          POSTGRES_DB: journey
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U app -d journey"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL: postgres://app:app@127.0.0.1:5432/journey
+      REHEARSAL_URL: postgres://app:app@127.0.0.1:5432/rehearsal
+      NEXT_TELEMETRY_DISABLED: '1'
+      LEGACY_EMAIL: legacy-person@example.test
+      LEGACY_PASSWORD: synthetic nextauth-era password
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run prisma:generate
+
+      - name: Rehearse the import twice on a throwaway database
+        run: |
+          psql "$DATABASE_URL" -qc 'CREATE DATABASE rehearsal'
+          DATABASE_URL="$REHEARSAL_URL" bash scripts/accounts/rehearse.sh
+
+      - name: Migrate as the box does, with a NextAuth-era account before the import
+        run: |
+          new=prisma/migrations/20261101120000_accountkit_accounts/migration.sql
+          for m in prisma/migrations/*/migration.sql; do
+            [ "$m" = "$new" ] && continue
+            psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -q -f "$m"
+          done
+          node scripts/accounts/seed-legacy.mjs
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -q --single-transaction -f "$new"
+
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm run build
+      - name: Assemble the standalone server
+        run: |
+          cp -r .next/static .next/standalone/.next/static
+          cp -r public .next/standalone/public
+
+      - name: Account journey at phone and desktop widths
+        env:
+          NODE_ENV: production
+          PORT: '3000'
+          HOSTNAME: 127.0.0.1
+          NEXT_PUBLIC_APP_URL: http://localhost:3000
+          # The names the box holds today; the session key is derived from them.
+          NEXTAUTH_SECRET: synthetic-journey-secret-at-least-32-characters
+          JWT_SECRET: synthetic-api-secret-at-least-32-characters
+          RESEND_API_KEY: re_ci_synthetic
+          RESEND_FROM: DataCat <noreply@orangecat.ch>
+          ORANGECAT_OAUTH_CLIENT_ID: synthetic
+          ORANGECAT_OAUTH_CLIENT_SECRET: synthetic-secret
+          SIGNIN_ISSUER: https://signin.example.test
+          SIGNIN_CLIENT_ID: synthetic
+          SIGNIN_CLIENT_SECRET: synthetic-secret
+          EXPECT_OIDC: '1'
+          BASE_URL: http://localhost:3000
+        run: |
+          (cd .next/standalone && node server.js > ../../server.log 2>&1 &)
+          for i in $(seq 60); do curl -sf -o /dev/null http://localhost:3000/login && break; sleep 1; done
+          node scripts/accounts/journey.mjs
+
+      - name: Keep screenshots and the server log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: account-journey
+          path: |
+            frontend/browser-smoke-artifacts/
+            frontend/server.log
+          retention-days: 14
+          if-no-files-found: warn

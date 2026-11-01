@@ -9,26 +9,26 @@ datasource db {
 
 // Core user management
 model User {
-  id              String    @id @default(cuid())
+  id             String    @id @default(cuid())
   // Profile data only, never an identity key. Null when an OrangeCat user's
   // email is already held by another datacat account: a new OrangeCat `sub`
   // never links to an existing user by email (@bitbaum/accountkit/orangecat,
   // stored by src/server/auth/orangecat-user.ts).
-  email           String?   @unique
-  passwordHash    String?   // Optional for OAuth users
+  email          String?   @unique
+  passwordHash   String? // Optional for OAuth users
   // OrangeCat's OIDC `sub` (its actor_id) — THE identity key for "Sign in with OrangeCat".
-  orangecatSub    String?   @unique
-  name            String?
-  avatar          String?
-  emailVerified   DateTime?
-  role            UserRole  @default(USER)
-  organizationId  String?
-  isActive        Boolean   @default(true)
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  orangecatSub   String?   @unique
+  name           String?
+  avatar         String?
+  emailVerified  DateTime?
+  role           UserRole  @default(USER)
+  organizationId String?
+  isActive       Boolean   @default(true)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 
   // Relations
-  organization    Organization? @relation(fields: [organizationId], references: [id])
+  organization    Organization?      @relation(fields: [organizationId], references: [id])
   forms           Form[]
   submissions     Submission[]
   sharedForms     FormCollaborator[]
@@ -40,18 +40,18 @@ model User {
 }
 
 model Organization {
-  id          String   @id @default(cuid())
-  name        String
-  slug        String   @unique
-  domain      String?
-  settings    Json     @default("{}")
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  domain    String?
+  settings  Json     @default("{}")
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Relations
-  users       User[]
-  forms       Form[]
+  users User[]
+  forms Form[]
 
   @@map("organizations")
 }
@@ -89,102 +89,102 @@ model Session {
 
 // Core form system
 model Form {
-  id              String        @id @default(cuid())
-  title           String
-  description     String?
-  schema          Json          // Form field definitions and validation
-  settings        Json          @default("{}")
-  isPublished     Boolean       @default(false)
-  isTemplate      Boolean       @default(false)
-  templateTags    String[]      @default([])
-  userId          String
-  organizationId  String?
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+  id             String   @id @default(cuid())
+  title          String
+  description    String?
+  schema         Json // Form field definitions and validation
+  settings       Json     @default("{}")
+  isPublished    Boolean  @default(false)
+  isTemplate     Boolean  @default(false)
+  templateTags   String[] @default([])
+  userId         String
+  organizationId String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
   // Form sharing and access control
-  shareSettings   ShareSettings?
-  sharedLinks     SharedLink[]
-  collaborators   FormCollaborator[]
+  shareSettings ShareSettings?
+  sharedLinks   SharedLink[]
+  collaborators FormCollaborator[]
 
   // Data collection
   submissions     Submission[]
   analysisResults LLMAnalysis[]
 
   // Audit and versioning
-  versions        FormVersion[]
-  currentVersion  Int           @default(1)
+  versions       FormVersion[]
+  currentVersion Int           @default(1)
 
   // Relations
-  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  organization    Organization? @relation(fields: [organizationId], references: [id])
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization Organization? @relation(fields: [organizationId], references: [id])
 
   @@map("forms")
 }
 
 model ShareSettings {
-  id                    String      @id @default(cuid())
-  formId                String      @unique
-  accessType            AccessType  @default(PRIVATE)
-  requireAuth           Boolean     @default(false)
-  allowAnonymous        Boolean     @default(true)
-  collectEmails         Boolean     @default(false)
-  allowMultipleSubmissions Boolean  @default(false)
-  notificationSettings  Json        @default("{}")
-  
-  form                  Form        @relation(fields: [formId], references: [id], onDelete: Cascade)
+  id                       String     @id @default(cuid())
+  formId                   String     @unique
+  accessType               AccessType @default(PRIVATE)
+  requireAuth              Boolean    @default(false)
+  allowAnonymous           Boolean    @default(true)
+  collectEmails            Boolean    @default(false)
+  allowMultipleSubmissions Boolean    @default(false)
+  notificationSettings     Json       @default("{}")
+
+  form Form @relation(fields: [formId], references: [id], onDelete: Cascade)
 
   @@map("share_settings")
 }
 
 model SharedLink {
-  id                String      @id @default(cuid())
-  formId            String
-  slug              String      @unique
-  accessType        AccessType  @default(PUBLIC)
-  requiresAuth      Boolean     @default(false)
-  expiresAt         DateTime?
-  maxSubmissions    Int?
+  id                 String     @id @default(cuid())
+  formId             String
+  slug               String     @unique
+  accessType         AccessType @default(PUBLIC)
+  requiresAuth       Boolean    @default(false)
+  expiresAt          DateTime?
+  maxSubmissions     Int?
   currentSubmissions Int        @default(0)
-  allowedDomains    String[]    @default([])
-  password          String?
-  metadata          Json        @default("{}")
-  isActive          Boolean     @default(true)
-  createdAt         DateTime    @default(now())
-  updatedAt         DateTime    @updatedAt
+  allowedDomains     String[]   @default([])
+  password           String?
+  metadata           Json       @default("{}")
+  isActive           Boolean    @default(true)
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
 
-  form              Form        @relation(fields: [formId], references: [id], onDelete: Cascade)
+  form Form @relation(fields: [formId], references: [id], onDelete: Cascade)
 
   @@map("shared_links")
 }
 
 model FormCollaborator {
-  id          String         @id @default(cuid())
+  id          String           @id @default(cuid())
   formId      String
   userId      String
   role        CollaboratorRole @default(VIEWER)
-  permissions Json           @default("{}")
-  invitedAt   DateTime       @default(now())
+  permissions Json             @default("{}")
+  invitedAt   DateTime         @default(now())
   acceptedAt  DateTime?
 
-  form        Form           @relation(fields: [formId], references: [id], onDelete: Cascade)
-  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  form Form @relation(fields: [formId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([formId, userId])
   @@map("form_collaborators")
 }
 
 model FormVersion {
-  id          String   @id @default(cuid())
-  formId      String
-  version     Int
-  schema      Json
-  settings    Json     @default("{}")
-  changelog   String?
-  createdAt   DateTime @default(now())
-  createdBy   String
+  id        String   @id @default(cuid())
+  formId    String
+  version   Int
+  schema    Json
+  settings  Json     @default("{}")
+  changelog String?
+  createdAt DateTime @default(now())
+  createdBy String
 
-  form        Form     @relation(fields: [formId], references: [id], onDelete: Cascade)
+  form Form @relation(fields: [formId], references: [id], onDelete: Cascade)
 
   @@unique([formId, version])
   @@map("form_versions")
@@ -192,70 +192,70 @@ model FormVersion {
 
 // Data collection and submissions
 model Submission {
-  id              String          @id @default(cuid())
-  formId          String
-  submitterId     String?         // Optional - can be anonymous
-  data            Json
-  metadata        Json            @default("{}")
-  status          SubmissionStatus @default(PENDING)
-  source          SubmissionSource @default(DIRECT)
-  ipAddress       String?
-  userAgent       String?
-  submittedAt     DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
+  id          String           @id @default(cuid())
+  formId      String
+  submitterId String? // Optional - can be anonymous
+  data        Json
+  metadata    Json             @default("{}")
+  status      SubmissionStatus @default(PENDING)
+  source      SubmissionSource @default(DIRECT)
+  ipAddress   String?
+  userAgent   String?
+  submittedAt DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
 
   // LLM Analysis
-  analyses        LLMAnalysis[]
-  
+  analyses LLMAnalysis[]
+
   // Relations
-  form            Form            @relation(fields: [formId], references: [id], onDelete: Cascade)
-  submitter       User?           @relation(fields: [submitterId], references: [id])
+  form      Form  @relation(fields: [formId], references: [id], onDelete: Cascade)
+  submitter User? @relation(fields: [submitterId], references: [id])
 
   @@map("submissions")
 }
 
 // LLM Analysis System
 model LLMAnalysis {
-  id              String          @id @default(cuid())
-  submissionId    String?         // Can analyze forms or submissions
-  formId          String?
-  analysisType    AnalysisType
-  prompt          String
-  result          Json
-  confidence      Float?
-  processingTime  Int?            // milliseconds
-  model           String          // e.g., "gpt-4", "claude-3"
-  version         String          @default("1.0")
-  status          AnalysisStatus  @default(PENDING)
-  error           String?
-  userId          String
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
+  id             String         @id @default(cuid())
+  submissionId   String? // Can analyze forms or submissions
+  formId         String?
+  analysisType   AnalysisType
+  prompt         String
+  result         Json
+  confidence     Float?
+  processingTime Int? // milliseconds
+  model          String // e.g., "gpt-4", "claude-3"
+  version        String         @default("1.0")
+  status         AnalysisStatus @default(PENDING)
+  error          String?
+  userId         String
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
 
   // Relations
-  submission      Submission?     @relation(fields: [submissionId], references: [id], onDelete: Cascade)
-  form            Form?           @relation(fields: [formId], references: [id], onDelete: Cascade)
-  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  submission Submission? @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  form       Form?       @relation(fields: [formId], references: [id], onDelete: Cascade)
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("llm_analyses")
 }
 
 // Background job system
 model BackgroundJob {
-  id          String     @id @default(cuid())
+  id          String    @id @default(cuid())
   type        JobType
-  status      JobStatus  @default(PENDING)
+  status      JobStatus @default(PENDING)
   data        Json
   result      Json?
   error       String?
-  priority    Int        @default(0)
-  attempts    Int        @default(0)
-  maxAttempts Int        @default(3)
-  scheduledAt DateTime   @default(now())
+  priority    Int       @default(0)
+  attempts    Int       @default(0)
+  maxAttempts Int       @default(3)
+  scheduledAt DateTime  @default(now())
   startedAt   DateTime?
   completedAt DateTime?
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   @@map("background_jobs")
 }
@@ -323,4 +323,107 @@ enum JobStatus {
   CANCELLED
 }
 
+// ── Accounts (@bitbaum/accountkit) ─────────────────────────────────────────
+// Read and written by AccountKit through Drizzle (src/server/auth/runtime.ts),
+// never through Prisma. Modelled here only so Prisma knows they exist and a
+// future `prisma migrate dev` never proposes dropping them. The shared user id
+// IS users.id. Migration: 20261101120000_accountkit_accounts.
 
+model AuthUser {
+  id               String          @id
+  name             String          @default("")
+  email            String          @unique(map: "auth_users_email_unique")
+  emailVerified    Boolean         @default(false) @map("email_verified")
+  image            String?
+  role             String          @default("customer")
+  twoFactorEnabled Boolean         @default(false) @map("two_factor_enabled")
+  createdAt        DateTime        @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime        @default(now()) @map("updated_at") @db.Timestamptz(6)
+  accounts         AuthAccount[]
+  sessions         AuthSession[]
+  passkeys         AuthPasskey[]
+  twoFactors       AuthTwoFactor[]
+
+  @@map("auth_users")
+}
+
+model AuthSession {
+  id        String   @id
+  expiresAt DateTime @map("expires_at") @db.Timestamptz(6)
+  token     String   @unique(map: "auth_sessions_token_unique")
+  ipAddress String?  @map("ip_address")
+  userAgent String?  @map("user_agent")
+  userId    String   @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+  user      AuthUser @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "auth_sessions_user_id_auth_users_id_fk")
+
+  @@index([userId], map: "auth_sessions_user_id_idx")
+  @@map("auth_sessions")
+}
+
+model AuthAccount {
+  id                    String    @id
+  accountId             String    @map("account_id")
+  providerId            String    @map("provider_id")
+  userId                String    @map("user_id")
+  accessToken           String?   @map("access_token")
+  refreshToken          String?   @map("refresh_token")
+  idToken               String?   @map("id_token")
+  accessTokenExpiresAt  DateTime? @map("access_token_expires_at") @db.Timestamptz(6)
+  refreshTokenExpiresAt DateTime? @map("refresh_token_expires_at") @db.Timestamptz(6)
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt             DateTime  @default(now()) @map("updated_at") @db.Timestamptz(6)
+  user                  AuthUser  @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "auth_accounts_user_id_auth_users_id_fk")
+
+  @@unique([providerId, accountId], map: "auth_accounts_provider_account_uidx")
+  @@index([userId], map: "auth_accounts_user_id_idx")
+  @@map("auth_accounts")
+}
+
+model AuthVerification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime @map("expires_at") @db.Timestamptz(6)
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt  DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+
+  @@index([identifier], map: "auth_verifications_identifier_idx")
+  @@map("auth_verifications")
+}
+
+model AuthPasskey {
+  id           String    @id
+  name         String?
+  publicKey    String    @map("public_key")
+  userId       String    @map("user_id")
+  credentialID String    @unique(map: "auth_passkeys_credential_id_unique") @map("credential_id")
+  counter      Int
+  deviceType   String    @map("device_type")
+  backedUp     Boolean   @map("backed_up")
+  transports   String?
+  aaguid       String?
+  createdAt    DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  user         AuthUser  @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "auth_passkeys_user_id_auth_users_id_fk")
+
+  @@index([userId], map: "auth_passkeys_user_id_idx")
+  @@map("auth_passkeys")
+}
+
+model AuthTwoFactor {
+  id                      String    @id
+  secret                  String
+  backupCodes             String    @map("backup_codes")
+  userId                  String    @map("user_id")
+  verified                Boolean?  @default(true)
+  failedVerificationCount Int?      @default(0) @map("failed_verification_count")
+  lockedUntil             DateTime? @map("locked_until") @db.Timestamptz(6)
+  user                    AuthUser  @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "auth_two_factors_user_id_auth_users_id_fk")
+
+  @@index([userId], map: "auth_two_factors_user_id_idx")
+  @@index([secret], map: "auth_two_factors_secret_idx")
+  @@map("auth_two_factors")
+}

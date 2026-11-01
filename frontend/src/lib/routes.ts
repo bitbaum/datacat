@@ -21,6 +21,8 @@ export const ROUTES = {
   profile: '/profile',
   login: '/login',
   register: '/register',
+  /** One's own account: passkeys, two-step codes, password, sign-in methods. */
+  account: '/account',
 } as const;
 
 export type Route = (typeof ROUTES)[keyof typeof ROUTES];

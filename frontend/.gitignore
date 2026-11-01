@@ -36,3 +36,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Account journey output (scripts/accounts/journey.mjs)
+browser-smoke-artifacts/

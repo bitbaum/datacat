@@ -29,3 +29,4 @@ playwright-report
 # generated survives in any checkout that built the blog before then, and
 # prettier cannot parse its import assertions. `pnpm run preflight` finds and
 # removes those leftovers; nothing needs to be ignored here.
+browser-smoke-artifacts

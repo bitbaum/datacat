@@ -102,6 +102,25 @@ datacat/
 └── package.json            # Root orchestration
 ```
 
+## Accounts
+
+Sign-in runs on `@bitbaum/accountkit` (`frontend/src/server/auth/runtime.ts`):
+email and password, the emailed sign-in link, passkeys, two-step codes,
+recovery, "Weiter mit OrangeCat" and the shared sign-in, each shown once its
+env is set (`RESEND_API_KEY`, `ORANGECAT_OAUTH_*`, `SIGNIN_*`). Its tables
+carry the `auth_` prefix beside the product's own `users`; the shared user id
+is `users.id`. AccountKit reaches them through Drizzle; everything else stays
+Prisma. The pages are `/login`, `/register` and `/account`; client components
+read the person, the API token and the offered methods from `useAuth()`
+(`/api/account`). `/api/v1/*` accepts the session cookie or that token.
+
+The Prisma migration `20261101120000_accountkit_accounts` imported every
+earlier person under their id: the bcrypt / `$bs1$` hash and the OrangeCat
+link. It is re-runnable. `frontend/scripts/accounts/rehearse.sh` replays it
+twice on a throwaway database and checks Prisma sees no drift;
+`.github/workflows/browser-smoke.yml` runs that and
+`frontend/scripts/accounts/journey.mjs` on every pull request.
+
 ## Code Style Guidelines
 
 ### Frontend (TypeScript/React)
