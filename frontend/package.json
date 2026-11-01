@@ -13,7 +13,7 @@
     "format:check": "prettier --check ."
   },
   "dependencies": {
-    "@bitbaum/accountkit": "github:bitbaum/accountkit#d49b6170cdca98f30a03e6f3e7000f633b61ab38",
+    "@bitbaum/accountkit": "^0.20.0",
     "@bitbaum/whenkit": "^0.3.3",
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
