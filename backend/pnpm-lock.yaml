@@ -21,8 +21,8 @@ importers:
   .:
     dependencies:
       '@bitbaum/accountkit':
-        specifier: ^0.18.0
-        version: 0.18.0(react@19.3.1)
+        specifier: github:bitbaum/accountkit#4e6451e690b20b17bfa1ec32acc74b152b19780a
+        version: https://codeload.github.com/bitbaum/accountkit/tar.gz/4e6451e690b20b17bfa1ec32acc74b152b19780a(react@19.3.1)
       '@bitbaum/ai-kit':
         specifier: ^1.22.0
         version: 1.22.0(react@19.3.1)
@@ -111,8 +111,9 @@ packages:
   '@acemir/cssom@0.9.32':
     resolution: {integrity: sha512-OijrAUu7rrJhSIoHNg6LMPS5e344nwUHA+1EFYYjrh64D+GmytUsfBQjci45TjT+rd5Spsp8B5xsZDT+TgyXXQ==}
 
-  '@bitbaum/accountkit@0.18.0':
-    resolution: {integrity: sha512-jK1zyeGvSuPk/RGFePOOh6XAh6UFETESe1B2XCnBYRlUmUBLIxGX/TvBuyf0g3Jz+fq2SQ1urPtznLFlC/VMaQ==}
+  '@bitbaum/accountkit@https://codeload.github.com/bitbaum/accountkit/tar.gz/4e6451e690b20b17bfa1ec32acc74b152b19780a':
+    resolution: {gitHosted: true, integrity: sha512-1fpRp970InBGN/mS8QjJN3+J3XFh3jcEMgrSS07X7t1Uog1RFfGTxv/PLX2TQZG7nnIBOjkAFkmU69ZJNYZ2cQ==, tarball: https://codeload.github.com/bitbaum/accountkit/tar.gz/4e6451e690b20b17bfa1ec32acc74b152b19780a}
+    version: 0.18.1
     engines: {node: '>=20'}
     hasBin: true
     peerDependencies:
@@ -2146,7 +2147,7 @@ snapshots:
 
   '@acemir/cssom@0.9.32': {}
 
-  '@bitbaum/accountkit@0.18.0(react@19.3.1)':
+  '@bitbaum/accountkit@https://codeload.github.com/bitbaum/accountkit/tar.gz/4e6451e690b20b17bfa1ec32acc74b152b19780a(react@19.3.1)':
     dependencies:
       limitkit: 0.2.1
       react: 19.3.1
