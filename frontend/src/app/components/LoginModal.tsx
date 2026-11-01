@@ -18,10 +18,6 @@ export function LoginModal({
 }: LoginModalProps) {
   if (!isOpen) return null;
 
-  const handleSuccess = () => {
-    onClose(); // Close modal on successful login
-  };
-
   const handleBackdropClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
       onClose();
@@ -64,11 +60,7 @@ export function LoginModal({
 
           {/* Login form */}
           <div className="p-0">
-            <LoginForm
-              onSuccess={handleSuccess}
-              showRegisterLink={true}
-              className="max-w-none shadow-none border-0 rounded-none"
-            />
+            <LoginForm className="max-w-none shadow-none border-0 rounded-none" />
           </div>
         </div>
       </div>

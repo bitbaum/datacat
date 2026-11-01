@@ -42,13 +42,13 @@
 - **Submissions**: Data collection with metadata
 - **LLM Analysis**: AI-powered form analysis
 - **Background Jobs**: Async processing
-- **NextAuth Integration**: Ready for authentication
+- **Accounts**: the frontend signs people in with `@bitbaum/accountkit` and mints the API token this backend verifies (`frontend/src/server/auth/api-token.ts`)
 
 ### API Architecture
 - **Primary**: tRPC for type-safe API calls
 - **Secondary**: REST API for backward compatibility  
 - **WebSocket**: Real-time features ready
-- **Authentication**: JWT + NextAuth.js ready
+- **Authentication**: JWT (`JWT_SECRET`), minted by the frontend
 
 ### Background Processing
 - **Queue System**: Bull + Redis
@@ -126,7 +126,7 @@ curl http://localhost:5001/
 
 ## Next Steps Available:
 1. **Connect Frontend**: Integrate tRPC with Next.js frontend
-2. **Authentication**: Set up NextAuth.js with providers
+2. **Authentication**: done in the frontend (`@bitbaum/accountkit`)
 3. **Form Submission**: Connect form builder to backend
 4. **LLM Integration**: Activate AI analysis features
 5. **Real-time Features**: Enable WebSocket functionality

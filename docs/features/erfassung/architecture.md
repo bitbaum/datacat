@@ -52,7 +52,7 @@ graph TB
 - **Implementation**: New models coexist with existing User/Organization models
 
 #### 3. Authentication Integration
-- **Approach**: Reuse existing NextAuth.js authentication system
+- **Approach**: Reuse the existing accounts (`@bitbaum/accountkit`, `frontend/src/server/auth/runtime.ts`)
 - **Implementation**: Erfassung respects existing user sessions and permissions
 
 #### 4. API Integration

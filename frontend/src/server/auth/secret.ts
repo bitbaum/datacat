@@ -1,4 +1,9 @@
 /**
+ * Since 2026-11-01 accounts run on @bitbaum/accountkit (src/server/auth/runtime.ts).
+ * Its session key is BETTER_AUTH_SECRET when set, otherwise derived from the
+ * session secret resolved here, so the names below keep working on the box.
+ * The history that follows is why both names are read.
+ *
  * Resolution of the secrets the auth path needs — and the loud failure when
  * production has none.
  *

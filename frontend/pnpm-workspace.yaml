@@ -28,3 +28,4 @@ minimumReleaseAgeExclude:
   - '@bitbaum/accountkit'
   - '@bitbaum/whenkit'
   - limitkit@0.2.1
+  - '@bitbaum/mail-kit'

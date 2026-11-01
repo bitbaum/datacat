@@ -22,7 +22,11 @@ test('a reader can open the article and navigate its contents on either viewport
   page.on('pageerror', (error) => errors.push(error.message));
   await page.goto('/blog');
   await page.locator('a[href="/blog/intake-engine"]').click();
-  await expect(page.locator('article h1')).toHaveText(title);
+  // This suite runs on `next dev`, which compiles a route on its first visit.
+  // The first click compiles the article while the account route (better-auth,
+  // pg) compiles beside it for the header, which can take longer than the
+  // default 5s. A production server answers at once (scripts/accounts/journey.mjs).
+  await expect(page.locator('article h1')).toHaveText(title, { timeout: 30_000 });
   await expect(page.getByRole('columnheader')).toHaveText(['Phase', 'Ziel', 'Status']);
   const contentsLink = page.locator('article a[href^="#"]').first();
   const target = await contentsLink.getAttribute('href');

@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { ROUTES } from '@/lib/routes';
 import { useAuth } from '../context/AuthContext';
 import { http, ApiSuccess } from '../services/http';
 
@@ -63,7 +65,16 @@ export default function ProfilePage() {
     return <div className="p-6">Laden…</div>;
   }
   if (!token) {
-    return <div className="p-6">Bitte zuerst anmelden.</div>;
+    return (
+      <div className="p-6">
+        <Link
+          href={`${ROUTES.login}?next=${encodeURIComponent(ROUTES.profile)}`}
+          className="text-indigo-600"
+        >
+          Bitte zuerst anmelden.
+        </Link>
+      </div>
+    );
   }
 
   return (
@@ -96,6 +107,12 @@ export default function ProfilePage() {
           >
             {saving ? 'Speichern…' : 'Speichern'}
           </button>
+          <Link
+            href={ROUTES.account}
+            className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md"
+          >
+            Anmeldung &amp; Sicherheit
+          </Link>
           <button
             onClick={logout}
             className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md"

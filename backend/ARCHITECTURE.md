@@ -33,7 +33,7 @@ This document outlines the production-ready backend architecture for Formular, f
 #### User Management
 - **User** - Core user entity with roles and organizations
 - **Organization** - Multi-tenant organization support
-- **Account/Session** - NextAuth.js compatible authentication
+- **Account/Session** - NextAuth-era tables, kept; sign-in now runs on `@bitbaum/accountkit` (`auth_*` tables, frontend)
 
 #### Form System
 - **Form** - Dynamic form definitions with versioning
