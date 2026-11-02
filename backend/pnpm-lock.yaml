@@ -24,8 +24,8 @@ importers:
         specifier: ^0.23.1
         version: 0.23.1(react@19.3.1)
       '@bitbaum/ai-kit':
-        specifier: ^1.22.0
-        version: 1.22.0(react@19.3.1)
+        specifier: ^1.23.0
+        version: 1.23.0(react@19.3.1)
       '@prisma/client':
         specifier: ^6.12.0
         version: 6.12.0(prisma@6.12.0(typescript@7.0.2))(typescript@7.0.2)
@@ -134,8 +134,8 @@ packages:
       next:
         optional: true
 
-  '@bitbaum/ai-kit@1.22.0':
-    resolution: {integrity: sha512-IfebEXcs+mbpK0jrrGpSJg2WPWq0VKMDuKYRoB5yMni+uZ4wRWfKOwS+DlUmgDfWmVWMAQzXDbQSawANbHbeYg==}
+  '@bitbaum/ai-kit@1.23.0':
+    resolution: {integrity: sha512-PFSdiWYJ3TMsXPlV11yZEMoZBELNvxT39s0EITYX8nJTS3d8PIjitHWNWTbmvpPA1QwEg2L0/WSlsa4tN3wqfg==}
     engines: {node: '>=20'}
     peerDependencies:
       react: '>=18'
@@ -2152,7 +2152,7 @@ snapshots:
       react: 19.3.1
       zod: 4.6.7
 
-  '@bitbaum/ai-kit@1.22.0(react@19.3.1)':
+  '@bitbaum/ai-kit@1.23.0(react@19.3.1)':
     dependencies:
       '@mozilla/readability': 0.6.0
       ai-forms: 0.1.3(react@19.3.1)
