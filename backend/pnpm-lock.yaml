@@ -21,8 +21,8 @@ importers:
   .:
     dependencies:
       '@bitbaum/accountkit':
-        specifier: ^0.23.0
-        version: 0.23.0(react@19.3.1)
+        specifier: ^0.23.1
+        version: 0.23.1(react@19.3.1)
       '@bitbaum/ai-kit':
         specifier: ^1.22.0
         version: 1.22.0(react@19.3.1)
@@ -111,8 +111,8 @@ packages:
   '@acemir/cssom@0.9.32':
     resolution: {integrity: sha512-OijrAUu7rrJhSIoHNg6LMPS5e344nwUHA+1EFYYjrh64D+GmytUsfBQjci45TjT+rd5Spsp8B5xsZDT+TgyXXQ==}
 
-  '@bitbaum/accountkit@0.23.0':
-    resolution: {integrity: sha512-22pEJo/6j1RkvibTlrGSjaonqSSgdu1amC2mRdtxkZEPOldZpLIdihcCYzpxRuUl9ZqlEiOSAK/DdkRcKePJ1w==}
+  '@bitbaum/accountkit@0.23.1':
+    resolution: {integrity: sha512-wElIAimG0u5mTtS54/04VAXJ81lvMhbuNxwxhl5NNVJIIkESJYlPcdew7UKVhTRvRM8wImJIyXMz7VxfeGKkxQ==}
     engines: {node: '>=20'}
     hasBin: true
     peerDependencies:
@@ -2146,7 +2146,7 @@ snapshots:
 
   '@acemir/cssom@0.9.32': {}
 
-  '@bitbaum/accountkit@0.23.0(react@19.3.1)':
+  '@bitbaum/accountkit@0.23.1(react@19.3.1)':
     dependencies:
       limitkit: 0.2.1
       react: 19.3.1
