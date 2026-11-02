@@ -27,7 +27,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@bitbaum/accountkit": "^0.20.0",
+    "@bitbaum/accountkit": "github:bitbaum/accountkit#99d43a4439da4b57a471ebceae98a1203861d070",
     "@bitbaum/ai-kit": "^1.22.0",
     "@prisma/client": "^6.12.0",
     "@trpc/client": "^11.4.3",
