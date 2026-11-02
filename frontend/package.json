@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@better-auth/passkey": "^1.7.14",
-    "@bitbaum/accountkit": "github:bitbaum/accountkit#99d43a4439da4b57a471ebceae98a1203861d070",
+    "@bitbaum/accountkit": "github:bitbaum/accountkit#11f7c93b9e87fc63a7ad833ae9add584e4161f43",
     "@bitbaum/mail-kit": "^0.2.0",
     "@bitbaum/whenkit": "^0.3.3",
     "@dnd-kit/core": "^6.3.1",
