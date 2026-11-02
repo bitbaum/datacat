@@ -6,7 +6,7 @@ allowBuilds:
   prisma: true
   puppeteer: true
 minimumReleaseAgeExclude:
-  - '@bitbaum/ai-kit@0.13.0 || 1.11.0 || 1.21.5 || 1.22.0 || 1.23.0'
+  - '@bitbaum/ai-kit@0.13.0 || 1.11.0 || 1.21.5 || 1.22.0 || 1.23.0 || 1.24.0'
   - '@bitbaum/accountkit'
   - limitkit@0.2.1
 overrides:
