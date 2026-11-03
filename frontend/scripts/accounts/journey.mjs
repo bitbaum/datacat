@@ -98,11 +98,12 @@ try {
       await visible(page.getByRole('button', { name: 'Weiter mit OrangeCat' })),
       'sign-in offers OrangeCat',
     );
+    // Since AccountKit 0.24 the shared sign-in's button names the providers
+    // its service publishes (<SIGNIN_ISSUER>/api/providers) and is hidden
+    // without one. The synthetic issuer publishes none: no button, no dead end.
     check(
-      await visible(
-        page.getByRole('button', { name: /Weiter mit Google, Apple, GitHub, X oder Facebook/ }),
-      ),
-      'sign-in offers Google, Apple, GitHub, X and Facebook',
+      !(await visible(page.getByRole('button', { name: /^Weiter mit (Google|GitHub|Facebook)/ }))),
+      'sign-in hides the shared sign-in while its issuer publishes no provider',
     );
   }
   await noSidewaysScroll(page, 'login');
