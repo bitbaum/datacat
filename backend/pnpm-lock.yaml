@@ -21,11 +21,11 @@ importers:
   .:
     dependencies:
       '@bitbaum/accountkit':
-        specifier: ^0.27.0
-        version: 0.27.0(react@19.3.1)
+        specifier: ^0.30.0
+        version: 0.30.0(react@19.3.1)
       '@bitbaum/ai-kit':
-        specifier: ^1.24.0
-        version: 1.24.0(react@19.3.1)
+        specifier: ^1.27.0
+        version: 1.27.0(react@19.3.1)
       '@prisma/client':
         specifier: ^6.12.0
         version: 6.12.0(prisma@6.12.0(typescript@7.0.2))(typescript@7.0.2)
@@ -108,16 +108,13 @@ importers:
 
 packages:
 
-  '@acemir/cssom@0.9.32':
-    resolution: {integrity: sha512-OijrAUu7rrJhSIoHNg6LMPS5e344nwUHA+1EFYYjrh64D+GmytUsfBQjci45TjT+rd5Spsp8B5xsZDT+TgyXXQ==}
-
-  '@bitbaum/accountkit@0.27.0':
-    resolution: {integrity: sha512-5dBGE8va8x6qnZGKTGDPu72w9b3/MqTGZG+BpsynQ05MF1FsEcN3EkYNXQhZshpjW139qyG9CTym/jFLVP8ilA==}
+  '@bitbaum/accountkit@0.30.0':
+    resolution: {integrity: sha512-SawXRyluBDhOomI0Z0AQFyeZK4ZGyfUmGstkfS3iciRa2OAPNpwukV7If7H2ftNkkG0PsuTC/weY54BtCkf9NQ==}
     engines: {node: '>=20'}
     hasBin: true
     peerDependencies:
       '@better-auth/passkey': ^1.7.10
-      '@bitbaum/mail-kit': ^0.2.0
+      '@bitbaum/mail-kit': ^0.2.0 || ^0.3.0 || ^0.4.0
       better-auth: ^1.7.10
       drizzle-orm: ^0.45.4
       next: ^16.4.0
@@ -134,8 +131,8 @@ packages:
       next:
         optional: true
 
-  '@bitbaum/ai-kit@1.24.0':
-    resolution: {integrity: sha512-fP5PFQijF+XWi8lT8zJEFJfC/Y6/SvzCT/nw04EvI+jXhVDdKdoPq5KKiGlFqR/SvkwiBJLCW35xiKkFysj3dw==}
+  '@bitbaum/ai-kit@1.27.0':
+    resolution: {integrity: sha512-efcTgG9KolcvPp3jYivI70x3w4TN7eqEOZ6h9XHjRY3n1gRKypcXCJ3vH574rbQY+AQ7bJQ2XJcmBFRGOQtb+A==}
     engines: {node: '>=20'}
     peerDependencies:
       react: '>=18'
@@ -822,6 +819,10 @@ packages:
     resolution: {integrity: sha512-DH0Bqq3DNp5tdOReuNyAA+Ev4Y2GS5FMbZpeTLP6C4CDi0h5nL0BmUPChXw3o/qbHLDWHl49sbNqQVY7bMSDdw==}
     engines: {node: '>=20.19.0'}
 
+  cssomnom@0.1.11:
+    resolution: {integrity: sha512-P4RkO1Sq2Ual77xypEmAc4MkM5k2Ha4UwtBPCOpJmXculGCYPgzsU/xnOCy084esZaPePgGkkJg4Il/HE7GS5A==}
+    engines: {node: '>=20.0.0'}
+
   debug@4.3.7:
     resolution: {integrity: sha512-Er2nc/H7RrMXZBFCEim6TCmMk02Z8vLC2Rbi1KEBggpo0fS6l0S1nnapwmIi3yW/+GOJap1Krg4w0Hg80oCqgQ==}
     engines: {node: '>=6.0'}
@@ -1344,8 +1345,8 @@ packages:
     resolution: {integrity: sha512-8IBrAi+W9axLDDiUE5F2+wabhLTNs1wpaBSf+RfytdXDm/KpOB6S8Xw7j0uoTQH5ti4A/EiRfyK1DbR6NcY1gA==}
     engines: {node: '>=20'}
 
-  linkedom@0.18.14:
-    resolution: {integrity: sha512-BRUnkOm4YR5vo+qI3j0EbungB0vZPSCue5AdnTQRaxAGSbsOZiBFRO0rh4zlo8qXUhli8pxvnpEXDklMnlq2Rg==}
+  linkedom@0.18.15:
+    resolution: {integrity: sha512-o0w7eD/SvoCao+pUi6dzocCLuMR11g4Tv/et0W2OUzwWmUcewntSzyl+Ua/K+0yKym0Y/Mav3nFAaI5Av5jvZg==}
     engines: {node: '>=16'}
     peerDependencies:
       canvas: '>= 2'
@@ -2158,9 +2159,7 @@ packages:
 
 snapshots:
 
-  '@acemir/cssom@0.9.32': {}
-
-  '@bitbaum/accountkit@0.27.0(react@19.3.1)':
+  '@bitbaum/accountkit@0.30.0(react@19.3.1)':
     dependencies:
       '@noble/curves': 2.4.0
       '@scure/base': 2.4.0
@@ -2169,11 +2168,11 @@ snapshots:
       uqr: 0.1.3
       zod: 4.6.7
 
-  '@bitbaum/ai-kit@1.24.0(react@19.3.1)':
+  '@bitbaum/ai-kit@1.27.0(react@19.3.1)':
     dependencies:
       '@mozilla/readability': 0.6.0
       ai-forms: 0.1.3(react@19.3.1)
-      linkedom: 0.18.14
+      linkedom: 0.18.15
     optionalDependencies:
       react: 19.3.1
     transitivePeerDependencies:
@@ -2738,6 +2737,8 @@ snapshots:
 
   css-what@8.0.0: {}
 
+  cssomnom@0.1.11: {}
+
   debug@4.3.7(supports-color@5.5.0):
     dependencies:
       ms: 2.1.3
@@ -3261,10 +3262,10 @@ snapshots:
 
   limitkit@0.2.1: {}
 
-  linkedom@0.18.14:
+  linkedom@0.18.15:
     dependencies:
-      '@acemir/cssom': 0.9.32
       css-select: 7.0.0
+      cssomnom: 0.1.11
       html-escaper: 3.0.3
       htmlparser2: 10.1.0
       uhyphen: 0.2.0
