@@ -21,8 +21,8 @@ importers:
   .:
     dependencies:
       '@bitbaum/accountkit':
-        specifier: ^0.32.0
-        version: 0.32.0(react@19.3.1)
+        specifier: ^0.32.1
+        version: 0.32.1(react@19.3.1)
       '@bitbaum/ai-kit':
         specifier: ^1.29.0
         version: 1.29.0(react@19.3.1)
@@ -108,8 +108,8 @@ importers:
 
 packages:
 
-  '@bitbaum/accountkit@0.32.0':
-    resolution: {integrity: sha512-rn5cmYsbHyDTdE/dtRVl3nRE+yH3tLVtaMZCcCJeVoqmSDK5F237fe316hvuV7TozT6uNW0xBcY4xNTnKs0GdA==}
+  '@bitbaum/accountkit@0.32.1':
+    resolution: {integrity: sha512-Gr2+gQU9ZszTKDpsGUPpKpjIkIfIzPGNybKhRpyEWvGTpymOrwLAiyKe3TiEvjSDITvLsHKRA3Mye8XM9h7BBg==}
     engines: {node: '>=20'}
     hasBin: true
     peerDependencies:
@@ -2159,7 +2159,7 @@ packages:
 
 snapshots:
 
-  '@bitbaum/accountkit@0.32.0(react@19.3.1)':
+  '@bitbaum/accountkit@0.32.1(react@19.3.1)':
     dependencies:
       '@noble/curves': 2.4.0
       '@scure/base': 2.4.0
